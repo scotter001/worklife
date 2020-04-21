@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="vn.worklife.user.mockup.service.BridgeService">
+
+    <resultMap id="BridgeVO" type="BridgeVO">
+        <result property="idCau" column="idcau"/>
+        <result property="idTuyenDuongCau" column="idtuyenduong"/>
+        <result property="loaiCau" column="loaicau"/>
+        <result property="tenCau" column="tencau"/>
+        <result property="lyTrinhKm" column="lytrinhkm"/>
+        <result property="lyTrinhM" column="lytrinhm"/>
+        <result property="kinhDo" column="kinhdo"/>
+        <result property="viDo" column="vido"/>
+        <result property="maHuyenCau" column="mahuyen"/>
+        <result property="maXaCau" column="maxa"/>
+        <result property="doiTuongVuot" column="doituongvuot"/>
+        <result property="chayChungVoi" column="chaychungvoi"/>
+        <result property="ketCauNhip" column="ketcaunhip"/>
+        <result property="vatLieuNhipChinh" column="vatlieunhipchinh"/>
+        <result property="bienHanChe" column="bienhanche"/>
+        <result property="taiTrong" column="taitrong"/>
+        <result property="xeThanLien" column="xethanlien"/>
+        <result property="xeSoMiRoMooc" column="xesomiromooc"/>
+        <result property="xeKeoRoMooc" column="xekeoromooc"/>
+        <result property="chongVaXo" column="chongvaxo"/>
+        <result property="bClav" column="BClav"/>
+        <result property="bClcrit" column="BClcrit"/>
+        <result property="recordTotals" column="totalrecords"/>
+        <result property="tenDuongCau" column="tenDuongCau"/>
+        <collection property="details" select="selectInfoBridgeById" column="{idCau=idcau}"/>
+    </resultMap>
+
+    <resultMap id="ThongSoKtVO" type="ThongSoKtVO">
+        <result property="idThongSoKt" column="idthongsokt"/>
+        <result property="idCauKt" column="idcau"/>
+        <result property="noiDung" column="noidung"/>
+        <result property="dvtThongSoKt" column="donvitinh"/>
+        <result property="soLieuKt" column="solieu"/>
+        <result property="tenDm" column="tendm"/>
+        <result property="loai" column="loai"/>
+        <result property="loaiDuLieu" column="loaidulieu"/>
+        <result property="recordTotals" column="totalrecords"/>
+    </resultMap>
+
+    <select id="selectInfoBridgeById" resultMap="ThongSoKtVO">
+      SELECT
+      tskt.idthongsokt,
+      tskt.idcau as idcau,
+      tskt.noidung,
+      tskt.solieu,
+      dm.donvitinh,
+      dm.loai,
+      dm.loaidulieu,
+      dm.tendm
+      FROM thongsokt_cau tskt
+      LEFT JOIN dmthongsokt dm ON tskt.noidung = dm.idthongsokt
+      WHERE tskt.idcau = #{idCau}
+    </select>
+
+    <select id="selectDm" resultMap="ThongSoKtVO">
+        SELECT
+		tendm,
+		donvitinh,
+		loai,
+	    loaidulieu
+		FROM dmthongsokt
+		WHERE idthongsokt = #{noiDung}
+    </select>
+
+    <insert id="insertInfoBridge" useGeneratedKeys="true" keyProperty="idThongSoKt">
+        INSERT INTO thongsokt_cau (
+        idcau,
+        noidung,
+        dvt,
+        solieu
+        )
+        VALUES (
+        #{idCauKt},
+        #{noiDung},
+        #{dvtThongSoKt},
+        #{soLieuKt}
+        )
+    </insert>
+
+    <update id="updateInfoBridge" parameterType="ThongSoKtVO">
+        UPDATE thongsokt_cau
+        SET
+        noidung = #{noiDung},
+        dvt = #{dvtThongSoKt},
+        solieu = #{soLieuKt}
+        WHERE
+        idthongsokt = #{idThongSoKt}
+    </update>
+
+
+    <delete id="deleteThongTinCau">
+        DELETE
+        FROM thongsokt_cau
+        WHERE idthongsokt = #{id}
+    </delete>
+
+    <select id="selectShowCau" resultMap="BridgeVO">
+        WITH TempResult AS (
+        SELECT
+        ca.idcau,
+        ca.idtuyenduong,
+        ca.loaicau,
+        ca.tencau,
+        ca.lytrinhkm,
+        ca.lytrinhm,
+        ca.kinhdo,
+        ca.vido,
+        ca.mahuyen,
+        ca.maxa,
+        ca.doituongvuot,
+        ca.chaychungvoi,
+        ca.ketcaunhip,
+        ca.vatlieunhipchinh,
+        ca.bienhanche,
+        ca.taitrong,
+        ca.xethanlien,
+        ca.xesomiromooc,
+        ca.xekeoromooc,
+        ca.chongvaxo,
+        ca.BClav,
+        ca.BClcrit,
+        td.tenduong as tenDuongCau
+        FROM cau ca
+        LEFT JOIN tuyenduong td ON ca.idtuyenduong = td.idtuyenduong
+        WHERE ca.idtuyenduong = #{optional.idTuyenDuong}
+        ),
+        TempCount AS (
+        SELECT COUNT (*) AS
+        totalrecords
+        FROM TempResult
+        ) SELECT *
+        FROM
+        TempResult, TempCount
+        ORDER
+        BY
+        ${orders[0].column}
+        ${orders[0].dir}
+        OFFSET ${start} ROWS
+        FETCH NEXT
+        ${length} ROWS ONLY;
+    </select>
+
+    <select id="selectBridgeById" resultMap="BridgeVO">
+        SELECT *
+        FROM cau
+        WHERE idcau = #{idCau}
+    </select>
+
+    <insert id="insertBridge" useGeneratedKeys="true" keyProperty="idCau">
+        INSERT INTO "cau" (
+        idtuyenduong,
+        loaicau,
+        tencau,
+        lytrinhkm,
+        kinhdo,
+        vido,
+        mahuyen,
+        maxa,
+        doituongvuot,
+        chaychungvoi,
+        ketcaunhip,
+        vatlieunhipchinh,
+        bienhanche,
+        taitrong,
+        xethanlien,
+        xesomiromooc,
+        xekeoromooc,
+        chongvaxo,
+        BClav,
+        BClcrit,
+        lytrinhm
+        )
+        VALUES (
+        #{idTuyenDuongCau},
+        #{loaiCau},
+        #{tenCau},
+        #{lyTrinhKm},
+        #{kinhDo},
+        #{viDo},
+        #{maHuyenCau},
+        #{maXaCau},
+        #{doiTuongVuot},
+        #{chayChungVoi},
+        #{ketCauNhip},
+        #{vatLieuNhipChinh},
+        #{bienHanChe},
+        #{taiTrong},
+        #{xeThanLien},
+        #{xeSoMiRoMooc},
+        #{xeKeoRoMooc},
+        #{chongVaXo},
+        #{bClav},
+        #{bClcrit},
+        #{lyTrinhM}
+        )
+    </insert>
+
+    <update id="updateBridge" parameterType="BridgeVO">
+        UPDATE "cau"
+        SET
+        idtuyenduong = #{idTuyenDuongCau},
+        loaicau = #{loaiCau},
+        tencau = #{tenCau},
+        lytrinhkm = #{lyTrinhKm},
+        kinhdo = #{kinhDo},
+        vido = #{viDo},
+        mahuyen = #{maHuyenCau},
+        maxa = #{maXaCau},
+        doituongvuot = #{doiTuongVuot},
+        chaychungvoi = #{chayChungVoi},
+        ketcaunhip = #{ketCauNhip},
+        vatlieunhipchinh = #{vatLieuNhipChinh},
+        bienhanche = #{bienHanChe},
+        taitrong = #{taiTrong},
+        xethanlien = #{xeThanLien},
+        xesomiromooc = #{xeSoMiRoMooc},
+        xekeoromooc = #{xeKeoRoMooc},
+        chongvaxo = #{chongVaXo},
+        BClav = #{bClav},
+        BClcrit = #{bClcrit},
+        lytrinhm = #{lyTrinhM}
+        WHERE idcau = #{idCau}
+    </update>
+</mapper>

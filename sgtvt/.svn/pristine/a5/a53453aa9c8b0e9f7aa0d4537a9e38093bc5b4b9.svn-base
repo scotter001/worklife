@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="vn.worklife.user.mockup.service.BienBaoService">
+
+    <resultMap id="BienBaoVO" type="BienBaoVO">
+        <result property="idBbdth" column="idbbdth"/>
+        <result property="tenBbdth" column="ten"/>
+        <result property="lyTrinhKmBbdth" column="lytrinhkm"/>
+        <result property="lyTrinhMBbdth" column="lytrinhm"/>
+        <result property="kinhDoBbdth" column="kinhdo"/>
+        <result property="viDoBbdth" column="vido"/>
+        <result property="idTuyenDuongBbdth" column="idtuyenduong"/>
+        <result property="maHuyenBbdth" column="mahuyen"/>
+        <result property="maXaBbdth" column="maxa"/>
+        <result property="moTaBbdth" column="mota"/>
+        <result property="namHoatDong" column="namhoatdong"/>
+        <result property="thoiGianBaoTri" column="thoihanbaotri"/>
+        <result property="recordTotals" column="totalrecords"/>
+        <result property="tenDuongBbdth" column="tenDuongBbdth"/>
+        <result property="ngayBaoTri" column="ngayBaoTri"/>
+    </resultMap>
+
+    <select id="selectShowBienBao" resultMap="BienBaoVO">
+        WITH TempResult AS (
+        SELECT
+        bb.idbbdth,
+        bb.ten,
+        bb.lytrinhkm,
+        bb.lytrinhm,
+        bb.kinhdo,
+        bb.vido,
+        bb.idtuyenduong,
+        bb.mahuyen,
+        bb.maxa,
+        bb.mota,
+        bb.namhoatdong,
+        bb.thoihanbaotri,
+        td.tenduong as tenDuongBbdth
+        FROM bienbao_dentinhieu bb
+        JOIN tuyenduong td ON bb.idtuyenduong = td.idtuyenduong
+        WHERE bb.idtuyenduong = #{optional.idTuyenDuong}
+        ),
+        TempCount AS (
+        SELECT COUNT (*) AS
+        totalrecords
+        FROM TempResult
+        ) SELECT *
+        FROM
+        TempResult, TempCount
+        ORDER
+        BY
+        ${orders[0].column}
+        ${orders[0].dir}
+        OFFSET ${start} ROWS
+        FETCH NEXT
+        ${length} ROWS ONLY;
+    </select>
+
+    <select id="selectBienBaoById" resultMap="BienBaoVO">
+        SELECT TOP 1
+        bb.idbbdth,
+        bb.ten,
+        bb.lytrinhkm,
+        bb.lytrinhm,
+        bb.kinhdo,
+        bb.vido,
+        bb.idtuyenduong,
+        bb.mahuyen,
+        bb.maxa,
+        bb.mota,
+        bb.namhoatdong,
+        bb.thoihanbaotri,
+        td.tenduong as tenDuongBbdth,
+        ISNULL(CONVERT (varchar(10),bt.thoigian,103),'')  as ngayBaoTri
+        FROM bienbao_dentinhieu bb
+        LEFT JOIN tuyenduong td ON bb.idtuyenduong = td.idtuyenduong
+        LEFT JOIN baotri bt ON bb.idbbdth = bt.iddoituong
+        WHERE idbbdth = #{idBbdth} ORDER BY bt.thoigian DESC
+    </select>
+
+    <insert id="insertBienBao" useGeneratedKeys="true" keyProperty="idBbdth">
+        INSERT INTO "bienbao_dentinhieu" (
+        ten,
+        lytrinhkm,
+        lytrinhm,
+        kinhdo,
+        vido,
+        idtuyenduong,
+        mahuyen,
+        maxa,
+        mota,
+        namhoatdong,
+        thoihanbaotri
+        )
+        VALUES (
+        #{tenBbdth},
+        #{lyTrinhKmBbdth},
+        #{lyTrinhMBbdth},
+        #{kinhDoBbdth},
+        #{viDoBbdth},
+        #{idTuyenDuongBbdth},
+        #{maHuyenBbdth},
+        #{maXaBbdth},
+        #{moTaBbdth},
+        #{namHoatDong},
+        #{thoiGianBaoTri}
+        )
+    </insert>
+
+    <update id="updateBienBao" parameterType="BienBaoVO">
+        UPDATE "bienbao_dentinhieu"
+        SET
+        ten = #{tenBbdth},
+        lytrinhkm = #{lyTrinhKmBbdth},
+        lytrinhm = #{lyTrinhMBbdth},
+        kinhdo = #{kinhDoBbdth},
+        vido = #{viDoBbdth},
+        idtuyenduong = #{idTuyenDuongBbdth},
+        mahuyen = #{maHuyenBbdth},
+        maxa = #{maXaBbdth},
+        mota = #{moTaBbdth},
+        namhoatdong = #{namHoatDong},
+        thoihanbaotri = #{thoiGianBaoTri}
+        WHERE idbbdth = #{idBbdth}
+    </update>
+    <select id="selectBienBaoByIdDuong" resultMap="BienBaoVO">
+        select * from bienbao_dentinhieu WHERE idtuyenduong = #{idbbdth}
+    </select>
+</mapper>

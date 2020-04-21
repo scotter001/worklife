@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="vn.worklife.qlctgt.user.capphepcaitaoviahe.service.CapPhepCaiTaoViaHeService">
+    <resultMap id="GiayPhepVO" type="GiayPhepVO">
+        <result property="idHoSo" column="idHoSo"/>
+        <result property="nguoiKy" column="nguoiKy"/>
+        <result property="thoiHan" column="thoiHan"/>
+        <result property="idGP" column="idGP"/>
+        <result property="canCu" column="canCu"/>
+        <result property="tuNgay" column="tuNgay"/>
+        <result property="noiDung" column="noiDung"/>
+        <result property="gp_So" column="gp_so"/>
+        <result property="gp_Ngay" column="gp_ngay"/>
+        <result property="chucVu" column="chucVu"/>
+        <result property="tieuDe" column="tieuDe"/>
+        <result property="giaHan" column="giaHan"/>
+        <result property="donGiaHan" column="donGiaHan"/>
+        <result property="ghiChuThoiHan" column="ghiChuThoiHan"/>
+        <result property="denNgay" column="denNgay"/>
+        <result property="noiNhan" column="noiNhan"/>
+        <result property="uyQuyen" column="uyQuyen"/>
+        <result property="idParent" column="idparent"/>
+    </resultMap>
+    <resultMap id="NhieuHuyenVO" type="NhieuHuyenVO">
+        <result property="idHoSo" column="idhoso"/>
+        <result property="nhieuHuyen" column="nhieuhuyen"/>
+        <result property="listIdHuyen" column="listddhuyen"/>
+        <result property="bphoneHuyen" column="BphoneHuyen"/>
+    </resultMap>
+    <resultMap id="ThietLapNguoiKyVO" type="ThietLapNguoiKyVO">
+        <result property="id" column="id"/>
+        <result property="nguoiKy" column="nguoiky"/>
+        <result property="chucVu" column="chucvu"/>
+        <result property="uyQuyen" column="uyquyen"/>
+        <result property="loaiGiay" column="loaigiay"/>
+        <result property="tenGiay" column="tengiay"/>
+        <result property="macDinh" column="macdinh"/>
+    </resultMap>
+    <resultMap id="DmLoaiCTVO" type="DmLoaiCTVO">
+        <result property="id" column="id"/>
+        <result property="ten" column="ten"/>
+        <result property="idLoaiHS" column="idLoaiHS"/>
+    </resultMap>
+    <select id="selectDmLoaiCT" resultMap="DmLoaiCTVO">
+        select id,idloaicongtrinh,ten,idloaihs from hoso hs
+        LEFT  JOIN  congtrinh ct on ct.idcongtrinh = hs.idcongtrinh
+        LEFT  JOIN  dmloaict l on l.idloaihs = hs.idloaihoso
+        WHERE  idhoso = #{idHoSo}
+    </select>
+    <select id="selectlistNguoiKyGP" resultMap="ThietLapNguoiKyVO">
+        select * from thietlap_nguoiky where loaigiay = 1 and macdinh = 1
+    </select>
+    <select id="selectGiayPhepAll" resultMap="GiayPhepVO">
+        SELECT * FROM giayphep
+    </select>
+    <insert id="insertGiayPhep">
+        INSERT INTO giayphep (gp_so, gp_ngay, thoihan, tungay,denngay,cancu,noidung,noinhan,nguoiky,chucvu,uyquyen,idhoso,giahan,dongiahan,idparent,tieude,ghichu_thoihan )
+        VALUES (
+                nullif(#{gp_So},''),
+            nullif(convert(date,#{gp_Ngay},103),''),
+                nullif(#{thoiHan},''),
+            nullif(convert(date,#{tuNgay},103),''),
+            nullif(convert(date,#{denNgay},103),''),
+                nullif(#{canCu},''),
+                nullif(#{noiDung},''),
+                nullif(#{noiNhan},''),
+                nullif(#{nguoiKy},''),
+                nullif(#{chucVu},''),
+                nullif(#{uyQuyen},''),
+              #{idHoSo},
+                nullif(#{giaHan},''),
+                nullif(#{donGiaHan},''),
+             #{idParent},
+                nullif(#{tieuDe},''),
+                nullif(#{ghiChu},''),
+                nullif(#{thoiHan},'')
+            )
+    </insert>
+    <update id="updateGiayPhep">
+        UPDATE giayphep
+        SET
+        gp_so        =    nullif(#{gp_so},''),
+        gp_ngay                =  nullif(convert(date,#{gp_Ngay},103),''),
+        thoihan              =   nullif(#{thoiHan},''),
+        tungay              =  nullif(convert(date,#{tuNgay},103),''),
+        denngay                =  nullif(convert(date,#{denNgay},103),''),
+        cancu            =   nullif(#{canCu},''),
+        noidung          = nullif(#{noiDung},''),
+        noinhan         =     nullif(#{noiNhan},''),
+        nguoiky           =   nullif(#{nguoiKy},''),
+        chucvu         =          nullif(#{chucVu},''),
+        uyquyen    =    nullif(#{uyQuyen},''),
+        giahan     =       nullif(#{giaHan},''),
+        dongiahan     =   nullif(#{donGiaHan},''),
+        idparent        =     #{idParent},
+        tieude      =         nullif(#{tieuDe},''),
+        ghichu_thoihan =  nullif(#{thoiHan},'')
+        WHERE idgp = #{idGP}
+    </update>
+    <delete id="deleteGiayPhep">
+        delete giayphep where idHoSo = #{idHoSo}
+    </delete>
+    <select id="selectNhieuHuyen1" resultMap="NhieuHuyenVO">
+        WITH TempResult AS (
+        SELECT DISTINCT
+        ct.idcongtrinh as idne,
+        (SELECT STUFF(
+        (SELECT DISTINCT ', ' + h.tenhuyen
+        FROM
+        congtrinh ct1
+        LEFT JOIN diachict_huyen dc ON ct.idcongtrinh = dc.idcongtrinh
+        LEFT JOIN dmhuyen h ON h.idhuyen = dc.idhuyen
+        WHERE ct1.idcongtrinh = ct.idcongtrinh AND dc.idhuyen IN (SELECT idhuyen
+        FROM diachict_huyen
+        GROUP BY idhuyen)
+        FOR XML PATH (''), TYPE).value('/', 'NVARCHAR(MAX)'), 1, 1, ''))
+        AS nhieuhuyen,
+            (SELECT STUFF(
+                    (SELECT DISTINCT ', ' + case when dc.idhuyen is null then  '' else
+                        case when h.loai = 1 then N'TP '
+                        when h.loai = 2 then N'Huyện '
+                        when h.loai = 3 then N'TX ' end +
+                        h.tenhuyen end
+                     FROM
+                         congtrinh ct1
+                         LEFT JOIN diachict_huyen dc ON ct.idcongtrinh = dc.idcongtrinh
+                         LEFT JOIN dmhuyen h ON h.idhuyen = dc.idhuyen
+                     WHERE ct1.idcongtrinh = ct.idcongtrinh AND dc.idhuyen IN (SELECT idhuyen
+                                                                               FROM diachict_huyen
+                                                                               GROUP BY idhuyen)
+                     FOR XML PATH (''), TYPE).value('/', 'NVARCHAR(MAX)'), 1, 1, ''))
+                AS BphoneHuyen,
+        (SELECT STUFF(
+        (SELECT DISTINCT ',' + convert(NVARCHAR, h.idhuyen)
+        FROM
+        congtrinh ct2
+        LEFT JOIN diachict_huyen dc  ON ct.idcongtrinh = dc.idcongtrinh
+        LEFT JOIN dmhuyen h ON h.idhuyen = dc.idhuyen
+        WHERE ct2.idcongtrinh = ct.idcongtrinh AND dc.idhuyen IN (SELECT idhuyen
+        FROM diachict_huyen
+        GROUP BY idhuyen)
+        FOR XML PATH (''), TYPE).value('/', 'NVARCHAR(MAX)'), 1, 1, ''))
+        AS listidhuyen
+        FROM congtrinh ct
+        LEFT JOIN diachict_huyen dc ON dc.idcongtrinh = ct.idcongtrinh
+        LEFT JOIN hoso hs ON hs.idcongtrinh = ct.idcongtrinh
+        WHERE idhoso = #{idHoSo} ), TempCount AS (
+        SELECT COUNT(*) AS
+        totalrecords
+        FROM TempResult
+        ) SELECT *
+        FROM
+        TempResult, TempCount
+        ORDER BY idne DESC
+    </select>
+
+</mapper>

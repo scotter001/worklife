@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ Copyright (c) 2018.
+  ~ Author : Phat Thinh
+  -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="vn.worklife.user.regularrepair.service.RegularRepairService">
+
+    <resultMap id="AllColumnMap" type="vn.worklife.user.regularrepair.model.RegularRepairVO">
+        <result column="idsctx" property="idsctx"/>
+        <result column="iddmsctx" property="iddmsctx"/>
+        <result column="tungay_kh" property="tungay_kh"/>
+        <result column="denngay_kh" property="denngay_kh"/>
+        <result column="chichu_kh" property="chichu_kh"/>
+        <result column="tungay_th" property="tungay_th"/>
+        <result column="denngay_th" property="denngay_th"/>
+        <result column="ghichu_th" property="ghichu_th"/>
+        <result column="ngaykiemtra" property="ngaykiemtra"/>
+        <result column="thuchien" property="thuchien"/>
+        <result column="danhgia" property="danhgia"/>
+    </resultMap>
+
+    <sql id="all_column">
+                idsctx,
+                iddmsctx,
+                ISNULL( CONVERT ( CHAR ( 10 ), tungay_kh, 103 ), '' ) AS tungay_kh,
+        ISNULL( CONVERT ( CHAR ( 10 ), denngay_kh, 103 ), '' ) AS denngay_kh,
+        ISNULL( CONVERT ( CHAR ( 10 ), tungay_th, 103 ), '' ) AS tungay_th,
+        ISNULL( CONVERT ( CHAR ( 10 ), denngay_th, 103 ), '' ) AS denngay_th,
+        chichu_kh,
+        ghichu_th,
+        ngaykiemtra,
+        thuchien,
+        danhgia
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="idsctx" keyColumn="idsctx">
+        INSERT INTO sctx_thuchien
+        (iddmsctx, thoigian_th, ghichu_th)
+        VALUES
+            (#{idDmSctx}, nullif(#{thoiGian_TH},''), nullif(#{ghiChu_TH},''))
+    </insert>
+
+    <insert id="insertList" useGeneratedKeys="true" keyProperty="idsctx" keyColumn="idsctx">
+        SET DATEFORMAT dmy;
+        INSERT INTO sctx_thuchien(
+        iddmsctx,
+        tungay_kh,
+        denngay_kh,
+        chichu_kh,
+        tungay_th,
+        denngay_th,
+        ghichu_th,
+        ngaykiemtra,
+        thuchien,
+        danhgia
+        )VALUES
+        <foreach collection="pojos" item="pojo" index="index" separator=",">
+            (
+            #{iddmsctx},
+            CAST(#{tungay_kh} AS DATE),
+            CAST(#{denngay_kh} AS DATE),
+            #{chichu_kh},
+            CAST(#{tungay_th} AS DATE),
+            CAST(#{denngay_th} AS DATE),
+            #{ghichu_th},
+            CAST(#{ngaykiemtra} AS DATE),
+            #{thuchien},
+            #{danhgia}
+            )
+        </foreach>
+    </insert>
+
+    <update id="update">
+        UPDATE sctx_thuchien
+        set
+            iddmsctx = #{idDmSctx},
+            thoigian_th = nullif(#{thoiGian_TH},''),
+            ghichu_th =  nullif(#{ghiChu_TH},'')
+        WHERE idsctx = #{idSctx}
+    </update>
+
+    <select id="select" resultMap="AllColumnMap">
+        SELECT
+        <include refid="all_column"/>
+        FROM sctx_thuchien
+        <where>
+            <if test="idsctx != null">idsctx = #{idsctx}</if>
+        </where>
+    </select>
+    <select id="selectTable" resultMap="vn.worklife.user.mockup.service.DanhMucSCTXService.DanhMucSCTXVO">
+        select
+        danhmuc_sctx.iddmsctx,
+        sctx_thuchien.idsctx,
+        suco.idtuyenduong,
+        tuyenduong.tenduong,
+        isnull(lytrinh,'') as lytrinh,
+        isnull(noidungsuachua,'') as noidungsuachua,
+        isnull(klduyet_tong,'') as klduyet_tong,
+        danhmuc_sctx.iddvt,
+        dmdvt.ten as tendvt,
+        isnull(noidungsuachua,'') as noidungsuachua,
+        isnull(sctx_thuchien.kehoach_th,'') as kehoach_th,
+        isnull(sctx_thuchien.thoigian_th,'') as thoigian_th,
+        isnull(sctx_thuchien.ghichu_th,'') as ghichu_th,
+        [group].group_name as tenhatql
+        from danhmuc_sctx
+        LEFT JOIN sctx_thuchien ON sctx_thuchien.iddmsctx = danhmuc_sctx.iddmsctx
+        LEFT JOIN suco ON suco.idsuco = danhmuc_sctx.idsuco
+        LEFT JOIN tuyenduong ON tuyenduong.idtuyenduong = suco.idtuyenduong
+        LEFT JOIN dmdvt ON dmdvt.iddvt = danhmuc_sctx.iddvt
+        LEFT JOIN [group] ON [group].group_id = suco.idgroup
+        where
+            thuocquy = #{quy} and nam = #{nam} and duyet = 1
+            <if test="idGroup != -1">
+                and suco.idgroup = #{idGroup}
+            </if>
+            <if test="tinhTrang == 1">
+                AND sctx_thuchien.thoigian_th is not null
+            </if>
+            <if test="tinhTrang == 2">
+                AND sctx_thuchien.thoigian_th is null
+            </if>
+            order by suco.idsuco desc
+    </select>
+</mapper>

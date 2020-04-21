@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="vn.worklife.user.mockup.service.LichSuSCDKService">
+    <resultMap id="LichSuSCDKVO" type="LichSuSCDKVO">
+        <result property="idDmscdk" column="iddmscdk"/>
+        <result property="idScdk" column="idscdk"/>
+        <result property="thoiGianSuaChua" column="thoigiansuachua"/>
+        <result property="thoiGianHoanThanh" column="thoigianhoanthanh"/>
+        <result property="congViecChinh" column="congviecchinh"/>
+        <result property="giaTrungThau" column="giatrungthau"/>
+        <result property="thiCong" column="thicong"/>
+        <result property="nguonVon" column="nguonvon"/>
+        <result property="recordTotals" column="totalrecords"/>
+        <result property="idTuyenDuong" column="idtuyenduong"/>
+        <result property="tuVanThietKe" column="tuvanthietke"/>
+        <result property="tuVanGiamSat" column="tuvangiamsat"/>
+        <result property="nguonVon" column="ten_nguonvon"/>
+    </resultMap>
+
+    <resultMap id="DanhSachSuCoSCDKVO" type="DanhSachSuCoSCDKVO">
+        <result property="idSuCo" column="idsuco"/>
+        <result property="traiPhai" column="traiphai"/>
+        <result property="loaiSuCo" column="loaisuco"/>
+        <result property="lyTrinhKmDiemDau" column="lytrinhkm_diemdau"/>
+        <result property="lyTrinhMDiemDau" column="lytrinhm_diemdau"/>
+        <result property="lyTrinhKmDiemCuoi" column="lytrinhkm_diemcuoi"/>
+        <result property="lyTrinhMDiemCuoi" column="lytrinhm_diemcuoi"/>
+        <result property="tenHuyen" column="tenhuyen"/>
+        <result property="tenXa" column="tenxa"/>
+    </resultMap>
+    <select id="selectListTD" resultMap="vn.worklife.user.quanlytuyenduong.service.DmTuyenDuongTheoHatService.TuyenDuongHatVO">
+        select distinct tuyenduong.idtuyenduong, tenduong from tuyenduong
+        JOIN danhmuc_scdk ON danhmuc_scdk.idtuyenduong = tuyenduong.idtuyenduong
+    </select>
+    <select id="selectListCau" resultMap="vn.worklife.user.quanlycau.service.QuanLyCauService.CauVO">
+        select distinct cau.idcau, tencau from cau
+        JOIN danhmuc_scdk ON danhmuc_scdk.idcau = cau.idcau
+    </select>
+    <select id="selectListTB" resultMap="vn.worklife.user.quanlytuyenduong.service.DmQLThietBiBienBaoService.QLThietBiVO">
+        select distinct idtb, tentb from thietbi
+        JOIN danhmuc_scdk on danhmuc_scdk.idthietbi = thietbi.idtb
+    </select>
+    <select id="selectListCT" resultMap="vn.worklife.user.mockup.service.LapDmScdkService.LapDanhMucSCDKVO">
+        select iddmscdk, tencongtrinh from danhmuc_scdk WHERE tencongtrinh is not null
+    </select>
+    <select id="selectTableLichSuDMSCDK" resultMap="vn.worklife.user.mockup.service.NhapThongTinSCDKService.NhapThongTinSCDKVO">
+        WITH TempResult AS (
+        SELECT
+		th.idscdk,
+		dm.iddmscdk,
+        isnull(vitri,'') as vitri,
+        (SELECT STUFF(
+        (SELECT DISTINCT ', ' + h.tenhuyen
+        FROM
+        danhmuc_scdk dm1
+        LEFT JOIN scdk_huyen sh ON sh.iddmscdk = dm.iddmscdk
+        LEFT JOIN dmhuyen h ON h.idhuyen = sh.idhuyen
+        WHERE dm1.iddmscdk = dm.iddmscdk AND sh.idhuyen IN (SELECT idhuyen
+        FROM scdk_huyen
+        GROUP BY idhuyen)
+        FOR XML PATH (''), TYPE).value('/', 'NVARCHAR(MAX)'), 1, 1, ''))
+        AS nhieuhuyen,
+        isnull(thoigian_th,'') as thoigian_th,
+        isnull(convert(nvarchar,ngay_ht,103),'') as ngay_ht,
+        kinhphi_duyet,
+        ten_nguonvon as tennguonvon,
+		giatrungthau,
+        isnull(iddmtv_tc,'') as iddmtv_tc,
+        tv1.ten as tentvtk,
+        tv2.ten as tentvgs,
+        isnull(hientrang,'') as hientrang,
+        isnull(giaiphap,'') as giaiphap
+        FROM scdk_thuchien th
+		LEFT JOIN danhmuc_scdk dm ON dm.iddmscdk = th.iddmscdk
+        LEFT JOIN tuyenduong td ON td.idtuyenduong = dm.idtuyenduong
+        LEFT JOIN dmnguonvon ON dmnguonvon.idnguonvon = dm.iddmnguonvon
+        LEFT JOIN dmtuvan tv1 ON tv1.id = th.iddmtv_tk
+        LEFT JOIN dmtuvan tv2 ON tv2.id = th.iddmtv_gs
+        WHERE
+            dm.nam >= #{optional.tuNam}
+            AND #{optional.denNam} >=dm.nam
+            <if test="optional.loai == 1">
+                and dm.idtuyenduong is not null
+                <if test="optional.idTuyenDuong != -1">
+                    and dm.idtuyenduong = #{optional.idTuyenDuong}
+                </if>
+            </if>
+            <if test="optional.loai == 2">
+                and dm.idcau is not null
+                <if test="optional.idTuyenDuong != -1">
+                    and dm.idcau = #{optional.idTuyenDuong}
+                </if>
+            </if>
+            <if test="optional.loai == 3">
+                and dm.idthietbi is not null
+                <if test="optional.idTuyenDuong != -1">
+                    and dm.idthietbi = #{optional.idTuyenDuong}
+                </if>
+            </if>
+            <if test="optional.loai == 4">
+                and dm.iddmscdk is not null
+                <if test="optional.idTuyenDuong != -1">
+                    and dm.iddmscdk = #{optional.idTuyenDuong}
+                </if>
+            </if>
+        ),
+        TempCount AS (
+        SELECT COUNT (*) AS
+        totalrecords
+        FROM TempResult
+        ) SELECT *
+        FROM
+        TempResult, TempCount
+        ORDER BY iddmscdk DESC
+        OFFSET ${start} ROWS
+        FETCH NEXT
+        ${length} ROWS ONLY;
+    </select>
+
+    <select id="selectDanhSachSCDK" resultMap="DanhSachSuCoSCDKVO">
+        SELECT
+        sc.idsuco,
+        sc.lytrinhkm_diemcuoi,
+        sc.lytrinhm_diemcuoi,
+        sc.lytrinhkm_diemdau,
+        sc.lytrinhm_diemdau,
+        hu.tenhuyen,
+        xa.tenxa,
+        ds.traiphai,
+        sc.loaisuco
+        FROM danhmuc_scdk dm
+        JOIN ds_dmscdk ds ON ds.iddmscdk = dm.iddmscdk
+        JOIN suco sc ON ds.idsuco = sc.idsuco
+        JOIN dmhuyen hu ON sc.mahuyen = hu.mahuyen
+        JOIN dmxa xa ON sc.maxa = xa.maxa
+        WHERE dm.iddmscdk = #{idDmscdk}
+    </select>
+
+    <select id="selectAllTableNotPaging" resultMap="LichSuSCDKVO">
+        SELECT
+		th.idscdk,
+		dm.iddmscdk,
+		th.congviecchinh,
+		th.giatrungthau,
+	  	ISNULL(CONVERT (varchar(10),th.thoigiansuachua,103),'')  as thoigiansuachua,
+        ISNULL(CONVERT (varchar(10),th.thoigianhoanthanh,103),'')  as thoigianhoanthanh,
+        nttc.tennhathau AS thicong,
+        nttv.tennhathau AS tuvanthietke,
+        nttk.tennhathau AS tuvangiamsat,
+	  	nv.ten_nguonvon
+        FROM danhmuc_scdk dm
+        JOIN ds_dmscdk ds ON ds.iddmscdk = dm.iddmscdk
+        JOIN suco sc ON ds.idsuco = sc.idsuco
+		JOIN dmnguonvon nv ON dm.nguonvon = nv.idnguonvon
+		JOIN scdk_thuchien th ON dm.iddmscdk = th.iddmscdk
+        JOIN dmnhathau nttc ON th.thicong = nttc.idnhathau
+        JOIN dmnhathau nttv ON th.tuvanthietke = nttv.idnhathau
+        JOIN dmnhathau nttk ON th.tuvangiamsat = nttk.idnhathau
+        WHERE sc.idtuyenduong = #{idTuyenDuong}
+		AND DATEPART(year, thoigiansuachua) >= #{tuNam}
+        AND #{denNam} >= DATEPART(year, thoigianhoanthanh)
+    </select>
+</mapper>

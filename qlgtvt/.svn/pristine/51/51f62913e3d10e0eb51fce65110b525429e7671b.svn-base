@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="vn.worklife.user.quanlycau.service.QuanLyCauService">
+    <resultMap id="DmKetCauVO" type="DmKetCauVO">
+        <result property="id" column="id"/>
+        <result property="ten" column="ten"/>
+    </resultMap>
+    <resultMap id="DmDangCauVO" type="DmDangCauVO">
+        <result property="id" column="id"/>
+        <result property="ten" column="ten"/>
+    </resultMap>
+    <resultMap id="DmDonViQLVO" type="DmDonViQLVO">
+        <result property="idDonViQL" column="iddonviql"/>
+        <result property="ten" column="ten"/>
+    </resultMap>
+    <resultMap id="CauVO" type="CauVO">
+        <result property="idCau" column="idcau"/>
+        <result property="idTuyenDuong" column="idtuyenduong"/>
+        <result property="loaiCau" column="loaicau"/>
+        <result property="tenCau" column="tencau"/>
+        <result property="lyTrinhKm" column="lytrinhkm"/>
+        <result property="toaDoLong" column="toadolong"/>
+        <result property="toaDoLat" column="toadolat"/>
+        <result property="idHuyen" column="idhuyen"/>
+        <result property="tenSongVuot" column="tensongvuot"/>
+        <result property="idGroup" column="idgroup"/>
+        <result property="namXD" column="namxd"/>
+        <result property="namKT" column="namkt"/>
+        <result property="donViQL" column="donviql"/>
+        <result property="chieuDai" column="chieudai"/>
+        <result property="chieuRong" column="chieurong"/>
+        <result property="beRong_XeChay" column="berong_xechay"/>
+        <result property="tinhKhong" column="tinhkhong"/>
+        <result property="taiTrong_TK" column="taitrong_tk"/>
+        <result property="taiTrong_KT" column="taitrong_kt"/>
+        <result property="soNhip" column="sonhip"/>
+        <result property="soDoNhip" column="sodonhip"/>
+        <result property="daiNhip" column="dainhip"/>
+        <result property="dangCau" column="dangcau"/>
+        <result property="tenDangCau" column="tendangcau"/>
+        <result property="kCMo_Mong" column="kcmo_mong"/>
+        <result property="kCMo_Than" column="kcmo_than"/>
+        <result property="kCTru_Mong" column="kctru_mong"/>
+        <result property="kCTru_Than" column="kctru_than"/>
+        <result property="recordTotals" column="totalrecords"/>
+        <result property="tenDuong" column="tenduong"/>
+        <result property="tenHatQL" column="tenhatql"/>
+        <result property="tenHuyen" column="tenhuyen"/>
+        <result property="tinhTrang" column="tinhtrang"/>
+        <result property="tenTinhTrang" column="tentinhtrang"/>
+        <result property="id" column="id"/>
+        <result property="ghiChu" column="ghichu"/>
+        <result property="tenDonViQL" column="tendonviql"/>
+        <result property="tenKCMo_Mong" column="tenkcmo_mong"/>
+        <result property="tenKCMo_Than" column="tenkcmo_than"/>
+        <result property="tenKCTru_Mong" column="tenkctru_mong"/>
+        <result property="tenKCTru_Than" column="tenkctru_than"/>
+        <result property="quy" column="quy"/>
+        <result property="nam" column="nam"/>
+    </resultMap>
+    <select id="selectListDmKetCau" resultMap="DmKetCauVO">
+        select * from dmketcau
+    </select>
+    <select id="selectListDangCau" resultMap="DmDangCauVO">
+        select * from dmdangcau
+    </select>
+    <select id="selectListDonViQL" resultMap="DmDonViQLVO">
+        select * from dmdonviql
+    </select>
+    <select id="selectListCau" resultMap="CauVO">
+        WITH TempResult AS (
+            select cau.idcau,
+                   cau.idtuyenduong,
+                   ISNULL(tencau,'') as tencau,
+                   ISNULL(lytrinh,'') as lytrinhkm,
+                   toadolong,
+                   toadolat,
+                   cau.idhuyen,
+                   ISNULL(tensongvuot,'') as tensongvuot,
+                   idgroup,
+                   ISNULL(namxd,'') as namxd,
+                   ISNULL(namkt,'') as namkt,
+                   donviql,
+                   ISNULL(cau.chieudai,'') as chieudai,
+                   ISNULL(chieurong,'') as chieurong,
+                   ISNULL(berong_xechay,'') as berong_xechay,
+                   ISNULL(tinhkhong,'') as tinhkhong,
+                   ISNULL(taitrong_tk,'') as taitrong_tk,
+                   ISNULL(taitrong_kt,'') as taitrong_kt,
+                   sonhip,
+                   ISNULL(sodonhip,'') as sodonhip,
+                   ISNULL(dainhip,'') as dainhip,
+                   dangcau,
+                   kcmo_mong,
+                   kcmo_than,
+                   kctru_mong,
+                   kctru_than,
+                   td.tenduong AS tenduong,
+                   [group].group_name AS tenhatql,
+                   dmhuyen.tenhuyen AS tenhuyen,
+                   ttc.tinhtrang AS tinhtrang,
+                   dmttd.ten AS tentinhtrang,
+                   ttc.id AS id
+            from cau
+            LEFT JOIN tuyenduong td ON td.idtuyenduong = cau.idtuyenduong
+            LEFT JOIN [group] ON [group].group_id = cau.idgroup
+            LEFT JOIN dmhuyen ON dmhuyen.idhuyen = cau.idhuyen
+            LEFT JOIN tinhtrang_cau ttc ON ttc.idcau = cau.idcau AND ttc.id IN (select max(id) from tinhtrang_cau GROUP BY idcau)
+            LEFT JOIN dmtinhtrang_duong dmttd ON ttc.tinhtrang = dmttd.idtinhtrang
+            <where>
+                <if test="optional.idGroup != -1 and optional.idGroup != 1">
+                    cau.idgroup = #{optional.idGroup}
+                </if>
+                <if test="optional.idHuyen != -1 and optional.idHuyen != null">
+                    and cau.idhuyen = #{optional.idHuyen}
+                </if>
+                <if test="optional.tenDuong != null and optional.tenDuong != ''">
+                    AND dbo.removecharvn(lower(td.tenduong)) LIKE dbo.removecharvn(lower(N'%${optional.tenDuong}%'))
+                </if>
+                <if test="optional.tenCau != null and optional.tenCau != ''">
+                    AND dbo.removecharvn(lower(cau.tencau)) LIKE dbo.removecharvn(lower(N'%${optional.tenCau}%'))
+                </if>
+            </where>
+        ),
+        TempCount AS (
+        SELECT COUNT(*) AS
+            totalrecords
+            FROM TempResult
+        ) SELECT *
+        FROM
+            TempResult, TempCount
+        ORDER BY idcau DESC
+        OFFSET ${start} ROWS
+        FETCH NEXT
+        ${length} ROWS ONLY;
+    </select>
+    <insert id="insertCau" useGeneratedKeys="true" keyProperty="idCau" keyColumn="idcau">
+        insert into cau
+            (
+             idtuyenduong,
+             tencau,
+             lytrinh,
+             toadolong,
+             toadolat,
+             idhuyen,
+             tensongvuot,
+             idgroup,
+             namxd,
+             namkt,
+             donviql,
+             chieudai,
+             chieurong,
+             berong_xechay,
+             tinhkhong,
+             taitrong_tk,
+             taitrong_kt,
+             sonhip,
+             sodonhip,
+             dainhip,
+             dangcau,
+             kcmo_mong,
+             kcmo_than,
+             kctru_mong,
+             kctru_than
+             )
+             VALUES
+                 (
+                  #{idTuyenDuong},
+                  NULLIF(#{tenCau},''),
+                  NULLIF(#{lyTrinhKm},''),
+                  NULLIF(convert(float,#{toaDoLong}),''),
+                  NULLIF(convert(float,#{toaDoLat}),''),
+                  #{idHuyen},
+                  NULLIF(#{tenSongVuot},''),
+                  #{idGroup},
+                  NULLIF(#{namXD},''),
+                  NULLIF(#{namKT},''),
+                  #{donViQL},
+                  NULLIF(#{chieuDai},''),
+                  NULLIF(#{chieuRong},''),
+                  NULLIF(#{beRong_XeChay},''),
+                  NULLIF(#{tinhKhong},''),
+                  NULLIF(#{taiTrong_TK},''),
+                  NULLIF(#{taiTrong_KT},''),
+                  NULLIF(convert(INTEGER,#{soNhip}),''),
+                  NULLIF(#{soDoNhip},''),
+                  NULLIF(#{daiNhip},''),
+                  #{dangCau},
+                  #{kCMo_Mong},
+                  #{kCMo_Than},
+                  #{kCTru_Mong},
+                  #{kCTru_Than}
+                 )
+    </insert>
+    <update id="updateCau">
+        update cau
+            set
+            idtuyenduong = #{idTuyenDuong},
+            tencau = NULLIF(#{tenCau},''),
+            lytrinhkm = NULLIF(#{lyTrinhKm},''),
+            toadolong = NULLIF(convert(float,#{toaDoLong}),''),
+            toadolat = NULLIF(convert(float,#{toaDoLat}),''),
+            idhuyen = #{idHuyen},
+            tensongvuot = NULLIF(#{tenSongVuot},''),
+            idgroup = #{idGroup},
+            namxd = NULLIF(#{namXD},''),
+            namkt = NULLIF(#{namKT},''),
+            donviql = #{donViQL},
+            chieudai = NULLIF(#{chieuDai},''),
+            chieurong = NULLIF(#{chieuRong},''),
+            berong_xechay = NULLIF(#{beRong_XeChay},''),
+            tinhkhong = NULLIF(#{tinhKhong},''),
+            taitrong_tk = NULLIF(#{taiTrong_TK},''),
+            taitrong_kt = NULLIF(#{taiTrong_KT},''),
+            sonhip = NULLIF(convert(INTEGER,#{soNhip}),''),
+            sodonhip = NULLIF(#{soDoNhip},''),
+            dainhip = NULLIF(#{daiNhip},''),
+            dangcau = #{dangCau},
+            kcmo_mong = #{kCMo_Mong},
+            kcmo_than = #{kCMo_Than},
+            kctru_mong = #{kCTru_Mong},
+            kctru_than = #{kCTru_Than}
+        Where idcau = #{idCau}
+    </update>
+    <insert id="insertTinhTrangCau">
+        insert into tinhtrang_cau (idcau, tinhtrang) VALUES (#{idCau}, #{tinhTrang})
+    </insert>
+    <update id="updateTinhTrangCau">
+        update tinhtrang_cau set tinhtrang = #{tinhTrang} WHERE idcau = #{idCau}
+    </update>
+    <select id="getPosition" resultType="java.lang.Integer">
+        WITH TempResult AS
+        (
+            select cau.idcau
+            from cau
+                     LEFT JOIN tuyenduong td ON td.idtuyenduong = cau.idtuyenduong
+                     LEFT JOIN [group] ON [group].group_id = cau.idgroup
+                     LEFT JOIN dmhuyen ON dmhuyen.idhuyen = cau.idhuyen
+                     LEFT JOIN tinhtrang_cau ttc ON ttc.idcau = cau.idcau AND ttc.id IN (select max(id) from tinhtrang_cau GROUP BY idcau)
+                     LEFT JOIN dmtinhtrang_duong dmttd ON ttc.tinhtrang = dmttd.idtinhtrang
+        ),
+        MyCte AS (
+        SELECT *, RowNum = row_number() OVER ( order by idcau DESC)
+        from TempResult
+        )
+        SELECT RowNum
+        FROM MyCte
+        WHERE idcau = #{idCau}
+    </select>
+</mapper>

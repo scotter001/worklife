@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.worklife.manager.security.service.WorklifeRoleHierarchyService">
+    <resultMap id="WorklifeRoleHierarchy" type="WorklifeRoleHierarchyVO">
+        <result property="parentRoleInfoId" column="parent_role_info_id"/>
+        <result property="childrenRoleInfoId" column="children_role_info_id"/>
+        <result property="createAt" column="create_at"/>
+        <result property="updateAt" column="update_at"/>
+    </resultMap>
+
+    <insert id="insertRoleHierarchy">
+        INSERT INTO role_hierarchy( parent_role_info_id,
+        children_role_info_id,
+        create_at,
+        update_at
+        )
+        VALUES( #{parentRoleInfoId},
+        #{childrenRoleInfoId},
+        #{createAt},
+        #{updateAt}
+        )
+    </insert>
+
+    <delete id="deleteSingleRoleHierarchy" parameterType="WorklifeRoleHierarchyVO">
+        DELETE
+        FROM role_hierarchy
+        WHERE parent_role_info_id = #{parentRoleInfoId}
+        AND children_role_info_id = #{childrenRoleInfoId}
+    </delete>
+
+    <select id="selectMultiRoleHierarchy" parameterType="WorklifeRoleHierarchyVO" resultMap="WorklifeRoleHierarchy">
+        SELECT role_hierarchy,
+        parent_role_info_id,
+        create_at,
+        update_at
+        FROM role_hierarchy
+        WHERE 1 = 1
+        <if test="parentRoleInfoId > 0">
+            AND parent_role_info_id = #{parentRoleInfoId}
+        </if>
+        <if test="childrenRoleInfoId > 0">
+            AND children_role_info_id = #{childrenRoleInfoId}
+        </if>
+    </select>
+</mapper>

@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="vn.worklife.user.quanlydiemden.service.DiemDenGTDuongThuyService">
+    <resultMap id="DmTieuChiDiemDenVO" type="DmTieuChiDiemDenVO">
+        <result property="id" column="id"/>
+        <result property="ten" column="ten"/>
+        <result property="phanLoai" column="phanloai"/>
+    </resultMap>
+    <select id="selectListTieuChi" resultMap="DmTieuChiDiemDenVO">
+        select * from dmtieuchi_diemdengtthuy WHERE phanloai = #{phanLoai}
+    </select>
+    <select id="selectListDiemDenDT" resultMap="vn.worklife.user.quanlydiemden.service.DiemDenGTDuongBoService.DiemDenVO">
+        WITH TempResult AS (
+            select distinct
+            dd1.iddiemden,
+            dd1.idtuyenduong,
+            tuyenduong.tenduong as tenduong,
+            isnull(lytrinh,'') as lytrinh,
+            isnull(tendiem,'') as tendiem,
+            isnull(diemdau_x,'') as diemdau_x,
+            isnull(diemdau_y,'') as diemdau_y,
+            isnull(diemcuoi_x,'') as diemcuoi_x,
+            isnull(diemcuoi_y,'') as diemcuoi_y,
+            isnull(nam,'') as nam,
+            loai,
+            isnull(diengiai,'') as diengiai,
+            isnull(convert(nvarchar,ngayxoa,103),'') as ngayxoa,
+            trensong,
+            isnull(phamvi_chieudai,'') as phamvi_chieudai,
+            isnull(lydo_tiemannguyhiem,'') as lydo_tiemannguyhiem,
+            isnull(tensong,'') as tensong,
+            isnull(rongsong,'') as rongsong,
+            isnull(chieurong,'') as chieurong,
+            isnull(chieusau,'') as chieusau,
+            isnull(bh_gioihan,'') as bh_gioihan,
+            isnull(bh_nguyhiem,'') as bh_nguyhiem,
+            isnull(bh_chidan,'') as bh_chidan,
+            isnull(tinhkhong,'') as tinhkhong,
+            isnull(tinhtrang_truchongva,'') as tinhtrang_truchongva,
+            isnull(ketcau_truchongva,'') as ketcau_truchongva,
+            isnull(donvi_baotri,'') as donvi_baotri,
+            isnull(tinhhinh_tngt,'') as tinhhinh_tngt,
+            gtthuy,
+            tieuchi_diemdengtthuy,
+            (SELECT
+            STUFF(
+            (SELECT distinct ', ' + dmhuyen.tenhuyen
+            FROM
+            diemden dd2
+            LEFT JOIN diemden_huyen ON diemden_huyen.iddiemden = dd2.iddiemden
+            LEFT JOIN dmhuyen ON dmhuyen.idhuyen = diemden_huyen.idhuyen
+            WHERE dd2.iddiemden = dd1.iddiemden AND diemden_huyen.idhuyen IN (select idhuyen from diemden_huyen GROUP BY idhuyen)
+            FOR XML PATH(''),TYPE).value('/','NVARCHAR(MAX)'), 1, 1, ''))
+            AS nhieuhuyen,
+            (SELECT
+                STUFF(
+                (SELECT distinct ',' + convert(nvarchar,dmhuyen.idhuyen)
+                FROM
+                diemden dd3
+                LEFT JOIN diemden_huyen ON diemden_huyen.iddiemden = dd3.iddiemden
+                LEFT JOIN dmhuyen ON dmhuyen.idhuyen = diemden_huyen.idhuyen
+                WHERE dd3.iddiemden = dd1.iddiemden AND diemden_huyen.idhuyen IN (select idhuyen from diemden_huyen GROUP BY idhuyen)
+                FOR XML PATH(''),TYPE).value('/','NVARCHAR(MAX)'), 1, 1, ''))
+                AS listidhuyen
+            from
+            diemden dd1
+            LEFT JOIN tuyenduong ON tuyenduong.idtuyenduong = dd1.idtuyenduong
+            LEFT JOIN diemden_huyen ON dd1.iddiemden = diemden_huyen.iddiemden
+        <where>
+            dd1.gtthuy = 1 and dd1.ngayxoa is null
+            <if test="optional.thuocSB != -1">
+                and dd1.trensong = #{optional.thuocSB}
+            </if>
+            <if test="optional.loaiDiem != -1">
+                and dd1.loai = #{optional.loaiDiem}
+            </if>
+            <if test="optional.idHuyen != -1">
+                AND diemden_huyen.idhuyen = #{optional.idHuyen}
+            </if>
+        </where>
+        ),
+        TempCount AS (
+        SELECT COUNT(*) AS
+        totalrecords
+        FROM TempResult
+        ) SELECT *
+        FROM
+        TempResult, TempCount
+        ORDER BY iddiemden DESC
+        OFFSET ${start} ROWS
+        FETCH NEXT
+        ${length} ROWS ONLY;
+    </select>
+    <insert id="insertDiemDenDuongThuy" useGeneratedKeys="true" keyProperty="idDiemDen" keyColumn="iddiemden">
+        insert into diemden
+            (
+            idtuyenduong,
+            lytrinh,
+            tendiem,
+            diemdau_x,
+            diemdau_y,
+            diemcuoi_x,
+            diemcuoi_y,
+            nam,
+            loai,
+            diengiai,
+            ngayxoa,
+            trensong,
+            phamvi_chieudai,
+            lydo_tiemannguyhiem,
+            tensong,
+            rongsong,
+            chieurong,
+            chieusau,
+            bh_gioihan,
+            bh_nguyhiem,
+            bh_chidan,
+            tinhkhong,
+            tinhtrang_truchongva,
+            ketcau_truchongva,
+            donvi_baotri,
+            tinhhinh_tngt,
+            gtthuy,
+            tieuchi_diemdengtthuy
+            )
+        values
+               (
+                #{idTuyenDuong},
+                nullif(#{lyTrinh},''),
+                nullif(#{tenDiem},''),
+                nullif(convert(float,#{diemDau_X}),''),
+                nullif(convert(float,#{diemDau_Y}),''),
+                nullif(convert(float,#{diemCuoi_X}),''),
+                nullif(convert(float,#{diemCuoi_Y}),''),
+                nullif(#{nam},''),
+                #{loai},
+                nullif(#{dienGiai},''),
+                nullif(convert(date,#{ngayXoa},103),''),
+                #{trenSong},
+                nullif(#{phamVi_ChieuDai},''),
+                nullif(#{lyDo_TiemAnNguyHiem},''),
+                nullif(#{tenSong},''),
+                nullif(#{rongSong},''),
+                nullif(#{chieuRong},''),
+                nullif(#{chieuSau},''),
+                nullif(#{bh_GioiHan},''),
+                nullif(#{bh_NguyHiem},''),
+                nullif(#{bh_ChiDan},''),
+                nullif(#{tinhKhong},''),
+                nullif(#{tinhTrang_TruChongVa},''),
+                nullif(#{ketCau_TruChongVa},''),
+                nullif(#{donVi_BaoTri},''),
+                nullif(#{tinhHinh_TNGT},''),
+                1,
+                #{tieuChi_DiemDenGTThuy}
+               )
+    </insert>
+    <update id="updateDiemDenDuongThuy">
+        update diemden
+            set
+                idtuyenduong = #{idTuyenDuong},
+                lytrinh = nullif(#{lyTrinh},''),
+                tendiem = nullif(#{tenDiem},''),
+                diemdau_x = nullif(convert(float,#{diemDau_X}),''),
+                diemdau_y = nullif(convert(float,#{diemDau_Y}),''),
+                diemcuoi_x = nullif(convert(float,#{diemCuoi_X}),''),
+                diemcuoi_y = nullif(convert(float,#{diemCuoi_Y}),''),
+                nam = nullif(#{nam},''),
+                loai = #{loai},
+                diengiai = nullif(#{dienGiai},''),
+                ngayxoa = nullif(convert(date,#{ngayXoa},103),''),
+                trensong = #{trenSong},
+                phamvi_chieudai = nullif(#{phamVi_ChieuDai},''),
+                lydo_tiemannguyhiem = nullif(#{lyDo_TiemAnNguyHiem},''),
+                tensong = nullif(#{tenSong},''),
+                rongsong = nullif(#{rongSong},''),
+                chieurong = nullif(#{chieuRong},''),
+                chieusau = nullif(#{chieuSau},''),
+                bh_gioihan = nullif(#{bh_GioiHan},''),
+                bh_nguyhiem = nullif(#{bh_NguyHiem},''),
+                bh_chidan = nullif(#{bh_ChiDan},''),
+                tinhkhong = nullif(#{tinhKhong},''),
+                tinhtrang_truchongva = nullif(#{tinhTrang_TruChongVa},''),
+                ketcau_truchongva = nullif(#{ketCau_TruChongVa},''),
+                donvi_baotri = nullif(#{donVi_BaoTri},''),
+                tinhhinh_tngt = nullif(#{tinhHinh_TNGT},''),
+                gtthuy = 1,
+                tieuchi_diemdengtthuy = #{tieuChi_DiemDenGTThuy}
+            Where iddiemden = #{idDiemDen}
+    </update>
+</mapper>

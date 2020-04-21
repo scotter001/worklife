@@ -1,0 +1,144 @@
+﻿<div class="tabs-container">
+	<ul class="nav nav-tabs">
+		<li class=""><a data-toggle="tab" href="#tab-0"
+						aria-expanded="false"><i class="fa fa-info"></i>Thông tin</a></li>
+		<li class="active"><a data-toggle="tab" href="#tab-1"
+							  aria-expanded="true"> <i class="fa fa-search"></i>Lọc
+		</a></li>
+	</ul>
+
+	<div class="tab-content">
+		<div id="tab-1" class="tab-pane active">
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-md-6">
+						<label class="control-label">Huyện/Thành phố</label> <select
+							class="form-control" id="selDistrict">
+						<option value="-1"></option>
+					</select>
+					</div>
+					<div class="col-md-6">
+						<label class="control-label">Xã/phường</label>
+						<select class="form-control" id="selWard">
+						<option value="-1">Chọn Xã/Phường</option>
+					</select>
+					</div>
+				</div>
+				<div class="row">
+						<div class="col-md-6">
+							<label class="control-label">Loại hình</label>
+							<select class="form-control" id="selType">
+							<option value="-1">Chọn loại</option>
+							</select>
+						</div>
+							<div class="col-md-6">
+							<label class="control-label">Tên cơ sở</label>
+							<input class="form-control" id="tenCoSoSearch">						
+						</div>
+				</div>
+				<div class="form-group pull-right" style="color: #804000">
+					<button id="btnSearch" class="btn btn-default btn-rounded"
+							type="button">
+						<i class="fa fa-search"></i>Tìm
+					</button>
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<label class="control-label">Danh sách cơ sở</label>
+					</div>
+					<div class="col-md-12">
+						<table class="table table-bordered table-hover nowrap"
+							   id="tblSearchResult" style="width: 100%;">
+							<thead>
+							<tr>
+								<th class="text-center">TT</th>
+								<th class="text-center">Loại hình</th>
+								<th class="text-center">Tên cơ sở</th>
+								<th class="text-center">Địa chỉ</th>
+							</tr>
+							</thead>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="tab-0" class="tab-pane">
+			<div class="panel-body">
+				<table class="table table-hover" id="tblInfo">
+					<thead>
+					<tr>
+						<th colspan="2">THÔNG TIN CƠ SỞ DƯỢC</th>
+					</tr>
+					</thead>
+					<tbody>
+					<tr>
+						<td><span>Tên cơ sở</span></td>
+						<td><span class="content" id="tenCoSo"></span></td>
+					</tr>
+					<tr>
+						<td><span>Loại hình</span></td>
+						<td><span class="content" id="loaiHinh"></span></td>
+					</tr>
+					<tr>
+						<td><span>Trực thuộc đơn vị</span></td>
+						<td><span class="content" id="trucThuoc"></span></td>
+					</tr>
+					<tr>
+						<td><span>Địa chỉ</span></td>
+						<td><span class="content" id="diaChi"></span></td>
+					</tr>
+					<tr>
+						<td><span>Điện thoại</span></td>
+						<td><span class="content" id="dienThoai"></span></td>
+					</tr>
+					<tr>
+						<td><span>Số giấy phép GPP</span></td>
+						<td><span class="content" id="soGPGPP"></span></td>
+					</tr>
+					<tr>
+						<td><span>Ngày cấp</span></td>
+						<td><span class="content" id="ngayCapGPP"></span></td>
+					</tr>
+					<tr>
+						<td><span>Cơ quan cấp</span></td>
+						<td><span class="content" id="coQuanCNGPP"></span></td>
+					</tr>
+					<tr>
+						<td><span>Số giấy phép GMP</span></td>
+						<td><span class="content" id="soGPGMP"></span></td>
+					</tr>
+					<tr>
+						<td><span>Ngày cấp</span></td>
+						<td><span class="content" id="ngayCapGMP"></span></td>
+					</tr>
+					<tr>
+						<td><span>Cơ quan cấp</span></td>
+						<td><span class="content" id="coQuanCNGMP"></span></td>
+					</tr>
+					<tr>
+						<td><span>Số giấy phép GSP</span></td>
+						<td><span class="content" id="soGPGSP"></span></td>
+					</tr>
+					<tr>
+						<td><span>Ngày cấp</span></td>
+						<td><span class="content" id="ngayCapGSP"></span></td>
+					</tr>
+					<tr>
+						<td><span>Cơ quan cấp</span></td>
+						<td><span class="content" id="coQuanCNGSP"></span></td>
+					</tr>
+					<tr>
+						<td><span>Người phụ trách chuyên môn</span></td>
+						<td><span class="content" id="nguoiPhuTrachCM"></span></td>
+					</tr>
+					<tr>
+						<td><span>Di động</span></td>
+						<td><span class="content" id="diDong"></span></td>
+					</tr>
+					</tbody>
+				</table>
+				<%@include file="core/buttons.jspf"%>
+			</div>
+		</div>
+	</div>
+</div>

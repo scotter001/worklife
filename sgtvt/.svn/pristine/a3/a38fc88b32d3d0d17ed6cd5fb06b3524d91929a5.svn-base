@@ -1,0 +1,18 @@
+@CHARSET "UTF-8";
+.btsearchxd03 {
+    width: 100%;
+    text-align: center;
+}
+.fix_date input{
+ position: relative; 
+}
+.fix_date span{
+ position: absolute;
+ top: 1px;
+ right: 1px;
+ border: 0;
+ border-left: 1px solid #E5E6E7 !important;
+ width: 41px;
+ padding: 8px 12px;
+ z-index: 9;
+}

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="vn.worklife.user.quanlytuyenduong.service.DmQLThietBiBienBaoService">
+    <resultMap id="LoaiTBVO" type="vn.worklife.user.quanlytuyenduong.model.LoaiTBVO">
+        <result property="id" column="id"/>
+        <result property="ten" column="ten"/>
+    </resultMap>
+    <resultMap id="DmHuyenVO" type="DmHuyenVO">
+        <result property="idHuyen" column="idhuyen"/>
+        <result property="maHuyen" column="mahuyen"/>
+        <result property="tenHuyen" column="tenhuyen"/>
+        <result property="loai" column="loai"/>
+        <result property="idTinh" column="idtinh"/>
+    </resultMap>
+    <resultMap id="GroupVO" type="GroupVO">
+        <result property="group_Id" column="group_id"/>
+        <result property="maHuyen" column="mahuyen"/>
+        <result property="group_Name" column="group_name"/>
+        <result property="abbreviation" column="abbreviation"/>
+        <result property="group_Description" column="group_description"/>
+        <result property="parent_Id" column="parent_id"/>
+        <result property="create_at" column="create_at"/>
+        <result property="update_at" column="update_at"/>
+        <result property="is_Department" column="is_department"/>
+        <result property="idPhuong" column="idphuong"/>
+        <result property="maXa" column="maxa"/>
+    </resultMap>
+
+    <resultMap id="QLThietBiVO" type="vn.worklife.user.quanlytuyenduong.model.QLThietBiVO">
+        <result property="idtb" column="idtb"/>
+        <result property="idTuyenDuong" column="idtuyenduong"/>
+        <result property="idgroup" column="idgroup"/>
+        <result property="idLoaiTB" column="idloaitb"/>
+        <result property="tenTB" column="tentb"/>
+        <result property="lyTrinhkm" column="lyTrinhkm"/>
+        <result property="lyTrinhm" column="lytrinhm"/>
+        <result property="idhuyen" column="idhuyen"/>
+        <result property="idxa" column="idxa"/>
+        <result property="moTa" column="mota"/>
+        <result property="namHoatDong" column="namhoatdong"/>
+        <result property="thoiHanBaoTri" column="thoihanbaotri"/>
+        <result property="ngaybtsc_cuoi" column="ngaybtsc_cuoi"/>
+        <result property="id" column="id"/>
+        <result property="ten" column="ten"/>
+        <result property="group_Name" column="group_name"/>
+        <result property="group_Id" column="group_id"/>
+        <result property="tenxa" column="tenxa"/>
+        <result property="tenhuyen" column="tenhuyen"/>
+        <result property="tenDuong" column="tenDuong"/>
+        <result property="recordTotals" column="totalrecords"/>
+    </resultMap>
+    <resultMap id="DmXaVO" type="vn.worklife.user.quanlytuyenduong.model.DmXaVO">
+        <result property="iDDmXa" column="iddmxa"/>
+        <result property="idHuyen" column="idhuyen"/>
+        <result property="loai" column="loai"/>
+        <result property="maXa" column="maxa"/>
+        <result property="maHuyen" column="mahuyen"/>
+        <result property="tenXa" column="tenxa"/>
+    </resultMap>
+
+    <select id="selectListThietBiBienBao" resultMap="QLThietBiVO">
+        SELECT *,  COUNT(*) OVER () AS totalrecords FROM thietbi tb
+        LEFT JOIN dmloaitb l ON (l.id = tb.idloaitb)
+        LEFT JOIN dmhuyen h ON (h.idhuyen = tb.idhuyen)
+        LEFT JOIN dmxa  ON (dmxa.iddmxa = tb.idxa)
+        LEFT JOIN tuyenduong td  ON (td.idtuyenduong = tb.idtuyenduong)
+        LEFT JOIN [group] g  ON (g.group_id = tb.idgroup)
+        <where>
+            <if test="optional.idTuyenDuong != -1">
+                td.idtuyenduong = #{optional.idTuyenDuong}
+            </if>
+            <if test="optional.id != -1">
+                AND l.id = #{optional.id}
+            </if>
+            <if test="optional.group_Name != null and optional.group_Name != ''">
+                AND dbo.removecharvn(lower(g.group_name)) LIKE dbo.removecharvn(lower(N'%${optional.group_Name}%'))
+            </if>
+            <if test="optional.group_Id != -1">
+                AND   g.group_id = #{optional.group_Id}
+
+            </if>
+        </where>
+        order by idtb DESC
+        OFFSET ${start} ROWS
+        FETCH NEXT
+        ${length} ROWS ONLY;
+
+    </select>
+    <select id="selectListThietBi" resultMap="QLThietBiVO">
+        select * from thietbi
+    </select>
+    <select id="selectListLoaiThietBi" resultMap="LoaiTBVO">
+        select * from dmloaitb
+    </select>
+    <select id="selectDmXaByIdHuyen" resultMap="DmXaVO">
+        SELECT * from dmxa x
+        LEFT JOIN dmhuyen h  ON (h.mahuyen = x.mahuyen)
+        <where>
+            <if test="idHuyen != -1">
+                idhuyen = #{idHuyen}
+            </if>
+        </where>
+    </select>
+    <select id="selectListThietBiByid" resultMap="QLThietBiVO">
+        SELECT CONVERT(NVARCHAR,nullif(ngaybtsc_cuoi,''), 111) as ngaybc,g.group_id,
+        nullif(namHoatDong,'')as namtoatdong ,nullif(ngaybtsc_cuoi,'') as ngaybtsc_cuoi,NULLIF(   thoiHanBaoTri, '' ) as thoihanbaotri
+
+        ,* FROM thietbi tb
+        LEFT JOIN dmloaitb l ON (l.id = tb.idloaitb)
+        LEFT JOIN dmhuyen h ON (h.idhuyen = tb.idhuyen)
+        LEFT JOIN dmxa  ON (dmxa.iddmxa = tb.idxa)
+        LEFT JOIN tuyenduong td  ON (td.idtuyenduong = tb.idtuyenduong)
+        LEFT JOIN [group] g  ON (g.group_id = tb.idgroup)
+        where
+        idtb = #{idtb}
+    </select>
+    <insert id="insertThietBi" useGeneratedKeys="true" keyProperty="idtb" keyColumn="idtb">
+        INSERT INTO thietbi (
+        idtuyenduong ,idgroup,idloaitb,tentb,lytrinhkm,lytrinhm,idhuyen,idxa,mota,namhoatdong,thoihanbaotri,ngaybtsc_cuoi
+        )   VALUES (
+        #{idTuyenDuong},
+        #{idgroup},
+        #{idLoaiTB},
+        #{tenTB},
+        #{lyTrinhkm},
+        #{lyTrinhm},
+        #{idhuyen},
+        #{idxa},
+        NULLIF( #{moTa}, '' ),
+        CAST(NULLIF(  #{namHoatDong}, '') AS int),
+        CAST(NULLIF(  #{thoiHanBaoTri}, '') AS int),
+        NULLIF( #{ngaybtsc_cuoi}, '')
+        )
+    </insert>
+    <update id="updateThietBi">
+        UPDATE thietbi
+        SET
+            idtuyenduong = #{idTuyenDuong},
+            idgroup =  #{idgroup},
+            idloaitb= #{idLoaiTB},
+            tentb=  #{tenTB},
+            lytrinhkm =   #{lyTrinhkm},
+            lytrinhm = #{lyTrinhm},
+            idhuyen = #{idhuyen},
+            idxa = #{idxa},
+            mota = NULLIF( #{moTa}, '' ),
+            namhoatdong =  CAST(NULLIF(  #{namHoatDong}, '') AS int),
+            thoihanbaotri = CAST(NULLIF(  #{thoiHanBaoTri}, '') AS int),
+            ngaybtsc_cuoi =  NULLIF( #{ngaybtsc_cuoi}, '' )
+        WHERE
+            idtb = #{idtb}
+    </update>
+    <select id="getPositionSeaShoe" resultType="java.lang.Integer">
+        WITH TempResult AS
+        (
+                select tb.idtb
+                from thietbi tb
+                    LEFT JOIN dmloaitb l ON (l.id = tb.idloaitb)
+                    LEFT JOIN dmhuyen h ON (h.idhuyen = tb.idhuyen)
+                    LEFT JOIN dmxa  ON (dmxa.iddmxa = tb.idxa)
+                    LEFT JOIN tuyenduong td  ON (td.idtuyenduong = tb.idtuyenduong)
+                    LEFT JOIN [group] g  ON (g.group_id = tb.idgroup)
+        ),
+                MyCte AS (
+                    SELECT *, RowNum = row_number() OVER ( order by idtb DESC)
+                    from TempResult
+            )
+        SELECT RowNum
+        FROM MyCte
+        WHERE idtb = #{idtb}
+    </select>
+
+</mapper>

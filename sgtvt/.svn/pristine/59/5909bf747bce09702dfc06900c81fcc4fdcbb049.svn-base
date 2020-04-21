@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2017.
+  ~ Author : Phat Thinh
+  -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="vn.worklife.manager.category.service.CategoryService">
+    <resultMap id="CategoryVO" type="CategoryVO">
+        <result property="id" column="id"/>
+        <result property="code" column="code"/>
+        <result property="name" column="name"/>
+        <result property="extendCol1" column="extendCol1"/>
+        <result property="extendCol2" column="extendCol2"/>
+        <result property="extendCol3" column="extendCol3"/>
+        <result property="extendCol4" column="extendCol4"/>
+        <result property="extendCol5" column="extendCol5"/>
+    </resultMap>
+    <select id="selectAllCategory" resultMap="CategoryVO">
+        SELECT
+            <include refid="selectResult"><property name="table" value="${table}"/></include>
+        FROM ${table.name}
+            <include refid="conditionResult"><property name="table" value="${table}"/></include>
+    </select>
+
+    <select id="selectAllCategoryData" resultMap="CategoryVO">
+        SELECT
+        <foreach collection="table.fields" item="field" separator=",">
+            ${field.column} as ${field.property}
+        </foreach>
+        FROM ${table.name};
+    </select>
+
+    <select id="selectAllCategoryWithParentCode" resultMap="CategoryVO">
+        SELECT
+            <include refid="selectResult"><property name="table" value="${table}"/></include>
+        FROM ${table.name}
+            <include refid="conditionResult"><property name="table" value="${table}"/></include>
+        WHERE
+        <foreach collection="table.fields" item="field">
+            <if test="field.ddefault == 'association'">
+                <foreach collection="field.conditions" item="condition">
+                    <if test="condition.type == 'table'">
+                        ${table.name}.${condition.column}=  ${code}
+                    </if>
+                </foreach>
+            </if>
+        </foreach>
+    </select>
+
+    <select id="selectAllCategoryWithParentId" resultMap="CategoryVO">
+        SELECT
+        <include refid="selectResult"><property name="table" value="${table}"/></include>
+        FROM ${table.name}
+        <include refid="conditionResult"><property name="table" value="${table}"/></include>
+        WHERE
+        <foreach collection="table.fields" item="field">
+            <if test="field.ddefault == 'association'">
+                <foreach collection="field.conditions" item="condition">
+                    <if test="condition.type == 'table'">
+                        ${table.name}.${condition.column}=  ${id}
+                    </if>
+                </foreach>
+            </if>
+        </foreach>
+    </select>
+
+    <select id="selectAllCategoryWithParentColumn" resultMap="CategoryVO">
+        SELECT
+        <include refid="selectResult"><property name="table" value="${table}"/></include>
+        FROM ${table.name}
+        <include refid="conditionResult"><property name="table" value="${table}"/></include>
+        WHERE
+            ${tblparent}.${column}=  ${value}
+    </select>
+
+    <select id="selectCategory" resultMap="CategoryVO" parameterType="map">
+        SELECT
+          <include refid="selectResult"><property name="table" value="${table}"/></include>
+        FROM ${table.name}
+        <include refid="conditionResult"><property name="table" value="${table}"/></include>
+        <where>
+            <foreach collection="conditional.entrySet()" item="con" index="index" separator="AND">
+                <foreach collection="table.fields" item="field">
+                    <if test="field.property == con.type">
+                        ${table.name}.${field.column} = #{con.value}
+                    </if>
+                </foreach>
+            </foreach>
+        </where>
+    </select>
+
+    <insert id="insertCategory">
+        <selectKey keyProperty="table.fields[0].value" resultType="String" order="AFTER">
+            SELECT IDENT_CURRENT (#{table.name})
+        </selectKey>
+        INSERT INTO ${table.name}
+        <foreach collection="table.fields" item="field" separator="," open="(" close=")">
+            <if test="field.property != 'id'">
+                ${field.column}
+            </if>
+        </foreach>
+        VALUES
+        <foreach collection="table.fields" item="field" separator="," open="(" close=")">
+            <if test="field.property != 'id'">
+                #{field.value}
+            </if>
+        </foreach>
+    </insert>
+    <update id="updateCategory">
+        UPDATE ${table.name}
+        SET
+        <foreach collection="table.fields" item="field" separator=",">
+            <if test="field.property != 'id'">
+                ${field.column} = #{field.value}
+            </if>
+        </foreach>
+        WHERE
+        <foreach collection="table.fields" item="field">
+            <if test="field.property == 'id'">
+                ${field.column} = #{field.value}
+            </if>
+        </foreach>
+    </update>
+
+    <delete id="deleteCategory">
+        DELETE FROM ${tblName}
+        WHERE ${colId} = #{value}
+    </delete>
+
+    <sql id="selectResult">
+        <foreach collection="table.fields" item="field" separator=",">
+            <if test="field.ddefault == 'option'">
+                CASE
+                <foreach collection="field.options" item="item">
+                    WHEN ${table.name}.${field.column} = ${item.value} THEN #{item.text}
+                </foreach>
+                END as ${field.property}
+            </if>
+            <if test="field.ddefault == 'association'">
+                <foreach collection="field.conditions" item="condition">
+                    <if test="condition.type == 'table'">
+                        ${condition.name}.${condition.result} as ${field.property}
+                    </if>
+                </foreach>
+            </if>
+
+            <if test="field.ddefault == null">
+                ${table.name}.${field.column} as ${field.property}
+            </if>
+        </foreach>
+    </sql>
+
+    <sql id="conditionResult">
+        <foreach collection="table.fields" item="field" separator=" ">
+            <if test="field.ddefault == 'association'">
+                <foreach collection="field.conditions" item="condition">
+                    <if test="condition.type == 'table'">
+                        INNER JOIN ${condition.name} ON ${table.name}.${condition.column} = ${condition.name}.${condition.column}
+                    </if>
+                </foreach>
+            </if>
+        </foreach>
+    </sql>
+</mapper>

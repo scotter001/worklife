@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:util="http://www.springframework.org/schema/util" xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+							http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+							http://www.springframework.org/schema/util
+                            http://www.springframework.org/schema/util/spring-util.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+    <util:properties id="globalsProperties" location="classpath:/worklife/properties/globals.properties"/>
+    <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+        <property name="basenames">
+            <list>
+                <value>classpath:/worklife/language/message_vi_VI</value>
+                <value>classpath:/worklife/language/message_en_US</value>
+            </list>
+        </property>
+        <property name="cacheSeconds">
+            <value>60</value>
+        </property>
+    </bean>
+
+    <bean id="worklifeLanguageSource" class="vn.worklife.security.util.WorklifeMultiLanguageController">
+        <property name="reloadableResourceBundleMessageSource">
+            <ref bean="messageSource"/>
+        </property>
+    </bean>
+
+
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- one of the properties available; the maximum file size in bytes -->
+        <property name="maxUploadSize" value="9000000"/>
+    </bean>
+
+    <!-- Production implementation of the JavaMailSender interface, supporting
+    both JavaMail MimeMessages and Spring SimpleMailMessages -->
+    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <property name="host" value="smtp.gmail.com"/>
+        <property name="port" value="587"/>
+        <property name="username" value="worklifevn@gmail.com"/>
+        <property name="password" value="Dw811M)qbv9y4Tu"/>
+
+        <!-- The name of the property, following JavaBean naming conventions -->
+        <property name="javaMailProperties">
+            <props>
+                <prop key="mail.transport.protocol">smtp</prop>
+                <prop key="mail.smtp.auth">true</prop>
+                <prop key="mail.smtp.starttls.enable">true</prop>
+                <prop key="mail.debug">true</prop>
+            </props>
+        </property>
+    </bean>
+
+
+    <bean id="categoryConfiguration" class="vn.worklife.manager.category.web.ConfigurationCategory"/>
+
+    <context:component-scan base-package="vn.worklife">
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Service"/>
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Repository"/>
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+
+    <bean id="objectMapper" class="com.fasterxml.jackson.databind.ObjectMapper">
+    </bean>
+    <!--<bean id="freeMarkerCfg" class="freemarker.template.Configuration">
+        <constructor-arg type="freemarker.template.Version" value="freemarker.template.Configuration.VERSION_2_3_23">
+        </constructor-arg>
+    </bean>-->
+    <!--<context:property-placeholder location="classpath:/worklife/properties/globals.properties" />-->
+    <task:executor id="acsyncExecutor" pool-size="16"  />
+    <task:annotation-driven executor="acsyncExecutor"/>
+</beans>

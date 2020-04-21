@@ -1,0 +1,87 @@
+﻿<div class="tabs-container">
+    <ul class="nav nav-tabs">
+        <li class=""><a data-toggle="tab" href="#tab-0"
+                        aria-expanded="false"><i class="fa fa-info"></i>Thông tin</a></li>
+        <li class="active"><a data-toggle="tab" href="#tab-1"
+                              aria-expanded="true"> <i class="fa fa-search"></i>Lọc
+        </a></li>
+    </ul>
+    <div class="tab-content">
+        <div id="tab-1" class="tab-pane active">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-9">
+                        <label class="control-label">Huyện/Thành phố</label> <select
+                            class="form-control" id="selDistrict">
+                        <option value="-1"></option>
+                    </select>
+
+                    </div>
+                    <div class="col-md-3">
+                        <label class="control-label">&nbsp;</label>
+                        <button id="btnSearch" class="btn btn-default btn-rounded"
+                                type="button" style="margin-top: -5px;">
+                            <i class="fa fa-search"></i>Tìm
+                        </button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label class="control-label">Danh sách cơ sở</label>
+                    </div>
+                    <div class="col-md-12">
+                        <table class="table table-bordered table-hover nowrap"
+                               id="tblSearchResult" style="width: 100%;">
+                            <thead>
+                            <tr>
+                                <th class="text-center">TT</th>
+                                <th class="text-center">Tên điểm</th>
+
+                                <th class="text-center">Địa chỉ</th>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="tab-0" class="tab-pane">
+            <div class="panel-body">
+                <table class="table table-hover" id="tblInfo">
+                    <thead>
+                    <tr>
+                        <th colspan="2">THÔNG TIN VỀ TIÊM CHỦNG</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td><span>Tên  điểm</span></td>
+                        <td><span class="content" id="tenDiem"></span></td>
+                    </tr>
+                    <tr>
+                        <td><span>Địa chỉ:</span></td>
+                        <td><span class="content" id="diaChi"></span></td>
+                    </tr>
+                    <tr>
+                        <td><span>Điện thoại:</span></td>
+                        <td><span class="content" id="dienThoaiDiem"></span></td>
+                    </tr>
+
+                    <tr>
+                        <td><span>Nguời phụ trách</span></td>
+                        <td><span class="content" id="tenNguoiPhuTrach"></span></td>
+                    </tr>
+                    <tr>
+                        <td><span>Di động</span></td>
+                        <td><span class="content" id="dienThoaiDiDong"></span></td>
+                    </tr>
+
+                    </tbody>
+                </table>
+                <%@include file="core/buttons.jspf" %>
+            </div>
+        </div>
+    </div>
+
+
+</div>

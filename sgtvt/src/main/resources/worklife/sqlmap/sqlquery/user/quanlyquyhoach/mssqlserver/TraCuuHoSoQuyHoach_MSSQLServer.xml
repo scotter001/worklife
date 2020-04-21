@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="vn.worklife.user.quanlyquyhoach.service.TraCuuHoSoQuyHoachService">
+    <select id="selectListTraCuuHSQH" resultMap="vn.worklife.user.quanlyquyhoach.service.KhoiTaoHoSoQuyHoachService.HoSoQuyHoachVO">
+        WITH TempResult AS (
+        select
+        idhoso_qh,
+        isnull(tenquyhoach,'') as tenquyhoach,
+        isnull(soquyetdinh,'') as soquyetdinh,
+        isnull(convert(nvarchar,ngayqd,103),'') as ngayqd,
+        isnull(coquanduyet,'') as coquanduyet,
+        dieuchinh
+        from
+        hoso_quyhoach
+        where
+        idhoso_qh IN (select max(idhoso_qh) from hoso_quyhoach GROUP BY idparent)
+        <if test="optional.tenQuyHoach != null and optional.tenQuyHoach != ''">
+            and dbo.removecharvn(lower(tenquyhoach)) LIKE dbo.removecharvn(lower(N'%${optional.tenQuyHoach}%'))
+        </if>
+        <if test="optional.maHuyen == -1">
+            and (mahuyen is null or mahuyen = '')
+        </if>
+        <if test="optional.maHuyen != -1">
+            and mahuyen = #{optional.maHuyen}
+        </if>
+        ),
+        TempCount AS (
+        SELECT COUNT (*) AS totalrecords
+        FROM TempResult
+        ) SELECT *
+        FROM
+        TempResult, TempCount
+        ORDER BY idhoso_qh DESC
+        OFFSET ${start} ROWS
+        FETCH NEXT
+        ${length} ROWS ONLY;
+    </select>
+</mapper>

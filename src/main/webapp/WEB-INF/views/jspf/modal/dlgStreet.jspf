@@ -1,0 +1,33 @@
+<%--
+  ~ Copyright (c) 2017.
+~ Author : Phat Thinh
+--%>
+
+<div class="modal inmodal" style="z-index:99000 !important" id="insertDuongModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" style="width:30%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <label class="col-lg control-label" style="float: left;">
+                    <spring:message code='label.street.new'/>
+                </label>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <label class="col-lg control-label"><spring:message code='label.street'/> </label>
+                        <input type="text" value="" class= "form-control" id="txtTenDuongModal"/>
+                    </div>
+                </div>
+                <br/>
+                <div class="row text-right">
+                    <div class="col-md-12">
+                        <button type="button" class="btn btn-primary" id="btnLuuTenDuongModal">
+                            <i class="fa fa-save"></i> <spring:message code='label.save'/>
+                        </button>&nbsp;&nbsp;&nbsp;
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="vn.worklife.user.baocaotinhtrangcau.service.BCTinhTrangCauService">
+    <resultMap id="BCTinhTrangCauVO" type="BCTinhTrangCauVO">
+        <result property="quy" column="quy"/>
+        <result property="nam" column="nam"/>
+        <result property="ngayBaoCao" column="ngaybaocao"/>
+    </resultMap>
+    <resultMap id="BaoCaoReportCauVO" type="BaoCaoReportCauVO">
+        <result property="idHuyen" column="idhuyen"/>
+        <result property="donViQL" column="donviql"/>
+        <result property="idTuyenDuong" column="idtuyenduong"/>
+        <result property="tenDuong" column="tenduong"/>
+        <result property="tenHuyen" column="tenhuyen"/>
+        <result property="tenDonViQL" column="tendonviql"/>
+        <result property="tenCau" column="tencau"/>
+    </resultMap>
+    <select id="selectListBaoCaoCau" resultMap="vn.worklife.user.quanlycau.service.QuanLyCauService.CauVO">
+        select cau.idcau,
+               cau.idtuyenduong,
+               ISNULL(tencau,'') as tencau,
+               ISNULL(lytrinh,'') as lytrinhkm,
+               toadolong,
+               toadolat,
+               cau.idhuyen,
+               ISNULL(tensongvuot,'') as tensongvuot,
+               idgroup,
+               ISNULL(namxd,'') as namxd,
+               ISNULL(namkt,'') as namkt,
+               donviql,
+               ISNULL(cau.chieudai,'') as chieudai,
+               ISNULL(chieurong,'') as chieurong,
+               ISNULL(berong_xechay,'') as berong_xechay,
+               ISNULL(tinhkhong,'') as tinhkhong,
+               ISNULL(taitrong_tk,'') as taitrong_tk,
+               ISNULL(taitrong_kt,'') as taitrong_kt,
+               sonhip,
+               ISNULL(sodonhip,'') as sodonhip,
+               ISNULL(dainhip,'') as dainhip,
+               dangcau,
+               dmdangcau.ten as tendangcau,
+               dm1.ten as tenkcmo_mong,
+               dm2.ten as tenkcmo_than,
+               dm3.ten as tenkctru_mong,
+               dm4.ten as tenkctru_than,
+               td.tenduong AS tenduong,
+               [group].group_name AS tenhatql,
+               dmhuyen.tenhuyen AS tenhuyen,
+               ttc.tinhtrang AS tinhtrang,
+               dmttd.ten AS tentinhtrang,
+               ttc.id AS id,
+               ISNULL(ttc.ghichu, '') as ghichu,
+               dmdonviql.ten as tendonviql,
+               ttc.quy,
+               ttc.nam
+        from cau
+                LEFT JOIN tuyenduong td ON td.idtuyenduong = cau.idtuyenduong
+                LEFT JOIN [group] ON [group].group_id = cau.idgroup
+                LEFT JOIN dmhuyen ON dmhuyen.idhuyen = cau.idhuyen
+                <if test="quy == -1 and nam == -1">
+                    JOIN tinhtrang_cau ttc ON ttc.idcau = cau.idcau AND ttc.quy is null and ttc.nam is null
+                </if>
+                <if test="quy != -1 or nam != -1">
+                    JOIN tinhtrang_cau ttc ON ttc.idcau = cau.idcau
+                </if>
+                LEFT JOIN dmtinhtrang_duong dmttd ON ttc.tinhtrang = dmttd.idtinhtrang
+                LEFT JOIN dmdangcau ON dmdangcau.id = cau.dangcau
+                LEFT JOIN dmketcau dm1 ON dm1.id = cau.kcmo_mong
+                LEFT JOIN dmketcau dm2 ON dm2.id = cau.kcmo_than
+                LEFT JOIN dmketcau dm3 ON dm3.id = cau.kctru_mong
+                LEFT JOIN dmketcau dm4 ON dm4.id = cau.kctru_than
+                LEFT JOIN dmdonviql ON dmdonviql.iddonviql = cau.donviql
+        <where>
+            <if test="idGroup != -1">
+                cau.idgroup = #{idGroup}
+            </if>
+            <if test="quy != -1">
+                and ttc.quy = #{quy}
+            </if>
+            <if test="nam != -1">
+                and ttc.nam = #{nam}
+            </if>
+        </where>
+    </select>
+    <select id="selectListBaoCaoCauDf" resultMap="vn.worklife.user.quanlycau.service.QuanLyCauService.CauVO">
+        select cau.idcau,
+        cau.idtuyenduong,
+        ISNULL(tencau,'') as tencau,
+        ISNULL(lytrinh,'') as lytrinhkm,
+        toadolong,
+        toadolat,
+        cau.idhuyen,
+        ISNULL(tensongvuot,'') as tensongvuot,
+        idgroup,
+        ISNULL(namxd,'') as namxd,
+        ISNULL(namkt,'') as namkt,
+        donviql,
+        ISNULL(cau.chieudai,'') as chieudai,
+        ISNULL(chieurong,'') as chieurong,
+        ISNULL(berong_xechay,'') as berong_xechay,
+        ISNULL(tinhkhong,'') as tinhkhong,
+        ISNULL(taitrong_tk,'') as taitrong_tk,
+        ISNULL(taitrong_kt,'') as taitrong_kt,
+        sonhip,
+        ISNULL(sodonhip,'') as sodonhip,
+        ISNULL(dainhip,'') as dainhip,
+        dangcau,
+        dmdangcau.ten as tendangcau,
+        dm1.ten as tenkcmo_mong,
+        dm2.ten as tenkcmo_than,
+        dm3.ten as tenkctru_mong,
+        dm4.ten as tenkctru_than,
+        td.tenduong AS tenduong,
+        [group].group_name AS tenhatql,
+        dmhuyen.tenhuyen AS tenhuyen,
+        ttc.tinhtrang AS tinhtrang,
+        dmttd.ten AS tentinhtrang,
+        ttc.id AS id,
+        ISNULL(ttc.ghichu, '') as ghichu,
+        dmdonviql.ten as tendonviql,
+        ttc.quy,
+        ttc.nam
+        from cau
+        LEFT JOIN tuyenduong td ON td.idtuyenduong = cau.idtuyenduong
+        LEFT JOIN [group] ON [group].group_id = cau.idgroup
+        LEFT JOIN dmhuyen ON dmhuyen.idhuyen = cau.idhuyen
+        <if test="quy == -1 and nam == -1">
+            LEFT JOIN tinhtrang_cau ttc ON ttc.idcau = cau.idcau AND ttc.quy is null and ttc.nam is null
+        </if>
+        <if test="quy != -1 or nam != -1">
+            LEFT JOIN tinhtrang_cau ttc ON ttc.idcau = cau.idcau
+        </if>
+        LEFT JOIN dmtinhtrang_duong dmttd ON ttc.tinhtrang = dmttd.idtinhtrang
+        LEFT JOIN dmdangcau ON dmdangcau.id = cau.dangcau
+        LEFT JOIN dmketcau dm1 ON dm1.id = cau.kcmo_mong
+        LEFT JOIN dmketcau dm2 ON dm2.id = cau.kcmo_than
+        LEFT JOIN dmketcau dm3 ON dm3.id = cau.kctru_mong
+        LEFT JOIN dmketcau dm4 ON dm4.id = cau.kctru_than
+        LEFT JOIN dmdonviql ON dmdonviql.iddonviql = cau.donviql
+        <where>
+            <if test="idGroup != -1">
+                cau.idgroup = #{idGroup}
+            </if>
+            <if test="quy != -1">
+                and ttc.quy = #{quy}
+            </if>
+            <if test="nam != -1">
+                and ttc.nam = #{nam}
+            </if>
+        </where>
+    </select>
+    <select id="getNgayBaoCao" resultMap="BCTinhTrangCauVO">
+        select DISTINCT ISNULL(convert(nvarchar,ngaybc,103),'') AS ngaybaocao
+        from tinhtrang_cau
+        LEFT JOIN cau ON cau.idcau = tinhtrang_cau.idcau
+        <where>
+            <if test="idGroup != -1">
+                cau.idgroup = #{idGroup}
+            </if>
+            <if test="quy != -1">
+                and quy = #{quy}
+            </if>
+            <if test="nam != -1">
+                and nam = #{nam}
+            </if>
+        </where>
+    </select>
+    <insert id="insertBCTTCau" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+        insert into tinhtrang_cau
+            (idcau, nam, quy, tinhtrang, ghichu, ngaybc)
+                VALUES (#{idCau}, #{nam}, #{quy}, #{tinhTrang}, #{ghiChu}, NULLIF(convert(date,#{ngayBC},103),''))
+    </insert>
+    <update id="updateBCTTCau">
+        update tinhtrang_cau
+        set
+            tinhtrang = #{tinhTrang},
+            ghichu = #{ghiChu},
+            ngaybc = NULLIF(convert(date,#{ngayBC},103),'')
+        WHERE id = #{id}
+    </update>
+    <select id="selectListBaoCaoReport" resultMap="BaoCaoReportCauVO">
+        select distinct tencau, tuyenduong.idtuyenduong, cau.idhuyen, cau.donviql, tuyenduong.tenduong, dmhuyen.tenhuyen, dmdonviql.ten as tendonviql
+        from cau
+        LEFT JOIN tuyenduong ON tuyenduong.idtuyenduong = cau.idtuyenduong
+        LEFT JOIN dmhuyen ON dmhuyen.idhuyen = cau.idhuyen
+        LEFT JOIN dmdonviql ON dmdonviql.iddonviql = cau.donviql
+        LEFT JOIN tinhtrang_cau ON tinhtrang_cau.idcau = cau.idcau
+        WHERE cau.idgroup = #{idGroup} and tinhtrang_cau.quy = #{quy} and tinhtrang_cau.nam = #{nam}
+    </select>
+    <select id="selectListCau" resultMap="vn.worklife.user.quanlycau.service.QuanLyCauService.CauVO">
+        select cau.idcau,
+               cau.idtuyenduong,
+               ISNULL(tencau,'') as tencau,
+               ISNULL(lytrinh,'') as lytrinhkm,
+               toadolong,
+               toadolat,
+               cau.idhuyen,
+               ISNULL(tensongvuot,'') as tensongvuot,
+               idgroup,
+               ISNULL(namxd,'') as namxd,
+               ISNULL(namkt,'') as namkt,
+               donviql,
+               ISNULL(cau.chieudai,'') as chieudai,
+               ISNULL(chieurong,'') as chieurong,
+               ISNULL(berong_xechay,'') as berong_xechay,
+               ISNULL(tinhkhong,'') as tinhkhong,
+               ISNULL(taitrong_tk,'') as taitrong_tk,
+               ISNULL(taitrong_kt,'') as taitrong_kt,
+               sonhip,
+               ISNULL(sodonhip,'') as sodonhip,
+               ISNULL(dainhip,'') as dainhip,
+               dangcau,
+               dm1.ten as tenkcmo_mong,
+               dm2.ten as tenkcmo_than,
+               dm3.ten as tenkctru_mong,
+               dm4.ten as tenkctru_than,
+               td.tenduong AS tenduong,
+               dmhuyen.tenhuyen AS tenhuyen,
+               ttc.tinhtrang AS tinhtrang,
+               dmttd.ten AS tentinhtrang,
+               ttc.id AS id,
+               ISNULL(ttc.ghichu, '') as ghichu,
+               dmdonviql.ten as tendonviql
+        from cau
+                 LEFT JOIN tuyenduong td ON td.idtuyenduong = cau.idtuyenduong
+                 LEFT JOIN [group] ON [group].group_id = cau.idgroup
+                 LEFT JOIN dmhuyen ON dmhuyen.idhuyen = cau.idhuyen
+                 LEFT JOIN tinhtrang_cau ttc ON ttc.idcau = cau.idcau
+                 LEFT JOIN dmtinhtrang_duong dmttd ON ttc.tinhtrang = dmttd.idtinhtrang
+                 LEFT JOIN dmdangcau ON dmdangcau.id = cau.dangcau
+                 LEFT JOIN dmketcau dm1 ON dm1.id = cau.kcmo_mong
+                 LEFT JOIN dmketcau dm2 ON dm2.id = cau.kcmo_than
+                 LEFT JOIN dmketcau dm3 ON dm3.id = cau.kctru_mong
+                 LEFT JOIN dmketcau dm4 ON dm4.id = cau.kctru_than
+                 LEFT JOIN dmdonviql ON dmdonviql.iddonviql = cau.donviql
+        WHERE quy = #{quy} and nam = #{nam} and cau.tencau = #{tenCau} and cau.idtuyenduong = #{idTuyenDuong} and cau.idhuyen = #{idHuyen} <!--and cau.donviql = #{donViQL}--> and ttc.nam is not null
+    </select>
+</mapper>

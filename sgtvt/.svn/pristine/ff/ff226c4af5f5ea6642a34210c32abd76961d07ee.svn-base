@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="vn.worklife.user.mockup.service.LapDmScdkService">
+    <resultMap type="LapDanhMucSCDKVO" id="LapDanhMucSCDKVO">
+        <result property="idDmScdk" column="iddmscdk"/>
+        <result property="idDmhmScdk" column="iddmhm_scdk"/>
+        <result property="idTuyenDuong" column="idtuyenduong"/>
+        <result property="idCau" column="idCau"/>
+        <result property="idThietBi" column="idthietbi"/>
+        <result property="viTri" column="vitri"/>
+        <result property="hienTrang" column="hientrang"/>
+        <result property="idUuTien" column="iduutien"/>
+        <result property="giaiPhap" column="giaiphap"/>
+        <result property="kinhPhiDuyet" column="kinhphi_duyet"/>
+        <result property="idDmNguonVon" column="iddmnguonvon"/>
+        <result property="nam" column="nam"/>
+        <result property="tenCongTrinh" column="tencongtrinh"/>
+        <result property="tenCau" column="tencau"/>
+        <result property="tenDuong" column="tenduong"/>
+        <result property="tenTB" column="tentb"/>
+        <result property="ten" column="ten"/>
+        <result property="idHuyen" column="idhuyen"/>
+        <result property="tenNguonVon" column="ten_nguonvon"/>
+        <result property="idNguonVon" column="idnguonvon"/>
+        <result property="recordTotals" column="totalrecords"/>
+        <result property="listIdHuyen" column="listidhuyen"/>
+        <result property="thuoc" column="thuoc"/>
+        <result property="nhieuHuyen" column="nhieuhuyen"/>
+        <result property="tenHM" column="tenhm"/>
+    </resultMap>
+    <resultMap type="PhapLySCDKVO" id="PhapLySCDKVO">
+        <result property="idPL" column="idpl"/>
+        <result property="nam" column="nam"/>
+        <result property="tenVanBan" column="tenvanban"/>
+        <result property="soVB" column="sovb"/>
+        <result property="ngayVB" column="ngayvb"/>
+        <result property="tenFile" column="tenfile"/>
+        <result property="doDai" column="dodai"/>
+        <result property="noiDung" column="noidung"/>
+        <result property="recordTotals" column="totalrecords"/>
+    </resultMap>
+    <resultMap type="DmhmSCTXVO" id="DmhmSCTXVO">
+        <result property="id" column="id"/>
+        <result property="ten" column="ten"/>
+        <result property="thuoc" column="thuoc"/>
+    </resultMap>
+    <resultMap type="DmUTSCTXVO" id="DmUTSCTXVO">
+        <result property="id" column="id"/>
+        <result property="ten" column="ten"/>
+    </resultMap>
+    <resultMap type="HuyenSCDKVO" id="HuyenSCDKVO">
+        <result property="idScdkHuyen" column="idscdkhuyen"/>
+        <result property="idDmScdk" column="iddmscdk"/>
+        <result property="idHuyen" column="idhuyen"/>
+    </resultMap>
+    <resultMap id="CauVO" type="CauVO">
+        <result property="idCau" column="idcau"/>
+        <result property="idTuyenDuong" column="idtuyenduong"/>
+        <result property="loaiCau" column="loaicau"/>
+        <result property="tenCau" column="tencau"/>
+        <result property="lyTrinhKm" column="lytrinhkm"/>
+        <result property="toaDoLong" column="toadolong"/>
+        <result property="toaDoLat" column="toadolat"/>
+        <result property="idHuyen" column="idhuyen"/>
+        <result property="tenSongVuot" column="tensongvuot"/>
+        <result property="idGroup" column="idgroup"/>
+        <result property="namXD" column="namxd"/>
+        <result property="namKT" column="namkt"/>
+        <result property="donViQL" column="donviql"/>
+        <result property="chieuDai" column="chieudai"/>
+        <result property="chieuRong" column="chieurong"/>
+        <result property="beRong_XeChay" column="berong_xechay"/>
+        <result property="tinhKhong" column="tinhkhong"/>
+        <result property="taiTrong_TK" column="taitrong_tk"/>
+        <result property="taiTrong_KT" column="taitrong_kt"/>
+        <result property="soNhip" column="sonhip"/>
+        <result property="soDoNhip" column="sodonhip"/>
+        <result property="daiNhip" column="dainhip"/>
+        <result property="dangCau" column="dangcau"/>
+        <result property="tenDangCau" column="tendangcau"/>
+        <result property="kCMo_Mong" column="kcmo_mong"/>
+        <result property="kCMo_Than" column="kcmo_than"/>
+        <result property="kCTru_Mong" column="kctru_mong"/>
+        <result property="kCTru_Than" column="kctru_than"/>
+        <result property="recordTotals" column="totalrecords"/>
+        <result property="tenDuong" column="tenduong"/>
+        <result property="tenHatQL" column="tenhatql"/>
+        <result property="tenHuyen" column="tenhuyen"/>
+        <result property="tinhTrang" column="tinhtrang"/>
+        <result property="tenTinhTrang" column="tentinhtrang"/>
+        <result property="id" column="id"/>
+        <result property="ghiChu" column="ghichu"/>
+        <result property="tenDonViQL" column="tendonviql"/>
+        <result property="tenKCMo_Mong" column="tenkcmo_mong"/>
+        <result property="tenKCMo_Than" column="tenkcmo_than"/>
+        <result property="tenKCTru_Mong" column="tenkctru_mong"/>
+        <result property="tenKCTru_Than" column="tenkctru_than"/>
+        <result property="quy" column="quy"/>
+        <result property="nam" column="nam"/>
+    </resultMap>
+    <select id="selectDSDanhMuc_Scdk" resultMap="LapDanhMucSCDKVO">
+        WITH TempResult AS (
+                SELECT DISTINCT
+                    thuoc,
+                    dm.iddmscdk,
+                    dm.iddmhm_scdk,
+                    dm.idtuyenduong,
+                    c.idCau,
+                    idThietBi,
+                    hienTrang,
+                    iduutien,
+                    giaiphap,
+                    kinhphi_duyet,
+                    iddmnguonvon,
+                    nam,
+                    tencongtrinh,
+                    tencau,
+                    tenduong,
+                    sc.ten AS tenhm,
+                    tentb,
+                    ut.ten,
+                    idNguonVon,
+                    vitri,
+                    (SELECT STUFF(
+                            (SELECT DISTINCT ', ' + h.tenhuyen
+                             FROM
+                                 danhmuc_scdk dm1
+                                 LEFT JOIN scdk_huyen sh ON sh.iddmscdk = dm.iddmscdk
+                                 LEFT JOIN dmhuyen h ON h.idhuyen = sh.idhuyen
+                             WHERE dm1.iddmscdk = dm.iddmscdk AND sh.idhuyen IN (SELECT idhuyen
+                                                                                 FROM scdk_huyen
+                                                                                 GROUP BY idhuyen)
+                             FOR XML PATH (''), TYPE).value('/', 'NVARCHAR(MAX)'), 1, 1, ''))
+                           AS nhieuhuyen,
+                    (SELECT STUFF(
+                            (SELECT DISTINCT ',' + convert(NVARCHAR, h.idhuyen)
+                             FROM
+                                 danhmuc_scdk dm2
+                                 LEFT JOIN scdk_huyen sh ON sh.iddmscdk = dm.iddmscdk
+                                 LEFT JOIN dmhuyen h ON h.idhuyen = sh.idhuyen
+                             WHERE dm2.iddmscdk = dm.iddmscdk AND sh.idhuyen IN (SELECT idhuyen
+                                                                                 FROM scdk_huyen
+                                                                                 GROUP BY idhuyen)
+                             FOR XML PATH (''), TYPE).value('/', 'NVARCHAR(MAX)'), 1, 1, ''))
+                           AS listidhuyen
+                FROM danhmuc_scdk dm
+                    LEFT JOIN tuyenduong td ON td.idtuyenduong = dm.idtuyenduong
+                    LEFT JOIN cau c ON c.idcau = dm.idcau
+                    LEFT JOIN thietbi tb ON tb.idtb = dm.idthietbi
+                    LEFT JOIN dmut_scdk ut ON ut.id = dm.iduutien
+                    LEFT JOIN dmnguonvon nv ON nv.idnguonvon = dm.iddmnguonvon
+                    LEFT JOIN dmhm_scdk sc ON sc.id = dm.iddmhm_scdk
+                    LEFT JOIN scdk_huyen h ON h.iddmscdk = dm.iddmscdk
+                WHERE dm.nam = #{nam} ), TempCount AS (
+                SELECT COUNT(*) AS
+                    totalrecords
+                FROM TempResult
+        ) SELECT *
+          FROM
+              TempResult, TempCount
+          ORDER BY iddmscdk DESC
+    </select>
+    <select id="selectDSDanhMuc_ScdkorferUT1" resultMap="LapDanhMucSCDKVO">
+        WITH TempResult AS (
+                SELECT DISTINCT
+                    thuoc,
+                    dm.iddmscdk,
+                    dm.iddmhm_scdk,
+                    dm.idtuyenduong,
+                    c.idCau,
+                    idThietBi,
+                    hienTrang,
+                    iduutien,
+                    giaiphap,
+                    kinhphi_duyet,
+                    iddmnguonvon,
+                    nam,
+                    tencongtrinh,
+                    tencau,
+                    tenduong,
+                    sc.ten AS tenhm,
+                    tentb,
+                    ut.ten,
+                    idNguonVon,
+                    vitri,
+                    (SELECT STUFF(
+                            (SELECT DISTINCT ', ' + h.tenhuyen
+                             FROM
+                                 danhmuc_scdk dm1
+                                 LEFT JOIN scdk_huyen sh ON sh.iddmscdk = dm.iddmscdk
+                                 LEFT JOIN dmhuyen h ON h.idhuyen = sh.idhuyen
+                             WHERE dm1.iddmscdk = dm.iddmscdk AND sh.idhuyen IN (SELECT idhuyen
+                                                                                 FROM scdk_huyen
+                                                                                 GROUP BY idhuyen)
+                             FOR XML PATH (''), TYPE).value('/', 'NVARCHAR(MAX)'), 1, 1, ''))
+                           AS nhieuhuyen,
+                    (SELECT STUFF(
+                            (SELECT DISTINCT ',' + convert(NVARCHAR, h.idhuyen)
+                             FROM
+                                 danhmuc_scdk dm2
+                                 LEFT JOIN scdk_huyen sh ON sh.iddmscdk = dm.iddmscdk
+                                 LEFT JOIN dmhuyen h ON h.idhuyen = sh.idhuyen
+                             WHERE dm2.iddmscdk = dm.iddmscdk AND sh.idhuyen IN (SELECT idhuyen
+                                                                                 FROM scdk_huyen
+                                                                                 GROUP BY idhuyen)
+                             FOR XML PATH (''), TYPE).value('/', 'NVARCHAR(MAX)'), 1, 1, ''))
+                           AS listidhuyen
+                FROM danhmuc_scdk dm
+                    LEFT JOIN tuyenduong td ON td.idtuyenduong = dm.idtuyenduong
+                    LEFT JOIN cau c ON c.idcau = dm.idcau
+                    LEFT JOIN thietbi tb ON tb.idtb = dm.idthietbi
+                    LEFT JOIN dmut_scdk ut ON ut.id = dm.iduutien
+                    LEFT JOIN dmnguonvon nv ON nv.idnguonvon = dm.iddmnguonvon
+                    LEFT JOIN dmhm_scdk sc ON sc.id = dm.iddmhm_scdk
+                    LEFT JOIN scdk_huyen h ON h.iddmscdk = dm.iddmscdk
+                WHERE dm.nam = #{nam} and iduutien = 1 ), TempCount AS (
+                SELECT COUNT(*) AS
+                    totalrecords
+                FROM TempResult
+        ) SELECT *
+          FROM
+              TempResult, TempCount
+          ORDER BY iduutien
+    </select>
+    <select id="selectDSDanhMuc_ScdkorferUT2" resultMap="LapDanhMucSCDKVO">
+        WITH TempResult AS (
+        SELECT DISTINCT
+        thuoc,
+        dm.iddmscdk,
+        dm.iddmhm_scdk,
+        dm.idtuyenduong,
+        c.idCau,
+        idThietBi,
+        hienTrang,
+        iduutien,
+        giaiphap,
+        kinhphi_duyet,
+        iddmnguonvon,
+        nam,
+        tencongtrinh,
+        tencau,
+        tenduong,
+        sc.ten AS tenhm,
+        tentb,
+        ut.ten,
+        idNguonVon,
+        vitri,
+        (SELECT STUFF(
+        (SELECT DISTINCT ', ' + h.tenhuyen
+        FROM
+        danhmuc_scdk dm1
+        LEFT JOIN scdk_huyen sh ON sh.iddmscdk = dm.iddmscdk
+        LEFT JOIN dmhuyen h ON h.idhuyen = sh.idhuyen
+        WHERE dm1.iddmscdk = dm.iddmscdk AND sh.idhuyen IN (SELECT idhuyen
+        FROM scdk_huyen
+        GROUP BY idhuyen)
+        FOR XML PATH (''), TYPE).value('/', 'NVARCHAR(MAX)'), 1, 1, ''))
+        AS nhieuhuyen,
+        (SELECT STUFF(
+        (SELECT DISTINCT ',' + convert(NVARCHAR, h.idhuyen)
+        FROM
+        danhmuc_scdk dm2
+        LEFT JOIN scdk_huyen sh ON sh.iddmscdk = dm.iddmscdk
+        LEFT JOIN dmhuyen h ON h.idhuyen = sh.idhuyen
+        WHERE dm2.iddmscdk = dm.iddmscdk AND sh.idhuyen IN (SELECT idhuyen
+        FROM scdk_huyen
+        GROUP BY idhuyen)
+        FOR XML PATH (''), TYPE).value('/', 'NVARCHAR(MAX)'), 1, 1, ''))
+        AS listidhuyen
+        FROM danhmuc_scdk dm
+        LEFT JOIN tuyenduong td ON td.idtuyenduong = dm.idtuyenduong
+        LEFT JOIN cau c ON c.idcau = dm.idcau
+        LEFT JOIN thietbi tb ON tb.idtb = dm.idthietbi
+        LEFT JOIN dmut_scdk ut ON ut.id = dm.iduutien
+        LEFT JOIN dmnguonvon nv ON nv.idnguonvon = dm.iddmnguonvon
+        LEFT JOIN dmhm_scdk sc ON sc.id = dm.iddmhm_scdk
+        LEFT JOIN scdk_huyen h ON h.iddmscdk = dm.iddmscdk
+        WHERE dm.nam = #{nam} and iduutien = 2), TempCount AS (
+        SELECT COUNT(*) AS
+        totalrecords
+        FROM TempResult
+        ) SELECT *
+        FROM
+        TempResult, TempCount
+        ORDER BY iduutien
+    </select>
+    <select id="selectDSPhapLy" resultMap="PhapLySCDKVO">
+        SELECT tenvanban,nam,idpl,sovb,dodai,noidung,tenfile , isnull(convert(nvarchar,ngayvb,103),'') as ngayvb
+        FROM scdk_phaply WHERE nam = #{nam}
+    </select>
+    <select id="selectDSPhapLyById" resultMap="PhapLySCDKVO">
+        select tenfile , dodai, noidung from scdk_phaply WHERE idpl = #{idPL}
+    </select>
+    <update id="updatePhapLySCDK">
+        UPDATE scdk_phaply
+        SET nam     =  nullif(#{nam}, ''),
+        tenvanban = nullif(#{tenVanBan},''),
+        sovb = nullif(#{soVB},''),
+        ngayvb =  nullif(convert(date,#{ngayVB},103),'')
+        WHERE idpl =  #{idPL}
+    </update>
+    <insert id="insertPhapLySCDK" useGeneratedKeys="true" keyProperty="idPL" keyColumn="idPL">
+        INSERT INTO scdk_phaply (nam, tenvanban,sovb,ngayvb) VALUES (
+            nullif(#{nam}, ''),
+            nullif(#{tenVanBan},''),
+            nullif(#{soVB},''),
+            nullif(convert(date,#{ngayVB},103),'')
+        )
+    </insert>
+    <update id="updateFileUploadVO">
+        update scdk_phaply
+        set tenfile = '',
+        dodai = 0,
+        noidung = 0
+        WHERE idpl = #{idPL}
+    </update>
+    <select id="selectlistUutien" resultMap="DmUTSCTXVO">
+        SELECT *
+        FROM dmut_scdk
+    </select>
+    <select id="selectlisthangmuc" resultMap="DmhmSCTXVO">
+        SELECT *
+        FROM dmhm_scdk
+    </select>
+    <select id="selectlisthangmucbyid" resultMap="DmhmSCTXVO">
+        SELECT *
+        FROM dmhm_scdk
+        WHERE id = #{idDmhmScdk}
+    </select>
+    <select id="selectlistnguonvon" resultMap="LapDanhMucSCDKVO">
+        SELECT *
+        FROM dmnguonvon
+    </select>
+    <select id="selectListCau" resultMap="CauVO">
+        SELECT *
+        FROM cau
+    </select>
+    <insert id="insertDanhMucSCDK" useGeneratedKeys="true" keyProperty="idDmScdk" keyColumn="idDmScdk">
+        INSERT INTO danhmuc_scdk (iddmhm_scdk, idtuyenduong, idcau, idthietbi, vitri, hientrang, giaiphap, iduutien, kinhphi_duyet, iddmnguonvon, nam, tencongtrinh)
+        VALUES (
+            #{idDmhmScdk},
+            nullif(#{idTuyenDuong}, ''),
+            nullif(#{idCau}, ''),
+            nullif(#{idThietBi}, ''),
+            nullif(#{viTri}, ''),
+            nullif(#{hienTrang}, ''),
+            nullif(#{giaiPhap}, ''),
+            nullif(#{idUuTien}, ''),
+            nullif(#{kinhPhiDuyet}, ''),
+            nullif(#{idDmNguonVon}, ''),
+            nullif(#{nam}, ''),
+            nullif(#{tenCongTrinh}, '')
+        )
+    </insert>
+    <delete id="deleteDanhMucSCDK">
+        DELETE FROM danhmuc_scdk
+        WHERE iddmscdk = #{idDmScdk}
+    </delete>
+    <delete id="deletePhapLySCDK">
+        DELETE FROM scdk_phaply
+        WHERE idPL = #{idPL}
+    </delete>
+    <update id="updateDanhMucSCDK">
+        UPDATE danhmuc_scdk
+        SET
+            iddmhm_scdk   = #{idDmhmScdk},
+            idtuyenduong  = nullif(#{idTuyenDuong}, ''),
+            idcau         = nullif(#{idCau}, ''),
+            idthietbi     = nullif(#{idThietBi}, ''),
+            vitri         = nullif(#{viTri}, ''),
+            hientrang     = nullif(#{hienTrang}, ''),
+            giaiphap      = nullif(#{giaiPhap}, ''),
+            iduutien      = nullif(#{idUuTien}, ''),
+            kinhphi_duyet = nullif(#{kinhPhiDuyet}, ''),
+            iddmnguonvon  = nullif(#{idDmNguonVon}, ''),
+            nam           = nullif(#{nam}, ''),
+            tencongtrinh  = nullif(#{tenCongTrinh}, '')
+        WHERE iddmscdk = #{idDmScdk}
+    </update>
+    <insert id="insertHuyenDmSCDK" useGeneratedKeys="true" keyProperty="idDmScdk" keyColumn="idDmScdk">
+        INSERT INTO scdk_huyen
+        (iddmscdk, idhuyen)
+        VALUES (
+            #{idDmScdk},
+            #{idHuyen}
+        )
+    </insert>
+    <delete id="deleteHuyenDmSCDK">
+        DELETE FROM scdk_huyen
+        WHERE idDmScdk = #{idDmScdk}
+    </delete>
+</mapper>

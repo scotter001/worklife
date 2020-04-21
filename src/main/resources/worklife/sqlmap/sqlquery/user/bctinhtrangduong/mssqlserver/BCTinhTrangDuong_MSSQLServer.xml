@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="vn.worklife.user.baocaotinhtrangduong.service.BaoCaoTinhTrangDuongService">
+    <resultMap id="BCTTDuongVO" type="BCTTDuongVO">
+        <result property="quy" column="quy"/>
+        <result property="nam" column="nam"/>
+        <result property="ngayBaoCao" column="ngaybaocao"/>
+    </resultMap>
+    <resultMap id="BaoCaoReportVO" type="BaoCaoReportVO">
+        <result property="iddh" column="iddh"/>
+        <result property="tenDuong" column="tenduong"/>
+        <result property="diaDanh_DiemDau" column="diadanh_diemdau"/>
+        <result property="diaDanh_DiemCuoi" column="diadanh_diemcuoi"/>
+    </resultMap>
+    <resultMap id="LyTrinhRePortVO" type="LyTrinhRePortVO">
+        <result property="diemDau_Tu" column="diemdau_tu"/>
+        <result property="diemDau_Den" column="diemdau_den"/>
+        <result property="diemCuoi_Tu" column="diemcuoi_tu"/>
+        <result property="diemCuoi_Den" column="diemcuoi_den"/>
+        <result property="chieuDai" column="chieudai"/>
+        <result property="rongNen" column="rongnen"/>
+        <result property="rongMat" column="rongmat"/>
+        <result property="diaHinh" column="diahinh"/>
+        <!--<result property="capQL" column="capql"/>-->
+        <result property="tinhTrang" column="tinhtrang"/>
+        <result property="ghiChu" column="ghichu"/>
+        <result property="tenCapQL" column="tencapql"/>
+        <result property="tenKetCau" column="tenketcau"/>
+    </resultMap>
+    <select id="selectListData" resultMap="vn.worklife.user.quanlytuyenduong.service.TTChiTietTuyenDuongTheoHatService.LyTrinhVO">
+        select
+               lytrinh.idlytrinh,
+               lytrinh.iddh,
+               diemdau_tu,
+               diemdau_den,
+               diemcuoi_tu,
+               diemcuoi_den,
+               lytrinh.chieudai,
+               rongnen,
+               rongmat,
+               diahinh,
+               capql,
+               duong_hat.diadanh_diemdau,
+               duong_hat.diadanh_diemcuoi,
+               tuyenduong.tenduong,
+               tinhtrang_duong.tinhtrang,
+               ISNULL(tinhtrang_duong.ghichu,'') as ghichu,
+               dmcapql.ten AS tencapql,
+               dmketcaumatdg.ten AS tenketcau,
+               tinhtrang_duong.quy,
+               tinhtrang_duong.nam,
+               tinhtrang_duong.id
+        from lytrinh
+        LEFT JOIN duong_hat ON duong_hat.iddh = lytrinh.iddh
+        LEFT JOIN tuyenduong ON tuyenduong.idtuyenduong = duong_hat.idtuyenduong
+            <if test="quy == -1 and nam == -1">
+                JOIN tinhtrang_duong ON tinhtrang_duong.idlytrinh = lytrinh.idlytrinh AND tinhtrang_duong.quy IS NULL AND tinhtrang_duong.nam IS NULL
+            </if>
+            <if test="quy != -1 or nam != -1">
+                JOIN tinhtrang_duong ON tinhtrang_duong.idlytrinh = lytrinh.idlytrinh
+            </if>
+        LEFT JOIN dmcapql ON dmcapql.idcapql = lytrinh.capql
+        LEFT JOIN dmketcaumatdg ON dmketcaumatdg.idketcaumat = lytrinh.ketcaumat
+        <where>
+            <if test="idGroup != -1">
+                duong_hat.idgroup = #{idGroup}
+            </if>
+            <if test="quy != -1">
+                and tinhtrang_duong.quy = #{quy}
+            </if>
+            <if test="nam != -1">
+                and tinhtrang_duong.nam = #{nam}
+            </if>
+            order by idlytrinh desc
+        </where>
+    </select>
+    <select id="selectListDataDf" resultMap="vn.worklife.user.quanlytuyenduong.service.TTChiTietTuyenDuongTheoHatService.LyTrinhVO">
+        select
+        lytrinh.idlytrinh,
+        lytrinh.iddh,
+        diemdau_tu,
+        diemdau_den,
+        diemcuoi_tu,
+        diemcuoi_den,
+        lytrinh.chieudai,
+        rongnen,
+        rongmat,
+        diahinh,
+        capql,
+        duong_hat.diadanh_diemdau,
+        duong_hat.diadanh_diemcuoi,
+        tuyenduong.tenduong,
+        tinhtrang_duong.tinhtrang,
+        ISNULL(tinhtrang_duong.ghichu,'') as ghichu,
+        dmcapql.ten AS tencapql,
+        dmketcaumatdg.ten AS tenketcau,
+        tinhtrang_duong.quy,
+        tinhtrang_duong.nam,
+        tinhtrang_duong.id
+        from lytrinh
+        LEFT JOIN duong_hat ON duong_hat.iddh = lytrinh.iddh
+        LEFT JOIN tuyenduong ON tuyenduong.idtuyenduong = duong_hat.idtuyenduong
+        <if test="quy == -1 and nam == -1">
+            LEFT JOIN tinhtrang_duong ON tinhtrang_duong.idlytrinh = lytrinh.idlytrinh AND tinhtrang_duong.quy IS NULL AND tinhtrang_duong.nam IS NULL
+        </if>
+        <if test="quy != -1 or nam != -1">
+            LEFT JOIN tinhtrang_duong ON tinhtrang_duong.idlytrinh = lytrinh.idlytrinh
+        </if>
+        LEFT JOIN dmcapql ON dmcapql.idcapql = lytrinh.capql
+        LEFT JOIN dmketcaumatdg ON dmketcaumatdg.idketcaumat = lytrinh.ketcaumat
+        <where>
+            <if test="idGroup != -1">
+                duong_hat.idgroup = #{idGroup}
+            </if>
+            <if test="quy != -1">
+                and tinhtrang_duong.quy = #{quy}
+            </if>
+            <if test="nam != -1">
+                and tinhtrang_duong.nam = #{nam}
+            </if>
+            ORDER BY idlytrinh DESC
+        </where>
+    </select>
+    <insert id="insertBCTTDuong" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into tinhtrang_duong
+            (idlytrinh, nam, quy, tinhtrang, ghichu, ngaybc)
+            VALUES (#{idLyTrinh}, #{nam}, #{quy}, #{tinhTrang}, #{ghiChu}, NULLIF(convert(date,#{ngayBC},103),''))
+    </insert>
+    <update id="updateBCTTDuong">
+        update tinhtrang_duong
+            set
+            tinhtrang = #{tinhTrang},
+            ghichu = #{ghiChu},
+            ngaybc = NULLIF(convert(date,#{ngayBC},103),'')
+        WHERE id = #{id}
+    </update>
+    <select id="getNgayBaoCao" resultMap="BCTTDuongVO">
+        select DISTINCT ISNULL(convert(nvarchar,ngaybc,103),'') AS ngaybaocao
+        from tinhtrang_duong
+        LEFT JOIN lytrinh ON lytrinh.idlytrinh = tinhtrang_duong.idlytrinh
+        LEFT JOIN duong_hat ON duong_hat.iddh = lytrinh.iddh
+        <where>
+            <if test="idGroup != -1">
+                duong_hat.idgroup = #{idGroup}
+            </if>
+            <if test="quy != -1">
+                and quy = #{quy}
+            </if>
+            <if test="nam != -1">
+                and nam = #{nam}
+            </if>
+        </where>
+    </select>
+    <select id="selectListLTReport" resultMap="BaoCaoReportVO">
+        select distinct duong_hat.iddh, tuyenduong.tenduong, duong_hat.diadanh_diemdau, duong_hat.diadanh_diemcuoi
+        from lytrinh
+        LEFT JOIN duong_hat ON duong_hat.iddh = lytrinh.iddh
+        LEFT JOIN tuyenduong ON tuyenduong.idtuyenduong = duong_hat.idtuyenduong
+        LEFT JOIN tinhtrang_duong ON tinhtrang_duong.idlytrinh = lytrinh.idlytrinh
+        where
+            duong_hat.idgroup = #{idGroup}
+            and tinhtrang_duong.quy = #{quy}
+            and tinhtrang_duong.nam = #{nam}
+    </select>
+    <select id="selectListLyTrinh" resultMap="LyTrinhRePortVO">
+        select distinct
+            diemdau_tu,
+            diemdau_den,
+            diemcuoi_tu,
+            diemcuoi_den,
+            lytrinh.chieudai,
+            rongnen,
+            rongmat,
+            ketcaumat,
+            diahinh,
+            dmtinhtrang_duong.ten as tinhtrang,
+            tinhtrang_duong.ghichu as ghichu,
+            dmcapql.ten as tencapql,
+            dmketcaumatdg.ten as tenketcau
+        from lytrinh
+            LEFT JOIN duong_hat ON duong_hat.iddh = lytrinh.iddh
+            LEFT JOIN tuyenduong ON tuyenduong.idtuyenduong = duong_hat.idtuyenduong
+            LEFT JOIN tinhtrang_duong ON tinhtrang_duong.idlytrinh = lytrinh.idlytrinh
+            LEFT JOIN dmcapql ON dmcapql.idcapql = lytrinh.capql
+            LEFT JOIN dmketcaumatdg ON dmketcaumatdg.idketcaumat = lytrinh.ketcaumat
+            LEFT JOIN dmtinhtrang_duong ON dmtinhtrang_duong.idtinhtrang = tinhtrang_duong.tinhtrang
+        WHERE lytrinh.iddh = #{iddh} and tinhtrang_duong.nam is not null
+    </select>
+</mapper>

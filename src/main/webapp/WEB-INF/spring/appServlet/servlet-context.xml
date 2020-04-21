@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:context="http://www.springframework.org/schema/context"
+             xmlns:sec="http://www.springframework.org/schema/security" xmlns:mvc="http://www.springframework.org/schema/mvc"
+             xmlns="http://www.springframework.org/schema/mvc"
+             xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        						http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+								http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+								http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+    <!-- DispatcherServlet Context: defines this servlet's request-processing
+        infrastructure -->
+
+    <sec:global-method-security pre-post-annotations="enabled" secured-annotations="enabled"/>
+    <mvc:annotation-driven/>
+    <mvc:annotation-driven>
+        <mvc:message-converters>
+            <beans:bean
+                    class="org.springframework.http.converter.StringHttpMessageConverter">
+                <beans:property name="supportedMediaTypes">
+                    <beans:list>
+                        <beans:value>text/plain;charset=UTF-8</beans:value>
+                        <beans:value>text/html;charset=UTF-8</beans:value>
+                        <beans:value>application/json;charset=UTF-8</beans:value>
+                    </beans:list>
+                </beans:property>
+            </beans:bean>
+            <beans:bean
+                    class="org.springframework.http.converter.BufferedImageHttpMessageConverter"/>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+    <!-- Enables the Spring MVC @DmQLThietBiBienBaoController programming file -->
+    <!--<context:component-scan base-package="vn.worklife.**.web2">
+        <context:include-filter expression="org.springframework.stereotype.DmQLThietBiBienBaoController"
+                                type="annotation" />
+        <context:exclude-filter expression="org.springframework.stereotype.Service"
+                                type="annotation" />
+        <context:exclude-filter expression="org.springframework.stereotype.Repository"
+                                type="annotation" />
+    </context:component-scan>-->
+
+    <!-- Handles HTTP GET requests for /resources/** by efficiently serving
+        up static resources in the ${webappRoot}/resources directory -->
+    <!--<resources mapping="/resources/**" location="/resources/" />-->
+    <mvc:resources mapping="/resources/**" location="/resources/"/>
+
+    <!-- Resolves views selected for rendering by @Controllers to .jsp resources
+        in the /WEB-INF/views directory -->
+    <beans:bean id="internalResourceViewResolver"
+            class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <beans:property name="prefix" value="/WEB-INF/views/"/>
+        <beans:property name="cache" value="false"/>
+        <beans:property name="suffix" value=".jsp"/>
+        <beans:property name="order" value="0" />
+    </beans:bean>
+
+    <context:component-scan base-package="vn.worklife"/>
+</beans:beans>

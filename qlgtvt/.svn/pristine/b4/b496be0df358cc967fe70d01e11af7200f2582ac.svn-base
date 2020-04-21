@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2018.
+  ~ Author : TienSinh
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="vn.worklife.user.settupcategoryupdate.service.SettupCategoryUpdateService">
+    <select id="selectListDuyetSCTX" resultMap="vn.worklife.user.mockup.service.DanhMucSCTXService.DanhMucSCTXVO">
+        select
+        iddmsctx,
+        danhmuc_sctx.idsuco,
+        suco.idtuyenduong,
+        tuyenduong.tenduong,
+        isnull(lytrinh,'') as lytrinh,
+        isnull(noidungsuachua,'') as noidungsuachua,
+        danhmuc_sctx.iddvt,
+        dmdvt.ten as tendvt,
+        isnull(congthuclap,'') as congthuclap,
+        isnull(kllap_ct,'') as kllap_ct,
+        isnull(kllap_tong,'') as kllap_tong,
+        isnull(congthucduyet,'') as congthucduyet,
+        isnull(klduyet_ct,'') as klduyet_ct,
+        isnull(klduyet_tong,'') as klduyet_tong,
+        isnull(convert(nvarchar,kinhphi),'') as kinhphi,
+        isnull(suco.huhong,'') as huhong,
+        isnull(convert(nvarchar,suco.ngay,103),'') as ngay,
+        [group].group_name as tenhatql
+        from danhmuc_sctx
+        LEFT JOIN suco ON suco.idsuco = danhmuc_sctx.idsuco
+        LEFT JOIN tuyenduong ON tuyenduong.idtuyenduong = suco.idtuyenduong
+        LEFT JOIN [group] ON [group].group_id = suco.idgroup
+        LEFT JOIN dmdvt ON dmdvt.iddvt = danhmuc_sctx.iddvt
+        WHERE thuocquy = #{quy} and nam = #{nam}
+        <if test="idGroup != -1">
+            and suco.idGroup = #{idGroup}
+        </if>
+        order by suco.idsuco desc
+    </select>
+    <update id="updateDuyetSCTX">
+        update danhmuc_sctx
+            set
+            congthucduyet = nullif(#{congThucDuyet},''),
+            klduyet_ct = nullif(#{klDuyet_CT},''),
+            klduyet_tong = nullif(#{klDuyet_Tong},''),
+            kinhphi = nullif(#{kinhPhi},''),
+            duyet = 1
+        WHERE iddmsctx = #{idDmSctx}
+    </update>
+</mapper>

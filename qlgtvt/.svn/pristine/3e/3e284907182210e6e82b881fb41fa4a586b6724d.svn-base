@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="vn.worklife.qlctgt.user.danhsachhoso.service.DanhSachHoSoService">
+    <resultMap id="DmLoaiHoSoVO" type="DmLoaiHoSoVO">
+        <result property="id_LoaiHoSo" column="id_loaihoso"/>
+        <result property="tenLoaiHoSo" column="tenloaihoso"/>
+        <result property="moTa" column="mota"/>
+        <result property="haiBuoc" column="2buoc"/>
+    </resultMap>
+    <resultMap id="DmDoanhNghiepVO" type="DmDoanhNghiepVO">
+        <result property="idDMDN" column="iddmdn"/>
+        <result property="ten" column="ten"/>
+        <result property="diaChi" column="diachi"/>
+        <result property="nguoiDaiDien" column="nguoidaidien"/>
+        <result property="chucVu" column="chucvu"/>
+        <result property="dienThoai" column="dienthoai"/>
+    </resultMap>
+    <resultMap id="HoSoVO" type="HoSoVO">
+        <result property="idHoSo" column="idhoso"/>
+        <result property="idLoaiHoSo" column="idloaihoso"/>
+        <result property="idDanhSach_HoSo" column="iddanhsach_hoso"/>
+        <result property="idHuyen" column="idhuyen"/>
+        <result property="tenHuyen" column="tenhuyen"/>
+        <result property="tenLoaiHS" column="tenloaihs"/>
+        <result property="soBienNhan" column="sobiennhan"/>
+        <result property="ngayNhan" column="ngaynhan"/>
+        <result property="ngayHenTra" column="ngayhentra"/>
+        <result property="tenDoanhNghiep" column="tendoanhnghiep"/>
+        <result property="diaChi_DN" column="diachi_dn"/>
+        <result property="idHoSo_Old" column="idhoso_old"/>
+        <result property="user_Nhan" column="user_nhan"/>
+        <result property="idHoSo_Buoc1" column="idhoso_buoc1"/>
+        <result property="idDMDN" column="iddmdn"/>
+        <result property="idCongTrinh" column="idcongtrinh"/>
+        <result property="trangThai" column="trangthai"/>
+        <result property="tenTrangThai" column="tentrangthai"/>
+        <result property="daiDien" column="daidien"/>
+        <result property="chucVu" column="chucvu"/>
+        <result property="dienThoai" column="dienthoai"/>
+        <result property="thoiHan" column="thoihan"/>
+        <result property="thoiHanTY" column="thoihanty"/>
+        <result property="recordTotals" column="totalrecords"/>
+    </resultMap>
+    <resultMap id="DanhSachHoSoVO" type="DanhSachHoSoVO">
+        <result property="idDanhSach_HoSo" column="iddanhsach_hoso"/>
+        <result property="idHoSo" column="idhoso"/>
+        <result property="idLoaiHoSo" column="idloaihoso"/>
+        <result property="trangThai" column="trangthai"/>
+        <result property="lyDo" column="lydo"/>
+        <result property="nhan_FullName" column="nhan_fullname"/>
+        <result property="ngayChuyenDen" column="ngaychuyenden"/>
+        <result property="ngayHoanThanh_HoSo" column="ngayhoanthanh_hoso"/>
+        <result property="nhan_User" column="nhan_user"/>
+    </resultMap>
+    <resultMap id="DmTrangThaiVO" type="DmTrangThaiVO">
+        <result property="idTrangThai" column="idtrangthai"/>
+        <result property="tenTrangThai" column="tenTrangThai"/>
+    </resultMap>
+    <resultMap id="DoanhNghiepVO" type="DoanhNghiepVO">
+        <result property="idDoanhNghiep" column="iddoanhnghiep"/>
+        <result property="tenDoanhNghiep" column="tendoanhnghiep"/>
+        <result property="diaChi_DoanhNghiep" column="diachi_doanhnghiep"/>
+        <result property="daiDien" column="daidien"/>
+        <result property="chucVu" column="chucvu"/>
+        <result property="dienThoai" column="dienthoai"/>
+        <result property="idCongTrinh" column="idcongtrinh"/>
+        <result property="idHoSo" column="idhoso"/>
+        <result property="soBienNhan" column="sobiennhan"/>
+        <result property="tenCongTrinh" column="tencongtrinh"/>
+        <result property="idDMDN" column="iddmdn"/>
+    </resultMap>
+    <select id="selectListLoaiHS" resultMap="DmLoaiHoSoVO">
+        select * from dm_loaihoso
+    </select>
+    <select id="selectListDoanhNghiep" resultMap="DmDoanhNghiepVO">
+        select
+               iddmdn,
+               isnull(ten,'') as ten,
+               isnull(diachi,'') as diachi,
+               isnull(nguoidaidien,'') as nguoidaidien,
+               isnull(chucvu,'') as chucvu,
+               isnull(dienthoai,'') as dienthoai
+        from dmdoanhnghiep
+        <where>
+            <if test="tenDoanhNghiep != ''">
+                dbo.removecharvn(lower(ten)) LIKE dbo.removecharvn(lower(N'%${tenDoanhNghiep}%'))
+            </if>
+        </where>
+        order by iddmdn desc
+    </select>
+    <insert id="insertDoanhNhiep" useGeneratedKeys="true" keyProperty="idDMDN" keyColumn="iddmdn">
+        insert into dmdoanhnghiep
+            (ten, diachi, nguoidaidien, chucvu, dienthoai)
+            VALUES (nullif(#{ten},''), nullif(#{diaChi},''), nullif(#{nguoiDaiDien},''), nullif(#{chucVu},''), nullif(#{dienThoai},''))
+    </insert>
+    <update id="updateDoanhNghiep">
+        update dmdoanhnghiep
+            set
+            ten = nullif(#{ten},''),
+            diachi = nullif(#{diaChi},''),
+            nguoidaidien = nullif(#{nguoiDaiDien},''),
+            chucvu = nullif(#{chucVu},''),
+            dienthoai = nullif(#{dienThoai},'')
+        WHERE iddmdn = #{idDMDN}
+    </update>
+    <delete id="deleteSDN">
+        delete dmdoanhnghiep WHERE iddmdn = #{idDMDN}
+    </delete>
+    <select id="selectReceptionNumber" resultType="java.lang.Boolean">
+        SELECT
+            (
+                CASE
+                    WHEN EXISTS (
+                        SELECT sobiennhan FROM hoso WHERE UPPER(sobiennhan) = UPPER(#{soBienNhan})
+                        )
+                        THEN 0
+                    ELSE 1
+                END
+            )
+    </select>
+    <insert id="insertHoSo" useGeneratedKeys="true" keyProperty="idHoSo" keyColumn="idhoso">
+        insert into hoso
+            (idloaihoso, sobiennhan, ngaynhan, ngayhentra, tendoanhnghiep, diachi_dn, iddmdn, idcongtrinh)
+            VALUES (
+                    #{idLoaiHoSo},
+                    #{soBienNhan},
+                    nullif(convert(date,#{ngayNhan},103),''),
+                    nullif(convert(date,#{ngayHenTra},103),''),
+                    nullif(#{tenDoanhNghiep},''),
+                    nullif(#{diaChi_DN},''),
+                    nullif(convert(INT,#{idDMDN}),''),
+                    #{idCongTrinh}
+                    )
+    </insert>
+    <insert id="insertDanhSachHoSo">
+        insert into danhsach_hoso
+            (idhoso, idloaihoso, trangthai, nhan_fullname, <!--ngaychuyenden,--> nhan_user)
+            VALUES
+                (
+                 #{idHoSo},
+                 #{idLoaiHoSo},
+                 1,
+                 #{user_FullName},
+                 <!--nullif(convert(date,#{ngayChuyenDen},103),''),-->
+                 #{user_Nhan}
+                )
+    </insert>
+    <select id="selectListTrangThai" resultMap="DmTrangThaiVO">
+        select * from dmtrangthai
+    </select>
+    <select id="selectListHSBuoc1" resultMap="DoanhNghiepVO">
+        WITH TempResult AS (
+            select distinct
+            ct.idcongtrinh,
+            hs.sobiennhan,
+            hs.iddmdn,
+            isnull(dn.tendoanhnghiep,'') as tendoanhnghiep,
+            isnull(dn.diachi_doanhnghiep,'') as diachi_doanhnghiep,
+            isnull(ct.tencongtrinh,'') as tencongtrinh
+            from doanhnghiep dn
+            JOIN hoso hs ON hs.idhoso = dn.idhoso
+            JOIN congtrinh ct ON ct.idcongtrinh = hs.idcongtrinh
+            JOIN danhsach_hoso dshs ON dshs.idhoso = hs.idhoso
+            JOIN dmdoanhnghiep dmdn ON dmdn.iddmdn = hs.iddmdn
+            JOIN vanban_chapthuan vb_ct ON vb_ct.idcongtrinh = ct.idcongtrinh
+            <where>
+                dshs.trangthai NOT IN (3,6,7) and dshs.iddanhsach_hoso IN (select max(iddanhsach_hoso) from danhsach_hoso group by idhoso)
+                AND vb_ct.vb_so is not null
+                <if test="optional.idLoaiHoSo == 4">
+                    and hs.idloaihoso = 3
+                </if>
+                <if test="optional.idLoaiHoSo == 6">
+                    and hs.idloaihoso = 5
+                </if>
+                <if test="optional.idLoaiHoSo == 9">
+                    and hs.idloaihoso = 8
+                </if>
+                <if test="optional.tenCongTrinh != ''">
+                    and dbo.removecharvn(lower(ct.tencongtrinh)) LIKE dbo.removecharvn(lower(N'%${optional.tenCongTrinh}%'))
+                </if>
+                <if test="optional.tenDoanhNghiep != ''">
+                    and dbo.removecharvn(lower(dn.tendoanhnghiep)) LIKE dbo.removecharvn(lower(N'%${optional.tenDoanhNghiep}%'))
+                </if>
+            </where>
+        ),
+             TempCount AS (
+                 SELECT COUNT (*) AS totalrecords
+                 FROM TempResult
+             ) SELECT *
+        FROM
+            TempResult, TempCount
+        ORDER BY idcongtrinh DESC OFFSET ${start} ROWS
+        FETCH NEXT ${length} ROWS ONLY;
+    </select>
+    <select id="selectListHoSo" resultMap="HoSoVO">
+        WITH TempResult AS (
+            select
+                hoso.idhoso,
+                hoso.idloaihoso,
+                iddanhsach_hoso,
+                sobiennhan,
+                dm_loaihoso.tenloaihoso as tenloaihs,
+                isnull(tendoanhnghiep,'') as tendoanhnghiep,
+                isnull(diachi_dn,'') as diachi_dn,
+                isnull(convert(nvarchar,ngaynhan,103),'') as ngaynhan,
+                isnull(convert(nvarchar,ngayhentra,103),'') as ngayhentra,
+                danhsach_hoso.trangthai as trangthai,
+                dmtrangthai.tentrangthai
+            from hoso
+            LEFT JOIN dm_loaihoso ON dm_loaihoso.id_loaihoso = hoso.idloaihoso
+            LEFT JOIN danhsach_hoso ON danhsach_hoso.idhoso = hoso.idhoso AND iddanhsach_hoso IN (select max(iddanhsach_hoso) from danhsach_hoso group by idhoso)
+            LEFT JOIN dmtrangthai ON dmtrangthai.idtrangthai = danhsach_hoso.trangthai
+            <where>
+                danhsach_hoso.nhan_user = #{optional.idUser}
+                <if test="optional.loaiHoSo != -1 and optional.loaiHoSo != null">
+                    and hoso.idloaihoso = #{optional.loaiHoSo}
+                </if>
+                <if test="optional.trangThai != -1 and optional.trangThai != null">
+                    and danhsach_hoso.trangthai = #{optional.trangThai}
+                </if>
+            </where>
+        ),
+             TempCount AS (
+                 SELECT COUNT (*) AS totalrecords
+                 FROM TempResult
+             ) SELECT *
+        FROM
+            TempResult, TempCount
+        ORDER BY idhoso DESC OFFSET ${start} ROWS
+        FETCH NEXT ${length} ROWS ONLY;
+    </select>
+    <insert id="insertDSHoSoChuyen">
+        insert into danhsach_hoso
+            (idhoso, idloaihoso, trangthai, nhan_fullname, ngaychuyenden, ngayhoanthanh_hoso, nhan_user)
+            VALUES
+                (
+                 #{idHoSo},
+                 #{idLoaiHoSo},
+                 #{trangThai},
+                 #{nhan_FullName},
+                 nullif(convert(date,#{ngayChuyenDen},103),''),
+                 nullif(convert(date,#{ngayHoanThanh_HoSo},103),''),
+                 #{nhan_User}
+                )
+    </insert>
+    <update id="updateDSHoSoParent">
+        update danhsach_hoso set trangthai = 2 where iddanhsach_hoso = #{idDanhSach_HoSo}
+    </update>
+</mapper>

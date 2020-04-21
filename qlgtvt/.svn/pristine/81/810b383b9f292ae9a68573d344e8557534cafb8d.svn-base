@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2018.
+  ~ Author : Phat Thinh
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="vn.worklife.user.mockup.service.BaoCaoSuCoService">
+    <resultMap id="BaoCaoSuCoVO" type="BaoCaoSuCoVO">
+        <result property="idBaoCao" column="idbaocao"/>
+        <result property="idGroup" column="idgroup"/>
+        <result property="tuan" column="tuan"/>
+        <result property="nam" column="nam"/>
+    </resultMap>
+
+    <select id="selectIdBaoCaoSuCo" resultType="java.lang.Integer">
+        SELECT idbaocao
+        FROM baocao_suco
+        WHERE tuan=#{tuan} and nam = #{nam} and idgroup=#{idGroup};
+    </select>
+
+    <insert id="insertBaoCaoSuCo" parameterType="BaoCaoSuCoVO" useGeneratedKeys="true" keyProperty="idBaoCao">
+            INSERT INTO baocao_suco (idgroup,tuan,nam)
+            VALUES (#{idGroup},#{tuan},#{nam});
+    </insert>
+
+    <update id="updateBaoCaoSuCo">
+        UPDATE "baocao_suco"
+        SET
+            idgroup               = #{idGroup},
+            tuan            = #{tuan},
+            nam               = #{nam}
+        WHERE idbaocao = #{idBaoCao}
+    </update>
+
+    <delete id="deleteBaoCaoSuCoById">
+        DELETE
+        FROM "baocao_suco"
+        WHERE idbaocao = #{idBaoCao}
+    </delete>
+</mapper>

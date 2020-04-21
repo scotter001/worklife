@@ -1,0 +1,532 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="vn.worklife.qlctgt.user.xulycpctdaunoiduong.sevice.XLCPCTDauNoiDuongService">
+    <resultMap id="CongTrinhVO" type="CongTrinhVO">
+        <result property="idCongTrinh" column="idcongtrinh"/>
+        <result property="idHoSo" column="idhoso"/>
+        <result property="user_Nhan" column="user_nhan"/>
+        <result property="tenCongTrinh" column="tencongtrinh"/>
+        <result property="tenHangMuc" column="tenhangmuc"/>
+        <result property="diaDiem_DiaChi" column="diadiem_diachi"/>
+        <result property="diaDiem_Huyen" column="diadiem_huyen"/>
+        <result property="diaDiem_Xa" column="diadiem_xa"/>
+        <result property="idDoanhNghiep" column="iddoanhnghiep"/>
+        <result property="noiDung_CapPhep" column="noidung_capphep"/>
+        <result property="luuy" column="luuy"/>
+        <result property="phamVi_CapPhep" column="phamvi_capphep"/>
+        <result property="dieuChinh" column="dieuchinh"/>
+        <result property="idParent" column="idparent"/>
+        <result property="tenDuAn" column="tenduan"/>
+        <result property="qd_ctdt" column="qd_ctdt"/>
+        <result property="gpxd" column="gpxd"/>
+        <result property="donViTK" column="donvitk"/>
+        <result property="bbkt" column="bbkt"/>
+        <result property="tenDoanhNghiep" column="tendoanhnghiep"/>
+        <result property="diaChi_DN" column="diachi_dn"/>
+        <result property="daiDien" column="daidien"/>
+        <result property="chucVu" column="chucvu"/>
+        <result property="dienThoai" column="dienthoai"/>
+        <result property="idHuyen" column="idhuyen"/>
+        <result property="idXa" column="idxa"/>
+        <result property="idgp" column="idgp"/>
+        <result property="thoiHan" column="thoihan"/>
+        <result property="tuNgay" column="tungay"/>
+        <result property="denNgay" column="denngay"/>
+        <result property="ghiChu_ThoiHan" column="ghichu_thoihan"/>
+        <result property="soBienNhan" column="sobiennhan"/>
+        <result property="ngayNhan" column="ngaynhan"/>
+        <result property="ngayHenTra" column="ngayhentra"/>
+        <result property="tenLoaiHS" column="tenloaihs"/>
+        <result property="donXinCP" column="donXinCP"/>
+        <result property="gp_So" column="gp_so"/>
+        <result property="idct_Huyen" column="idct_huyen"/>
+        <result property="diaChi_Huyen" column="diachi_huyen"/>
+        <result property="diaChi_Xa" column="diachi_xa"/>
+        <result property="noiDungCauMau" column="noidungcaumau"/>
+        <result property="tenVietTat" column="tenviettat"/>
+        <result property="noiDungCauMauGP" column="noidungcaumaugp"/>
+        <result property="tenLoai" column="tenloai"/>
+        <result property="idLoaiCongTrinh" column="idLoaiCongTrinh"/>
+        <result property="id" column="id"/>
+        <result property="ten" column="ten"/>
+        <result property="idLoaiHS" column="idLoaiHS"/>
+        <result property="listIdHuyen" column="listidhuyen"/>
+        <result property="nhieuHuyen" column="nhieuhuyen"/>
+    </resultMap>
+    <resultMap id="TaiLieuCongTrinhVO" type="TaiLieuCongTrinhVO">
+        <result property="idTL" column="idtl"/>
+        <result property="idCongTrinh" column="idcongtrinh"/>
+        <result property="tenTaiLieu" column="tentailieu"/>
+        <result property="tenFile" column="tenfile"/>
+        <result property="doDai" column="dodai"/>
+        <result property="noiDung" column="noidung"/>
+    </resultMap>
+    <resultMap id="DiaChiCTHuyenVO" type="DiaChiCTHuyenVO">
+        <result property="idCT_Huyen" column="idcongtrinh_huyen"/>
+        <result property="idCongTrinh" column="idcongtrinh"/>
+        <result property="idHuyen" column="idhuyen"/>
+        <result property="idXa" column="idxa"/>
+    </resultMap>
+    <resultMap id="VanBanChapThuanVO" type="VanBanChapThuanVO">
+        <result property="idVB" column="idvb"/>
+        <result property="vb_So" column="vb_so"/>
+        <result property="vb_Ngay" column="vb_ngay"/>
+        <result property="noiDung" column="noidung"/>
+        <result property="noiNhan" column="noinhan"/>
+        <result property="nguoiKy" column="nguoiky"/>
+        <result property="chucVu" column="chucvu"/>
+        <result property="uyQuyen" column="uyquyen"/>
+        <result property="idCongTrinh" column="idcongtrinh"/>
+        <result property="veViec" column="veviec"/>
+    </resultMap>
+    <resultMap id="ThietLapNguoiKyVO" type="ThietLapNguoiKyVO">
+        <result property="id" column="id"/>
+        <result property="nguoiKy" column="nguoiky"/>
+        <result property="chucVu" column="chucvu"/>
+        <result property="uyQuyen" column="uyquyen"/>
+        <result property="loaiGiay" column="loaigiay"/>
+        <result property="tenGiay" column="tengiay"/>
+        <result property="macDinh" column="macdinh"/>
+    </resultMap>
+    <resultMap id="GiayPhepChapThuanVO" type="GiayPhepChapThuanVO">
+        <result property="idgp" column="idgp"/>
+        <result property="gp_So" column="gp_so"/>
+        <result property="gp_Ngay" column="gp_ngay"/>
+        <result property="canCu" column="cancu"/>
+        <result property="noiDungGP" column="noidunggp"/>
+        <result property="noiNhanGP" column="noinhangp"/>
+        <result property="nguoiKyGP" column="nguoikygp"/>
+        <result property="chucVuGP" column="chucvugp"/>
+        <result property="uyQuyenGP" column="uyquyengp"/>
+        <result property="tieuDe" column="tieude"/>
+        <result property="idHoSo" column="idhoso"/>
+        <result property="thoiHan" column="thoihan"/>
+        <result property="idCongTrinh" column="idCongTrinh"/>
+    </resultMap>
+    <resultMap id="DmCanCuPhapLyVO" type="DmCanCuPhapLyVO">
+        <result property="id" column="id"/>
+        <result property="noiDung" column="noidung"/>
+        <result property="idLoaiHS" column="idloaihs"/>
+        <result property="suDung" column="sudung"/>
+        <result property="loaiGiay" column="loaigiay"/>
+    </resultMap>
+    <update id="updateTaiLieuCT">
+        update tailieu_congtrinh
+        set
+        tenfile = '',
+        dodai = 0,
+        noidung = 0
+        where idtl = #{idTL}
+    </update>
+    <select id="selectDataHoSo" resultMap="vn.worklife.qlctgt.user.danhsachhoso.service.DanhSachHoSoService.HoSoVO">
+        select
+        idloaihoso,
+        sobiennhan,
+        convert(nvarchar,ngaynhan,103) as ngaynhan,
+        convert(nvarchar,ngayhentra,103) as ngayhentra,
+        dm_loaihoso.tenloaihoso as tenloaihs,
+        isnull(tendoanhnghiep,'') as tendoanhnghiep,
+        isnull(diachi_dn,'') as diachi_dn,
+        isnull(nguoidaidien,'') as daidien,
+        isnull(chucvu,'') as chucvu,
+        isnull(dienthoai,'') as dienthoai,
+        dmthoihan.thoihan as thoihan,
+        dmloaict.thoihan as thoihanty
+        from hoso
+        LEFT JOIN dmdoanhnghiep ON dmdoanhnghiep.iddmdn = hoso.iddmdn
+        LEFT JOIN dmthoihan ON dmthoihan.idloaihs = hoso.idloaihoso
+        LEFT JOIN dm_loaihoso ON dm_loaihoso.id_loaihoso = hoso.idloaihoso
+        LEFT JOIN congtrinh ON congtrinh.idcongtrinh = hoso.idcongtrinh
+        LEFT JOIN dmloaict ON dmloaict.id = congtrinh.idloaicongtrinh
+        where idhoso = #{idHoSo}
+    </select>
+    <select id="selectDataCongTrinh" resultMap="CongTrinhVO">
+        select top 1
+        sobiennhan,
+        convert(nvarchar,ngaynhan,103) as ngaynhan,
+        convert(nvarchar,ngayhentra,103) as ngayhentra,
+        dm_loaihoso.tenloaihoso as tenloaihs,
+        congtrinh.idcongtrinh,
+        doanhnghiep.iddoanhnghiep,
+        idgp,
+        idct_huyen,
+        isnull(doanhnghiep.tendoanhnghiep,'') as tendoanhnghiep,
+        isnull(diachi_doanhnghiep,'') as diachi_dn,
+        isnull(daidien,'') as daidien,
+        isnull(doanhnghiep.chucvu,'') as chucvu,
+        isnull(dienthoai,'') as dienthoai,
+        isnull(tencongtrinh,'') as tencongtrinh,
+        isnull(tenhangmuc,'') as tenhangmuc,
+        isnull(donvitk,'') as donvitk,
+        isnull(diadiem_diachi,'') as diadiem_diachi,
+        diachict_huyen.idhuyen,
+        idxa,
+        isnull(donxincp,'') as donxincp,
+        isnull(tenduan,'') as tenduan,
+        isnull(qd_ctdt,'') as qd_ctdt,
+        isnull(gpxd,'') as gpxd,
+        isnull(convert(nvarchar,bbkt,103),'') as bbkt,
+        isnull(noidung_capphep,'') as noidung_capphep,
+        isnull(phamvi_capphep,'') as phamvi_capphep,
+        thoihan,
+        isnull(convert(nvarchar,tungay,103),'') as tungay,
+        isnull(convert(nvarchar,denngay,103),'') as denngay,
+        isnull(ghichu_thoihan,'') as ghichu_thoihan,
+        isnull(gp_so,'') as gp_so,
+        isnull(dmhuyen.loai,'') as 'loai',
+        idloaicongtrinh,
+        isnull(tenloai,'') as tenloai
+        from hoso
+        JOIN congtrinh ON congtrinh.idcongtrinh = hoso.idcongtrinh
+        LEFT JOIN doanhnghiep ON doanhnghiep.idcongtrinh = hoso.idcongtrinh
+        LEFT JOIN dm_loaihoso ON dm_loaihoso.id_loaihoso = hoso.idloaihoso
+        LEFT JOIN giayphep ON giayphep.idhoso = hoso.idhoso
+        LEFT JOIN diachict_huyen ON diachict_huyen.idcongtrinh = congtrinh.idcongtrinh
+        LEFT JOIN dmhuyen on diachict_huyen.idhuyen = dmhuyen.idhuyen
+        WHERE hoso.idhoso = #{idHoSo}
+    </select>
+    <select id="selectThoiHan" resultMap="GiayPhepChapThuanVO">
+        select thoihan from giayphep where idhoso = #{idHoSo}
+    </select>
+    <insert id="insertDoanhNghiep" useGeneratedKeys="true" keyProperty="idDoanhNghiep" keyColumn="iđoanhnghiep">
+        insert into doanhnghiep
+        (tendoanhnghiep, diachi_doanhnghiep, daidien, chucvu, dienthoai, idcongtrinh, idhoso)
+        VALUES
+        (
+        nullif(#{tenDoanhNghiep},''),
+        nullif(#{diaChi_DN},''),
+        nullif(#{daiDien},''),
+        nullif(#{chucVu},''),
+        nullif(#{dienThoai},''),
+        #{idCongTrinh},
+        #{idHoSo}
+        )
+    </insert>
+    <update id="updateDoanhNghiep">
+        update doanhnghiep
+        set
+        tendoanhnghiep = nullif(#{tenDoanhNghiep},''),
+        diachi_doanhnghiep = nullif(#{diaChi_DN},''),
+        daidien = nullif(#{daiDien},''),
+        chucvu = nullif(#{chucVu},''),
+        dienthoai = nullif(#{dienThoai},'')
+        where iddoanhnghiep = #{idDoanhNghiep}
+    </update>
+    <insert id="insertCongTrinh" useGeneratedKeys="true" keyProperty="idCongTrinh" keyColumn="idcongtrinh">
+        insert into congtrinh
+        (
+        tencongtrinh,
+        tenhangmuc,
+        diadiem_diachi,
+        noidung_capphep,
+        phamvi_capphep,
+        tenduan,
+        qd_ctdt,
+        gpxd,
+        donvitk,
+        bbkt,
+        idloaicongtrinh,
+        tenloai
+        )
+        VALUES (
+        nullif(#{tenCongTrinh}, ''),
+        nullif(#{tenHangMuc}, ''),
+        nullif(#{diaDiem_DiaChi}, ''),
+        nullif(#{noiDung_CapPhep}, ''),
+        nullif(#{phamVi_CapPhep}, ''),
+        nullif(#{tenDuAn}, ''),
+        nullif(#{qd_ctdt}, ''),
+        nullif(#{gpxd}, ''),
+        nullif(#{donViTK}, ''),
+        nullif(convert(date, #{bbkt}, 103), ''),
+        #{idLoaiCongTrinh},
+        nullif(#{tenLoai},'')
+        )
+    </insert>
+    <update id="updateIdParentCT">
+        update congtrinh set idparent = #{idCongTrinh} where idcongtrinh = #{idCongTrinh}
+    </update>
+    <update id="updateCongTrinh">
+        update congtrinh
+        set
+        tencongtrinh = nullif(#{tenCongTrinh}, ''),
+        tenhangmuc = nullif(#{tenHangMuc}, ''),
+        diadiem_diachi = nullif(#{diaDiem_DiaChi}, ''),
+        noidung_capphep = nullif(#{noiDung_CapPhep}, ''),
+        phamvi_capphep = nullif(#{phamVi_CapPhep}, ''),
+        tenduan = nullif(#{tenDuAn}, ''),
+        qd_ctdt = nullif(#{qd_ctdt}, ''),
+        gpxd = nullif(#{gpxd}, ''),
+        donvitk = nullif(#{donViTK}, ''),
+        bbkt = nullif(convert(date, #{bbkt}, 103), ''),
+        idloaicongtrinh = #{idLoaiCongTrinh},
+        tenloai = nullif(#{tenLoai},'')
+        where idcongtrinh = #{idCongTrinh}
+    </update>
+    <insert id="insertGiayPhep" useGeneratedKeys="true" keyProperty="idgp" keyColumn="idgp">
+        insert into giayphep
+        (thoihan, tungay, denngay, idhoso, ghichu_thoihan, idcongtrinh)
+        values
+        (
+        nullif(convert(INT,#{thoiHan}),''),
+        nullif(convert(date,#{tuNgay},103),''),
+        nullif(convert(date,#{denNgay},103),''),
+        #{idHoSo},
+        nullif(#{ghiChu_ThoiHan},''),
+        #{idCongTrinh}
+        )
+    </insert>
+    <update id="updateIdParentGP">
+        update giayphep set idparent = #{idgp} where idgp = #{idgp}
+    </update>
+    <update id="updateGiayPhep">
+        update giayphep
+        set
+        thoihan = nullif(convert(INT,#{thoiHan}),''),
+        tungay = nullif(convert(date,#{tuNgay},103),''),
+        denngay = nullif(convert(date,#{denNgay},103),''),
+        ghichu_thoihan = nullif(#{ghiChu_ThoiHan},'')
+        where idgp = #{idgp}
+    </update>
+    <insert id="insertDiaChiHuyen" useGeneratedKeys="true" keyProperty="idct_Huyen" keyColumn="idct_huyen">
+        insert into diachict_huyen
+        (idcongtrinh, idhuyen, idxa)
+        VALUES (#{idCongTrinh}, #{idHuyen}, #{idXa})
+    </insert>
+    <update id="updateDiaChiHuyen">
+        update diachict_huyen set idhuyen = #{idHuyen}, idxa = #{idXa} where idct_huyen = #{idct_Huyen}
+    </update>
+    <update id="updateHoSo">
+        update hoso
+        set
+        user_nhan = #{user_Nhan},
+        idcongtrinh = #{idCongTrinh},
+        donxincp = nullif(#{donXinCP},'')
+        where idhoso = #{idHoSo}
+    </update>
+    <insert id="insertTaiLieu" useGeneratedKeys="true" keyProperty="idTL" keyColumn="idtl">
+        insert into tailieu_congtrinh (tentailieu, idcongtrinh)
+        values (nullif(#{tenTaiLieu},''), #{idCongTrinh})
+    </insert>
+    <update id="updateTaiLieu">
+        update tailieu_congtrinh
+        set
+        tentailieu = nullif(#{tenTaiLieu},'')
+        where idtl = #{idTL}
+    </update>
+    <select id="selectListTaiLieu" resultMap="TaiLieuCongTrinhVO">
+        select idtl, isnull(tentailieu,'') as tentailieu, tenfile, dodai, noidung, idcongtrinh from tailieu_congtrinh where idcongtrinh = #{idCongTrinh}
+    </select>
+    <select id="selectListTaiLieuByid" resultMap="TaiLieuCongTrinhVO">
+        select * from tailieu_congtrinh WHERE idtl =#{idTL}
+    </select>
+    <delete id="deleteTaiLieuCT">
+        delete tailieu_congtrinh where idtl = #{idTL}
+    </delete>
+    <select id="selectThongTinCT" resultMap="CongTrinhVO">
+        select top 1
+        isnull(tenduan,'') as tenduan,
+        isnull(diadiem_diachi,'') as diadiem_diachi,
+        case when idxa is null then '' else
+        case when dmxa.loai = 1 then N'xã '
+        when dmxa.loai = 2 then N'phường '
+        when dmxa.loai = 3 then N'TT ' end +
+        dmxa.tenxa end as diachi_xa,
+        case when dcct.idhuyen is null then  '' else
+        case when dmhuyen.loai = 1 then N'TP '
+        when dmhuyen.loai = 2 then N'Huyện '
+        when dmhuyen.loai = 3 then N'TX ' end +
+        dmhuyen.tenhuyen end as diachi_huyen,
+        convert(nvarchar,ngaynhan,103) as ngaynhan,
+        isnull(donxincp,'') as donxincp,
+        isnull(doanhnghiep.tendoanhnghiep,'') as tendoanhnghiep,
+        isnull(donvitk,'') as donvitk,
+        isnull(gpxd,'') as gpxd,
+        isnull(convert(nvarchar,bbkt,103),'') as bbkt,
+        isnull(qd_ctdt,'') as qd_ctdt,
+        isnull(tenduan,'') as tenduan,
+        isnull(cmvb.noidung,'') as noidungcaumau,
+        isnull(tenviettat,'') as tenviettat,
+        isnull(tencongtrinh,'') as tencongtrinh,
+        isnull(tenhangmuc,'') as tenhangmuc,
+        isnull(noidung_capphep,'') as noidung_capphep,
+        isnull(donxincp,'') as donxincp,
+        isnull(diachi_doanhnghiep,'') as diachi_doanhnghiep,
+        isnull(daidien,'') as daidien,
+        isnull(doanhnghiep.chucvu,'') as chucvu,
+        isnull(dienthoai,'') as dienthoai,
+        isnull(noidung_capphep,'') as noidung_capphep,
+        isnull(thoihan,'') as thoihan,
+        isnull(phamvi_capphep,'') as phamvi_capphep,
+        isnull(convert(nvarchar,tungay,103),'') as tungay,
+        isnull(convert(nvarchar,denngay,103),'') as denngay,
+        isnull(ghichu_thoihan,'') as ghichu_thoihan,
+        isnull(cmgp.noidung,'') as noidungcaumaugp,
+        idgp,
+        isnull(diachi_doanhnghiep,'') as diachi_dn,
+        isnull(tenloai,'') as tenloai
+        from congtrinh
+        LEFT JOIN diachict_huyen dcct ON dcct.idcongtrinh = congtrinh.idcongtrinh
+        LEFT JOIN dmhuyen ON dmhuyen.idhuyen = dcct.idhuyen
+        LEFT JOIN dmxa ON dmxa.iddmxa = dcct.idxa
+        LEFT JOIN hoso ON hoso.idcongtrinh = congtrinh.idcongtrinh
+        LEFT JOIN doanhnghiep ON doanhnghiep.idcongtrinh = congtrinh.idcongtrinh
+        LEFT JOIN dmcaumau cmvb ON cmvb.idloaihoso = hoso.idloaihoso AND loaigiay = 2 AND loaicau = 2
+        LEFT JOIN dmcaumau cmgp ON cmgp.idloaihoso = hoso.idloaihoso AND cmgp.loaigiay = 1 AND cmgp.loaicau = 1
+        LEFT JOIN users ON users.id_user = hoso.user_nhan
+        LEFT JOIN giayphep ON giayphep.idcongtrinh = congtrinh.idcongtrinh
+        WHERE congtrinh.idcongtrinh = #{idCongTrinh} and hoso.idloaihoso = #{idLoaiHoSo}
+    </select>
+    <select id="selectVanBanChapThuan" resultMap="VanBanChapThuanVO">
+        select
+        idvb,
+        isnull(vb_so,'') as vb_so,
+        isnull(convert(nvarchar,vb_ngay,103),'') as vb_ngay,
+        isnull(noidung,'') as noidung,
+        isnull(noinhan,'') as noinhan,
+        isnull(nguoiky,'') as nguoiky,
+        isnull(chucvu,'') as chucvu,
+        isnull(uyquyen,'') as uyquyen,
+        idcongtrinh,
+        isnull(veviec,'') as veviec
+        from vanban_chapthuan where idcongtrinh = #{idCongTrinh}
+    </select>
+    <select id="selectGiayPhep" resultMap="GiayPhepChapThuanVO">
+        select
+        gp_so,
+        convert(nvarchar,gp_ngay,103) as gp_ngay,
+        cancu,
+        noidung as noidunggp,
+        noinhan as noinhangp,
+        nguoiky as nguoikygp,
+        chucvu as chucvugp,
+        uyquyen as uyquyengp,
+        tieude
+        from giayphep where idcongtrinh = #{idCongTrinh}
+    </select>
+    <select id="selectCanCuPL" resultMap="DmCanCuPhapLyVO">
+        select * from dmcancuphaply where sudung = #{suDung} and loaigiay = #{loaiGiay}
+    </select>
+    <select id="selectListNguoiKy" resultMap="ThietLapNguoiKyVO">
+        select * from thietlap_nguoiky where loaigiay = #{loaiGiay} and macdinh = #{macDinh}
+    </select>
+    <insert id="insertVanBanChapThuan" useGeneratedKeys="true" keyProperty="idVB" keyColumn="idvb">
+        insert into vanban_chapthuan
+        (vb_so, vb_ngay, noidung, noinhan, nguoiky, chucvu, uyquyen, idcongtrinh, veviec)
+        values
+        (
+        nullif(#{vb_So},''),
+        nullif(convert(date,#{vb_Ngay},103),''),
+        nullif(#{noiDung},''),
+        nullif(#{noiNhan},''),
+        nullif(#{nguoiKy},''),
+        nullif(#{chucVu},''),
+        nullif(#{uyQuyen},''),
+        #{idCongTrinh},
+        nullif(#{veViec},'')
+        )
+    </insert>
+    <update id="updateVanBanChapThuan">
+        update vanban_chapthuan
+        set
+        vb_so = nullif(#{vb_So},''),
+        vb_ngay = nullif(convert(date,#{vb_Ngay},103),''),
+        noidung = nullif(#{noiDung},''),
+        noinhan = nullif(#{noiNhan},''),
+        nguoiky = nullif(#{nguoiKy},''),
+        chucvu = nullif(#{chucVu},''),
+        uyquyen = nullif(#{uyQuyen},''),
+        veviec = nullif(#{veViec},'')
+        where idvb = #{idVB}
+    </update>
+    <insert id="insertGiayPhepChapThuan" useGeneratedKeys="true" keyProperty="idgp" keyColumn="idgp">
+        insert into giayphep (gp_so, gp_ngay, cancu, noidung, noinhan, nguoiky, chucvu, uyquyen, idhoso, tieude, idcongtrinh)
+        VALUES
+        (
+        nullif(#{gp_So},''),
+        nullif(convert(date,#{gp_Ngay},103),''),
+        nullif(#{canCu},''),
+        nullif(#{noiDungGP},''),
+        nullif(#{noiNhanGP},''),
+        nullif(#{nguoiKyGP},''),
+        nullif(#{chucVuGP},''),
+        nullif(#{uyQuyenGP},''),
+        #{idHoSo},
+        nullif(#{tieuDe},''),
+        #{idCongTrinh}
+        )
+    </insert>
+    <update id="updateGiayPhepChapThuan">
+        update giayphep
+        set
+            gp_so = nullif(#{gp_So},''),
+            gp_ngay = nullif(convert(date,#{gp_Ngay},103),''),
+            cancu = nullif(#{canCu},''),
+            noidung = nullif(#{noiDungGP},''),
+            noinhan = nullif(#{noiNhanGP},''),
+            nguoiky = nullif(#{nguoiKyGP},''),
+            chucvu = nullif(#{chucVuGP},''),
+            uyquyen = nullif(#{uyQuyenGP},''),
+            tieude = nullif(#{tieuDe},'')
+        where idgp = #{idgp}
+    </update>
+    <select id="selectDmLoaiCT" resultMap="CongTrinhVO">
+        select id,idloaicongtrinh,ten,idloaihs from hoso hs
+            LEFT  JOIN  congtrinh ct on ct.idcongtrinh = hs.idcongtrinh
+            LEFT  JOIN  dmloaict l on l.idloaihs = hs.idloaihoso
+        WHERE  idhoso = #{idHoSo}
+    </select>
+    <update id="updateDmLoaiCT">
+        UPDATE dmloaict
+        SET
+        ten =  nullif(#{ten},'')
+        WHERE id = #{id}
+    </update>
+    <select id="selectNhieuHuyen" resultMap="CongTrinhVO">
+        WITH TempResult AS (
+                SELECT DISTINCT
+                    ct.idcongtrinh as idne,
+                    (SELECT STUFF(
+                            (SELECT DISTINCT ', ' + h.tenhuyen
+                             FROM
+                                 congtrinh ct1
+                                 LEFT JOIN diachict_huyen dc ON ct.idcongtrinh = dc.idcongtrinh
+                                 LEFT JOIN dmhuyen h ON h.idhuyen = dc.idhuyen
+                             WHERE ct1.idcongtrinh = ct.idcongtrinh AND dc.idhuyen IN (SELECT idhuyen
+                                                                                       FROM diachict_huyen
+                                                                                       GROUP BY idhuyen)
+                             FOR XML PATH (''), TYPE).value('/', 'NVARCHAR(MAX)'), 1, 1, ''))
+                        AS nhieuhuyen,
+                    (SELECT STUFF(
+                            (SELECT DISTINCT ',' + convert(NVARCHAR, h.idhuyen)
+                             FROM
+                                 congtrinh ct2
+                                 LEFT JOIN diachict_huyen dc  ON ct.idcongtrinh = dc.idcongtrinh
+                                 LEFT JOIN dmhuyen h ON h.idhuyen = dc.idhuyen
+                             WHERE ct2.idcongtrinh = ct.idcongtrinh AND dc.idhuyen IN (SELECT idhuyen
+                                                                                       FROM diachict_huyen
+                                                                                       GROUP BY idhuyen)
+                             FOR XML PATH (''), TYPE).value('/', 'NVARCHAR(MAX)'), 1, 1, ''))
+                        AS listidhuyen
+                FROM congtrinh ct
+                    LEFT JOIN diachict_huyen dc ON dc.idcongtrinh = ct.idcongtrinh
+                    LEFT JOIN hoso hs ON hs.idcongtrinh = ct.idcongtrinh
+                WHERE idhoso = #{idHoSo} ), TempCount AS (
+                SELECT COUNT(*) AS
+                    totalrecords
+                FROM TempResult
+        ) SELECT *
+          FROM
+              TempResult, TempCount
+          ORDER BY idne DESC
+    </select>
+    <delete id="deleteDiaChiCTHuyen">
+        delete diachict_huyen where idcongtrinh= #{idCongTrinh}
+    </delete>
+    <insert id="insertDiaChiCTHuyen">
+        insert into diachict_huyen (idcongtrinh, idhuyen) VALUES (#{idCongTrinh}, #{idHuyen})
+    </insert>
+    <select id="selectFileTaiLieuCT" resultMap="TaiLieuCongTrinhVO">
+        select tenfile, noidung, dodai from tailieu_congtrinh where idtl = #{idTL}
+    </select>
+</mapper>

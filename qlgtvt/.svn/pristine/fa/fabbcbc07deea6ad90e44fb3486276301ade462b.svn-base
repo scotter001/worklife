@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="vn.worklife.user.mockup.service.BaoTriService">
+
+    <resultMap id="BaoTriVO" type="BaoTriVO">
+        <result property="idBaoTri" column="idbaotri"/>
+        <result property="loaiBaoTri" column="loaibaotri"/>
+        <result property="namBaoTri" column="nam"/>
+        <result property="hinhThuc" column="hinhthuc"/>
+        <result property="idDoiTuong" column="iddoituong"/>
+        <result property="thoiGianBaoTriDuong" column="thoigian"/>
+        <result property="lyTrinhKmBaoTri" column="lytrinhkm"/>
+        <result property="lyTrinhMBaoTri" column="lytrinhm"/>
+        <result property="kinhDoBaoTri" column="kinhdo"/>
+        <result property="viDoBaoTri" column="vido"/>
+        <result property="donViThucHienBaoTri" column="donvithuchien"/>
+        <result property="noiDungBaoTri" column="noidung"/>
+        <result property="recordTotals" column="totalrecords"/>
+        <result property="tenCauBaoTri" column="tencau"/>
+        <result property="idTuyenDuongBaoTri" column="idtuyenduong"/>
+        <result property="tenThietBiBaoTri" column="tenThietBiBaoTri"/>
+        <result property="idCauBaoTri" column="idcau"/>
+        <result property="idBienBaoDTH" column="idbbdth"/>
+    </resultMap>
+
+    <select id="selectShowLoaiBaoTriDuong" resultMap="BaoTriVO">
+        WITH TempResult AS (
+        SELECT
+		bt.idbaotri,
+		bt.loaibaotri,
+		bt.nam,
+		bt.hinhthuc,
+		bt.iddoituong,
+        ISNULL(CONVERT (varchar(10),bt.thoigian,103),'')  as thoigian,
+		bt.lytrinhkm,
+		bt.lytrinhm,
+		bt.kinhdo,
+		bt.vido,
+		bt.donvithuchien,
+		bt.noidung
+        FROM baotri bt
+        WHERE loaibaotri = #{optional.valRadioCheck}
+        AND iddoituong = #{optional.idTuyenDuong}
+        <if test="optional.namBaoTri != 2018">
+            AND nam = #{optional.namBaoTri}
+        </if>
+        ),
+        TempCount AS (
+        SELECT COUNT (*) AS
+        totalrecords
+        FROM TempResult
+        ) SELECT *
+        FROM
+        TempResult, TempCount
+        ORDER
+        BY
+        ${orders[0].column}
+        ${orders[0].dir}
+        OFFSET ${start} ROWS
+        FETCH NEXT
+        ${length} ROWS ONLY;
+    </select>
+
+    <select id="selectShowLoaiBaoTriCau" resultMap="BaoTriVO">
+        WITH TempResult AS (
+        SELECT
+        btcau.idbaotri,
+		btcau.loaibaotri,
+		btcau.nam,
+		btcau.hinhthuc,
+		btcau.iddoituong,
+        ISNULL(CONVERT (varchar(10),btcau.thoigian,103),'')  as thoigian,
+		btcau.lytrinhkm,
+		btcau.lytrinhm,
+		btcau.kinhdo,
+		btcau.vido,
+		btcau.donvithuchien,
+		btcau.noidung,
+        ca.tencau,
+        ca.idcau,
+        ca.idtuyenduong
+        FROM baotri btcau
+		JOIN cau ca ON btcau.iddoituong = ca.idcau
+		WHERE loaibaotri = 2 AND idtuyenduong = #{optional.idTuyenDuong}
+        <if test="optional.namBaoTri != 2018">
+            AND nam = #{optional.namBaoTri}
+        </if>
+        ),
+        TempCount AS (
+        SELECT COUNT (*) AS
+        totalrecords
+        FROM TempResult
+        ) SELECT *
+        FROM
+        TempResult, TempCount
+        ORDER
+        BY
+        ${orders[0].column}
+        ${orders[0].dir}
+        OFFSET ${start} ROWS
+        FETCH NEXT
+        ${length} ROWS ONLY;
+    </select>
+
+    <select id="selectShowLoaiBaoTriThietBi" resultMap="BaoTriVO">
+        WITH TempResult AS (
+        SELECT
+        bttb.idbaotri,
+        bttb.loaibaotri,
+        bttb.nam,
+        bttb.hinhthuc,
+        bttb.iddoituong,
+        ISNULL(CONVERT (varchar(10),bttb.thoigian,103),'')  as thoigian,
+        bttb.lytrinhkm,
+        bttb.lytrinhm,
+        bttb.kinhdo,
+        bttb.vido,
+        bttb.donvithuchien,
+        bttb.noidung,
+        bbdth.ten AS tenThietBiBaoTri,
+        bbdth.idtuyenduong
+        FROM baotri bttb
+        JOIN bienbao_dentinhieu bbdth ON bttb.iddoituong = bbdth.idbbdth
+        WHERE loaibaotri = 3
+        AND idtuyenduong = #{optional.idTuyenDuong}
+        <if test="optional.namBaoTri != 2018">
+            AND nam = #{optional.namBaoTri}
+        </if>
+        ),
+        TempCount AS (
+        SELECT COUNT (*) AS
+        totalrecords
+        FROM TempResult
+        ) SELECT *
+        FROM
+        TempResult, TempCount
+        ORDER
+        BY
+        ${orders[0].column}
+        ${orders[0].dir}
+        OFFSET ${start} ROWS
+        FETCH NEXT
+        ${length} ROWS ONLY;
+    </select>
+
+    <select id="selectShowLoaiBaoTriThietBiById" resultMap="BaoTriVO">
+        SELECT
+        btid.idbaotri,
+        btid.loaibaotri,
+        btid.nam,
+        btid.hinhthuc,
+        btid.iddoituong,
+        ISNULL(CONVERT (varchar(10),btid.thoigian,103),'')  as thoigian,
+        btid.lytrinhkm,
+        btid.lytrinhm,
+        btid.kinhdo,
+        btid.vido,
+        btid.donvithuchien,
+        btid.noidung,
+        bbdth2.ten AS tenThietBiBaoTri,
+        bbdth2.idbbdth,
+        bbdth2.idtuyenduong
+        FROM baotri btid
+        JOIN bienbao_dentinhieu bbdth2 ON btid.iddoituong = bbdth2.idbbdth
+        WHERE loaibaotri = 3
+        AND btid.idbaotri = #{idBaoTri}
+    </select>
+
+    <select id="selectShowLoaiBaoTriCauById" resultMap="BaoTriVO">
+        SELECT
+        bti.idbaotri,
+        bti.loaibaotri,
+        bti.nam,
+        bti.hinhthuc,
+        bti.iddoituong,
+        ISNULL(CONVERT (varchar(10),bti.thoigian,103),'')  as thoigian,
+        bti.lytrinhkm,
+        bti.lytrinhm,
+        bti.kinhdo,
+        bti.vido,
+        bti.donvithuchien,
+        bti.noidung,
+        ca.tencau,
+        ca.idcau,
+        ca.idtuyenduong
+        FROM baotri bti
+        JOIN cau ca ON bti.iddoituong = ca.idcau
+        WHERE loaibaotri = 2
+        AND bti.idbaotri = #{idBaoTri}
+    </select>
+
+    <select id="selectShowLoaiBaoTriDuongById" resultMap="BaoTriVO">
+        SELECT
+        btc.idbaotri,
+		btc.loaibaotri,
+		btc.nam,
+		btc.hinhthuc,
+		btc.iddoituong,
+		ISNULL(CONVERT (varchar(10),btc.thoigian,103),'') as thoigian,
+		btc.lytrinhkm,
+		btc.lytrinhm,
+		btc.kinhdo,
+		btc.vido,
+		btc.donvithuchien,
+		btc.noidung
+        FROM baotri btc
+        WHERE idbaotri = #{idBaoTri}
+    </select>
+
+    <insert id="insertLoaiBaoTriDuong" useGeneratedKeys="true" keyProperty="idBaoTri">
+        INSERT INTO baotri (
+		loaibaotri,
+		nam,
+		hinhthuc,
+		iddoituong,
+		thoigian,
+		lytrinhkm
+		lytrinhm
+		kinhdo,
+		vido,
+		donvithuchien,
+		noidung
+        )
+        VALUES (
+        #{loaiBaoTri},
+        #{namBaoTri},
+        #{hinhThuc},
+        #{idDoiTuong},
+        CONVERT (DATETIME,#{thoiGianBaoTriDuong},103),
+        ISNULL(#{lyTrinhKmBaoTri},''),
+        ISNULL(#{lyTrinhMBaoTri},''),
+        #{kinhDoBaoTri},
+        #{viDoBaoTri},
+        #{donViThucHienBaoTri},
+        #{noiDungBaoTri}
+        )
+    </insert>
+
+    <update id="updateBaoTri" parameterType="BaoTriVO">
+        UPDATE "baotri"
+        SET
+		nam = #{namBaoTri},
+		hinhthuc = #{hinhThuc},
+		thoigian = CONVERT (DATETIME,#{thoiGianBaoTriDuong},103),
+		lytrinhkm = #{lyTrinhKmBaoTri},
+		lytrinhm = #{lyTrinhMBaoTri},
+		kinhdo = #{kinhDoBaoTri},
+		vido = #{viDoBaoTri},
+		donvithuchien = #{donViThucHienBaoTri},
+		noidung =  #{noiDungBaoTri}
+        WHERE idbaotri = #{idBaoTri}
+    </update>
+</mapper>

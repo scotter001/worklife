@@ -1,0 +1,20 @@
+<%--
+  ~ Copyright (c) 2017.
+  ~ Author : Phat Thinh
+  --%>
+<link href="<c:url value='/style/css/others/inspinia/bootstrap.min.css'/>" rel="stylesheet" type="text/css">
+<link href="<c:url value='/style/css/others/inspinia/plugins/jQueryUI/jquery-ui.css'/>" rel="stylesheet">
+<link href="<c:url value='/style/css/others/inspinia/plugins/dataTables/datatables.min.css' />" rel="stylesheet">
+<link href="<c:url value='/style/font-awesome/css/font-awesome.min.css'/>" rel="stylesheet" type="text/css">
+<link href="<c:url value='/style/css/others/inspinia/animate.css'/>" rel="stylesheet" type="text/css">
+<link href="<c:url value='/style/css/worklife/user/nav-menu.css'/>" rel="stylesheet" type="text/css">
+<link href="<c:url value='/style/css/others/inspinia/plugins/iCheck/custom.css' />" rel="stylesheet">
+<link href="<c:url value='/style/css/others/inspinia/plugins/ladda/ladda-themeless.min.css'/>" rel="stylesheet" type="text/css">
+<link href="<c:url value='/style/css/others/inspinia/plugins/select2/select2.min.css' />" rel="stylesheet">
+<link href="<c:url value='/style/css/others/inspinia/plugins/datapicker/datepicker3.css' />" rel="stylesheet">
+<link href="<c:url value='/style/css/others/inspinia/plugins/sweetalert/sweetalert.css'/>" rel="stylesheet" type="text/css">
+<link href="<c:url value='/style/css/others/inspinia/jquery-editable-select.css'/>" rel="stylesheet">
+<link href="<c:url value='/style/css/others/inspinia/style.css'/>" rel="stylesheet">
+<%--<link href="<c:url value='/style/css/worklife/public/new-style.css'/>"     rel="stylesheet">--%>
+<link href="<c:url value='/style/css/worklife/user/basic.css'/>" rel="stylesheet">
+<link href="<c:url value='/style/css/others/inspinia/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css' />" rel="stylesheet">

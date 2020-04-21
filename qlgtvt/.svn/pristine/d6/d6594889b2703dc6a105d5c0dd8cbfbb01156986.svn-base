@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2018.
+  ~ Author : TienSinh
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="vn.worklife.user.statisticeditprice.service.StatisticEditPriceService">
+    
+	<select id="selecteListQuarter" resultType="hashmap">
+		SELECT DISTINCT g.group_name as ten,
+						(SELECT ISNULL(CONVERT(nvarchar,SUM(sctx.kinhphi)),'') FROM danhmuc_sctx  sctx INNER JOIN suco s ON (s.idsuco = sctx.idsuco AND s.idgroup = g.group_id  AND thuocquy = 1)) AS quy1,
+						(SELECT ISNULL(CONVERT(nvarchar,SUM(sctx.kinhphi)),'') FROM danhmuc_sctx  sctx INNER JOIN suco s ON (s.idsuco = sctx.idsuco AND s.idgroup = g.group_id  AND thuocquy = 2)) AS quy2,
+						(SELECT ISNULL(CONVERT(nvarchar,SUM(sctx.kinhphi)),'') FROM danhmuc_sctx  sctx INNER JOIN suco s ON (s.idsuco = sctx.idsuco AND s.idgroup = g.group_id  AND thuocquy = 3)) AS quy3,
+						(SELECT ISNULL(CONVERT(nvarchar,SUM(sctx.kinhphi)),'') FROM danhmuc_sctx  sctx INNER JOIN suco s ON (s.idsuco = sctx.idsuco AND s.idgroup = g.group_id  AND thuocquy = 4)) AS quy4
+		FROM danhmuc_sctx
+		LEFT JOIN suco s ON danhmuc_sctx.idsuco = s.idsuco
+		LEFT JOIN [group] g ON g.group_id = s.idgroup
+		WHERE danhmuc_sctx.nam = #{nam}
+	</select>
+	<select id="selecteListFiveYear" resultType="hashmap" >
+	<!--SELECT ISNULL(ten,'') as ten,
+		 <foreach item="item" index="index" collection="collection" separator=",">
+		        ISNULL(convert(nvarchar,[${item}]),'') as '${index}'
+    </foreach>
+	FROM
+		(SELECT kinhphi,nam,g.group_name as ten
+		FROM danhmuc_sctx
+		LEFT JOIN suco on danhmuc_sctx.idsuco =suco.idsuco
+		LEFT JOIN tuyenduong on suco.idtuyenduong = tuyenduong.idtuyenduong
+		LEFT JOIN [group] g ON g.group_id = suco.idgroup
+		) p
+		PIVOT(
+		sum(kinhphi)
+		FOR nam IN 
+		  	<foreach item="item" index="index" collection="collection"
+     		 open="(" separator="," close=")">
+		        [${item}]
+		  	</foreach>
+		) as pvt-->
+		SELECT DISTINCT g.group_name as ten,
+		(SELECT ISNULL(CONVERT(nvarchar,SUM(sctx.kinhphi)),'') FROM danhmuc_sctx  sctx INNER JOIN suco s ON (s.idsuco = sctx.idsuco AND s.idgroup = g.group_id  AND nam = #{nam} - 4)) AS nam4,
+		(SELECT ISNULL(CONVERT(nvarchar,SUM(sctx.kinhphi)),'') FROM danhmuc_sctx  sctx INNER JOIN suco s ON (s.idsuco = sctx.idsuco AND s.idgroup = g.group_id  AND nam = #{nam} - 3)) AS nam3,
+		(SELECT ISNULL(CONVERT(nvarchar,SUM(sctx.kinhphi)),'') FROM danhmuc_sctx  sctx INNER JOIN suco s ON (s.idsuco = sctx.idsuco AND s.idgroup = g.group_id  AND nam = #{nam} - 2)) AS nam2,
+		(SELECT ISNULL(CONVERT(nvarchar,SUM(sctx.kinhphi)),'') FROM danhmuc_sctx  sctx INNER JOIN suco s ON (s.idsuco = sctx.idsuco AND s.idgroup = g.group_id  AND nam = #{nam} - 1)) AS nam1,
+		(SELECT ISNULL(CONVERT(nvarchar,SUM(sctx.kinhphi)),'') FROM danhmuc_sctx  sctx INNER JOIN suco s ON (s.idsuco = sctx.idsuco AND s.idgroup = g.group_id  AND nam = #{nam})) AS nam0
+		FROM danhmuc_sctx
+		LEFT JOIN suco s ON danhmuc_sctx.idsuco = s.idsuco
+		LEFT JOIN [group] g ON g.group_id = s.idgroup
+		WHERE (#{nam} IN (select nam from danhmuc_sctx GROUP BY nam)) OR (#{nam} - 1 IN (select nam from danhmuc_sctx GROUP BY nam))
+		   	OR (#{nam} - 2 IN (select nam from danhmuc_sctx GROUP BY nam))
+			OR (#{nam} - 3 IN (select nam from danhmuc_sctx GROUP BY nam))
+			OR (#{nam} - 4 IN (select nam from danhmuc_sctx GROUP BY nam))
+	</select>
+</mapper>

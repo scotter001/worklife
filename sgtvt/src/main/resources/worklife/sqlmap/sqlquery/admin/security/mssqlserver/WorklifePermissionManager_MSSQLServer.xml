@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="vn.worklife.manager.security.service.WorklifePermissionService">
+     <resultMap id="WorklifePermissions" type="WorklifePermissionVO">
+        <result property="permissionId" column="permission_id"/>
+        <result property="permissionName" column="permission_name"/>
+        <result property="permissionPattern" column="permission_pattern"/>
+        <result property="permissionDescription" column="permission_description"/>
+        <result property="listPermissionName" column="list_permission_name"/>
+        <result property="listPermissionNo" column="list_permission_no"/>
+        <result property="createAt" column="create_at"/>
+        <result property="updateAt" column="update_at"/>
+    </resultMap>
+
+    <resultMap id="WorklifePermissionsforCreate" type="WorklifePermissionVO">
+        <result property="permissionId" column="permission_id"/>
+        <result property="permissionName" column="permission_name"/>
+        <result property="permissionPattern" column="permission_pattern"/>
+        <result property="permissionDescription" column="permission_description"/>
+        <result property="listPermissionName" column="list_permission_name"/>
+        <result property="listPermissionNo" column="list_permission_no"/>
+        <result property="createAt" column="create_at"/>
+        <result property="updateAt" column="update_at"/>
+        <result property="permissionStatus" column="permission_status"/>
+    </resultMap>
+
+    <resultMap id="WorklifeListPermission" type="WorklifeListPermissionVO">
+        <result property="listPermissionName" column="list_permission_name"/>
+        <result property="listPermissionNo" column="list_permission_no"/>
+    </resultMap>
+    
+    <resultMap id="WorklifePermissionVONo" type="WorklifePermissionVO">
+        <result property="listPermissionNo" column="list_permission_no"/>
+    </resultMap>
+
+    <insert id="insertPermission">
+        <!-- <selectKey keyProperty="permissionId" resultType="int" order="AFTER">
+            SELECT currval('permissions_permission_id_seq');
+        </selectKey> -->
+        <selectKey keyProperty="permissionId" resultType="int" order="AFTER">
+			SELECT MAX(permission_id) FROM permissions        	
+        </selectKey>
+        INSERT INTO permissions (	permission_name,
+						        	permission_pattern,
+						        	permission_description,
+							        list_permission_name,
+							        list_permission_no,
+							        create_at,
+							        update_at
+        						)
+	        VALUES( 				#{permissionName},
+							        #{permissionPattern},
+							        #{permissionDescription},
+							        #{listPermissionName},
+							        #{listPermissionNo},
+							        #{createAt},
+							        #{updateAt}
+						        )
+    </insert>
+    
+    <select id="selectPermissionNo" resultMap="WorklifePermissionVONo">
+    	SELECT DISTINCT list_permission_no
+		FROM			permissions
+    </select>
+
+    <update id="updatePermission" parameterType="WorklifePermissionVO">
+        UPDATE 	permissions
+        SET 	permission_name 			= #{permissionName},
+		        permission_pattern 			= #{permissionPattern},
+		        permission_description 		= #{permissionDescription},
+		        list_permission_name 		= #{listPermissionName},
+		        list_permission_no 			= #{listPermissionNo},
+		        update_at 					= #{updateAt}
+        WHERE 	permission_id 				= #{permissionId}
+    </update>
+
+    <delete id="deleteSinglePermissionByPermissionId" parameterType="WorklifePermissionVO">
+        DELETE
+        FROM 	permissions
+        WHERE 	permission_id = #{permissionId}
+    </delete>
+
+    <select id="selectListPermissionForRegister" parameterType="int" resultMap="WorklifePermissionsforCreate">
+        SELECT 	r.permission_id AS permissionId,
+		        r.permission_id,
+		        r.permission_name,
+		        r.permission_pattern,
+		        r.permission_description,
+		        r.list_permission_name,
+		        r.list_permission_no,
+		        r.create_at,
+		        r.update_at,
+		        (	CASE WHEN ( 
+		        	SELECT Chars = STUFF((
+						SELECT ', ' + permissions.permission_name
+						FROM permissions
+						INNER JOIN permission_group ON permissions.permission_id = permission_group.permission_id
+			        	WHERE permission_group.group_id = #{groupId} AND permission_group.permission_id = r.permission_id
+						FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 2, '')
+		        ) != '' THEN 'Y' ELSE 'N' END) AS permission_status
+        FROM 	permissions AS r
+        LEFT JOIN permission_group ON (permission_group.permission_id = r.permission_id AND permission_group.group_id = #{groupId})
+    </select>
+    
+    <select id="selectMutiPermissionSystem" resultMap="WorklifePermissionsforCreate">
+        SELECT DISTINCT
+        	 	r.permission_id AS permissionId,
+		        r.permission_id,
+		        r.permission_name,
+		        r.permission_pattern,
+		        r.permission_description,
+		        r.list_permission_name,
+		        r.list_permission_no,
+		        r.create_at,
+		        r.update_at,
+		        (	CASE WHEN ( 
+		        	SELECT Chars = STUFF((
+						SELECT ', ' + permissions.permission_name
+						FROM permissions
+						INNER JOIN permission_group ON permissions.permission_id = permission_group.permission_id
+			        	WHERE permission_group.permission_id = r.permission_id
+						FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 2, '')
+		        ) != '' THEN 'Y' ELSE 'N' END) AS permission_status
+        FROM 	permissions AS r
+        LEFT JOIN permission_group ON (permission_group.permission_id = r.permission_id)
+        WHERE is_system = 1
+    </select>
+    
+
+    <select id="selectListPermissionForRole" parameterType="int" resultMap="WorklifePermissionsforCreate">
+        SELECT 	r.permission_id AS permissionId,
+		        r.permission_id,
+		        r.permission_name,
+		        r.permission_pattern,
+		        r.permission_description,
+		        r.list_permission_name,
+		        r.list_permission_no,
+		        r.create_at,
+		        r.update_at,
+		        <if test="roleId != null and roleId > 0">
+		        	(	CASE WHEN ( 
+		        		SELECT Chars = STUFF((
+							SELECT ', ' + permissions.permission_name
+							FROM permissions
+							INNER JOIN role_group ON permissions.permission_id = role_group.permission_id
+				        	WHERE role_group.group_id = #{groupId} AND role_group.role_id = #{roleId} AND role_group.permission_id = r.permission_id
+							FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 2, '')
+			        ) != '' THEN 'Y' ELSE 'N' END) AS permission_status
+		        </if>
+		        <if test="roleId == null or 0 >= roleId">
+		        	'N' AS permission_status
+		        </if>
+        FROM 	permissions AS r
+        INNER JOIN permission_group ON (permission_group.permission_id = r.permission_id AND permission_group.group_id = #{groupId})
+    </select>
+
+    <select id="selectListPermissionGroupName" resultMap="WorklifeListPermission">
+        SELECT 	DISTINCT list_permission_no,
+        		list_permission_name
+        FROM 	permissions
+        ORDER BY list_permission_name ASC
+    </select>
+
+    <select id="selectListPermissionByRoleId" resultMap="WorklifePermissions">
+        SELECT 	permissions.permission_id,
+		        permissions.permission_name,
+		        permissions.permission_pattern,
+		        permissions.permission_description,
+		        permissions.list_permission_name,
+		        permissions.list_permission_no,
+		        permissions.create_at,
+		        permissions.update_at
+        FROM 	permissions
+        INNER JOIN role_group ON permissions.permission_id = role_group.permission_id
+        WHERE 	role_group.role_id = #{roleId}
+    </select>
+
+    <select id="selectPermissionByPermissionId" parameterType="WorklifePermissionVO" resultMap="WorklifePermissions">
+        SELECT 	permission_id,
+		        permission_name,
+		        permission_pattern,
+		        permission_description,
+		        list_permission_name,
+		        list_permission_no,
+		        create_at,
+		        update_at
+        FROM 	permissions
+        WHERE 	permission_id = #{permissionId}
+    </select>
+
+    <select id="selectMultiPermissionByListPermissionId" parameterType="ArrayList" resultMap="WorklifePermissions">
+        SELECT 	permission_id,
+		        permission_name,
+		        permission_pattern,
+		        permission_description,
+		        list_permission_name,
+		        list_permission_no,
+		        create_at,
+		        update_at
+        FROM 	permissions
+        INNER JOIN permission_group ON permission_group.permission_id = permissions.permission_id
+        WHERE 	1 = 0
+        <foreach item="permissionId" collection="listPermissionId" separator="OR">
+            permission_group.permission_id = #{permissionId}
+        </foreach>
+    </select>
+
+    <select id="selectMultiPermissionByGroupId" parameterType="int" resultMap="WorklifePermissions">
+        SELECT 	permissions.permission_id,
+		        permissions.permission_name,
+		        permissions.permission_pattern,
+		        permissions.permission_description,
+		        permissions.list_permission_name,
+		        permissions.list_permission_no,
+		        permissions.create_at,
+		        permissions.update_at
+        FROM 	permissions
+        INNER JOIN permission_group ON permission_group.permission_id = permissions.permission_id
+        WHERE 	permission_group.group_id = #{groupId}
+    </select>
+
+    <select id="selectMultiPermission" parameterType="WorklifePermissionVO" resultMap="WorklifePermissions">
+        SELECT 	permission_id,
+		        permission_name,
+		        permission_pattern,
+		        permission_description,
+		        list_permission_name,
+		        list_permission_no,
+		        create_at,
+		        update_at
+        FROM 	permissions
+        WHERE 	1 = 1
+        <if test="permissionId > 0">
+            AND permission_id = #{permissionId}
+        </if>
+        <if test="permissionName != ''">
+            AND permission_name LIKE #{permissionName}
+        </if>
+        <if test="permissionPattern != ''">
+            AND permission_pattern LIKE #{permissionPattern}
+        </if>
+        <if test="search != '' and search != null">
+            AND (lower(permission_name) LIKE lower(CONCAT('%', #{search}, '%'))
+            OR lower(permission_pattern) LIKE lower(CONCAT('%', #{search}, '%'))
+            OR lower(permission_description) LIKE lower(CONCAT('%', #{search}, '%'))
+            OR lower(list_permission_name) LIKE lower(CONCAT('%', #{search}, '%'))
+            OR lower(list_permission_no::text) LIKE lower(CONCAT('%', #{search}, '%')))
+        </if>
+        <if test="columnName != '' and columnName != null">
+            <if test="typeOrder != '' and typeOrder != null">
+                ORDER BY
+                <if test="columnName == 'permission_name'">
+                    permission_name
+                </if>
+                <if test="columnName == 'permission_pattern'">
+                    permission_pattern
+                </if>
+                <if test="columnName == 'permission_description'">
+                    permission_description
+                </if>
+                <if test="columnName == 'list_permission_name'">
+                    list_permission_name
+                </if>
+                <if test="columnName == 'list_permission_no'">
+                    list_permission_no
+                </if>
+                <if test="typeOrder == 'desc'">
+                    DESC
+                </if>
+                <if test="typeOrder == 'asc'">
+                    ASC
+                </if>
+            </if>
+        </if>
+        OFFSET #{firstIndex} ROWS FETCH NEXT #{recordCountPerPage} ROWS ONLY
+    </select>
+
+    <select id="countMultiPermission" resultType="int">
+        SELECT COUNT(*)
+        FROM
+        (
+        	SELECT 	permission_id,
+		        permission_name,
+		        permission_pattern,
+		        permission_description,
+		        list_permission_name,
+		        list_permission_no,
+		        create_at,
+		        update_at
+	        FROM 	permissions
+	        WHERE 	1 = 1
+	        <if test="permissionId > 0">
+	            AND permission_id = #{permissionId}
+	        </if>
+	        <if test="permissionName != ''">
+	            AND permission_name LIKE #{permissionName}
+	        </if>
+	        <if test="permissionPattern != ''">
+	            AND permission_pattern LIKE #{permissionPattern}
+	        </if>
+	        <if test="search != '' and search != null">
+	            AND (lower(permission_name) LIKE lower(CONCAT('%', #{search}, '%'))
+	            OR lower(permission_pattern) LIKE lower(CONCAT('%', #{search}, '%'))
+	            OR lower(permission_description) LIKE lower(CONCAT('%', #{search}, '%'))
+	            OR lower(list_permission_name) LIKE lower(CONCAT('%', #{search}, '%'))
+	            OR lower(list_permission_no::text) LIKE lower(CONCAT('%', #{search}, '%')))
+	        </if>
+        ) AS t
+    </select>
+    
+    <select id="selectAllPermission" resultMap="WorklifePermissions">
+        SELECT 
+        		permission_id,
+        		permission_name,
+        		list_permission_name
+        FROM 	permissions
+        ORDER BY list_permission_name ASC
+    </select>
+</mapper>

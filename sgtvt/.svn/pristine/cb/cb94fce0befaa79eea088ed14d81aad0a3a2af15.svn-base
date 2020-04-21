@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="vn.worklife.user.quanlytuyenduong.service.TTChiTietTuyenDuongTheoHatService">
+    <resultMap id="DmKetCauMatDuongVO" type="DmKetCauMatDuongVO">
+        <result property="idKetCauMat" column="idketcaumat"/>
+        <result property="ten" column="ten"/>
+    </resultMap>
+    <resultMap id="DmCapQLVO" type="DmCapQLVO">
+        <result property="idCapQL" column="idcapql"/>
+        <result property="ten" column="ten"/>
+    </resultMap>
+    <resultMap id="DmTinhTrangDuongVO" type="DmTinhTrangDuongVO">
+        <result property="idTinhTrang" column="idtinhtrang"/>
+        <result property="ten" column="ten"/>
+    </resultMap>
+    <resultMap id="LyTrinhVO" type="LyTrinhVO">
+        <result property="idLyTrinh" column="idlytrinh"/>
+        <result property="iddh" column="iddh"/>
+        <result property="diemDau_Tu" column="diemdau_tu"/>
+        <result property="diemDau_Den" column="diemdau_den"/>
+        <result property="diemCuoi_Tu" column="diemcuoi_tu"/>
+        <result property="diemCuoi_Den" column="diemcuoi_den"/>
+        <result property="chieuDai" column="chieudai"/>
+        <result property="rongNen" column="rongnen"/>
+        <result property="rongMat" column="rongmat"/>
+        <result property="ketCauMat" column="ketcaumat"/>
+        <result property="diaHinh" column="diahinh"/>
+        <result property="capQL" column="capql"/>
+        <result property="tenDuong" column="tenduong"/>
+        <result property="diaDanh_DiemDau" column="diadanh_diemdau"/>
+        <result property="diaDanh_DiemCuoi" column="diadanh_diemcuoi"/>
+        <result property="tinhTrang" column="tinhtrang"/>
+        <result property="ghiChu" column="ghichu"/>
+        <result property="tenCapQL" column="tencapql"/>
+        <result property="tenKetCau" column="tenketcau"/>
+        <result property="id" column="id"/>
+        <result property="recordTotals" column="totalrecords"/>
+    </resultMap>
+    <resultMap id="TinhTrangDuongVO" type="TinhTrangDuongVO">
+        <result property="id" column="id"/>
+        <result property="idLyTrinh" column="idlytrinh"/>
+        <result property="nam" column="nam"/>
+        <result property="quy" column="quy"/>
+        <result property="tinhTrang" column="tinhtrang"/>
+        <result property="ghiChu" column="ghichu"/>
+        <result property="ngayBC" column="ngaybc"/>
+    </resultMap>
+    <select id="selectListKetCauMD" resultMap="DmKetCauMatDuongVO">
+        select * from dmketcaumatdg
+    </select>
+    <select id="selectListCapQL" resultMap="DmCapQLVO">
+        select * from dmcapql
+    </select>
+    <select id="selectListTTDuong" resultMap="DmTinhTrangDuongVO">
+        select * from dmtinhtrang_duong
+    </select>
+    <update id="updateChiTietDuong">
+        update duong_hat
+            set
+            diadanh_diemdau = #{diaDanh_DiemDau},
+            diadanh_diemcuoi = #{diaDanh_DiemCuoi}
+            WHERE iddh = #{iddh}
+    </update>
+    <insert id="insertLyTrinh" useGeneratedKeys="true" keyProperty="idLyTrinh" keyColumn="idlytrinh">
+        insert into lytrinh
+            (iddh, diemdau_tu, diemdau_den, diemcuoi_tu, diemcuoi_den, chieudai, rongnen, rongmat, ketcaumat, diahinh, capql)
+            VALUES
+                (#{iddh}, #{diemDau_Tu}, #{diemDau_Den}, #{diemCuoi_Tu}, #{diemCuoi_Den}, NULLIF(convert(float,#{chieuDai}),''), #{rongNen}, #{rongMat}, #{ketCauMat}, #{diaHinh}, #{capQL})
+    </insert>
+    <update id="updateLyTrinh">
+        update lytrinh
+            set
+            diemdau_tu = #{diemDau_Tu},
+            diemdau_den = #{diemDau_Den},
+            diemcuoi_tu = #{diemCuoi_Tu},
+            diemcuoi_den = #{diemCuoi_Den},
+            chieudai = NULLIF(convert(float,#{chieuDai}),''),
+            rongnen = #{rongNen},
+            rongmat = #{rongMat},
+            ketcaumat = #{ketCauMat},
+            diahinh = #{diaHinh},
+            capql = #{capQL}
+            Where idlytrinh = #{idLyTrinh}
+    </update>
+    <insert id="insertTTDuong">
+        insert into tinhtrang_duong
+            (idlytrinh, tinhtrang, ghichu)
+            VALUES
+                (#{idLyTrinh}, #{tinhTrang}, #{ghiChu})
+    </insert>
+    <update id="updateTTDuong">
+        update tinhtrang_duong
+            set
+            idlytrinh = #{idLyTrinh},
+            tinhtrang = #{tinhTrang},
+            ghichu = #{ghiChu}
+            WHERE id = #{id}
+    </update>
+    <select id="selectListLyTrinhByIddh" resultMap="LyTrinhVO">
+        select * from lytrinh WHERE iddh = #{iddh}
+    </select>
+    <select id="selectTTDuong" resultMap="TinhTrangDuongVO">
+        select id, tinhtrang, ISNULL(ghichu,'') as ghichu
+        from tinhtrang_duong
+        WHERE idlytrinh = #{idLyTrinh} AND id IN (select max(id) from tinhtrang_duong Group By idlytrinh)
+    </select>
+    <delete id="deleteLyTrinh">
+        delete lytrinh WHERE idlytrinh = #{idLyTrinh}
+    </delete>
+    <delete id="deleteTTDuong">
+        delete tinhtrang_duong WHERE idlytrinh = #{idLyTrinh}
+    </delete>
+</mapper>

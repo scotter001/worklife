@@ -1,0 +1,12 @@
+@CHARSET "UTF-8";
+@media (max-width: 769px) {
+	.mobilabel{
+		display: none;
+	}
+	.mobiform .form-group{
+		margin-bottom: 5px;
+	}
+}
+.width100{
+	width: 100%;
+}

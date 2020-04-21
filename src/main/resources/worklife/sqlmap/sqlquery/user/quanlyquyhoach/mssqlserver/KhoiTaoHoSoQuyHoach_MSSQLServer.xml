@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="vn.worklife.user.quanlyquyhoach.service.KhoiTaoHoSoQuyHoachService">
+    <resultMap id="DmDonViTuVanQHVO" type="DmDonViTuVanQHVO">
+        <result property="id" column="id"/>
+        <result property="ten" column="ten"/>
+        <result property="cap" column="cap"/>
+    </resultMap>
+    <resultMap id="DmThamDinhVO" type="DmThamDinhVO">
+        <result property="id" column="id"/>
+        <result property="ten" column="ten"/>
+    </resultMap>
+    <resultMap id="DmCQDuyetVO" type="DmCQDuyetVO">
+        <result property="id" column="id"/>
+        <result property="ten" column="ten"/>
+        <result property="cap" column="cap"/>
+    </resultMap>
+    <resultMap id="BanVeQuyHoachVO" type="BanVeQuyHoachVO">
+        <result property="idBanVe_QH" column="idbanve_qh"/>
+        <result property="idHoSo_QH" column="idhoso_qh"/>
+        <result property="tenBanVe" column="tenbanve"/>
+        <result property="maBanVe" column="mabanve"/>
+        <result property="tyLe" column="tyle"/>
+        <result property="soTo" column="soto"/>
+        <result property="ten" column="ten"/>
+        <result property="doDai" column="dodai"/>
+        <result property="noiDung" column="noidung"/>
+        <result property="id" column="id"/>
+    </resultMap>
+    <resultMap id="TaiLieuQuyHoachVO" type="TaiLieuQuyHoachVO">
+        <result property="idTaiLieu_QH" column="idtailieu_qh"/>
+        <result property="idHoSo_QH" column="idhoso_qh"/>
+        <result property="tenTaiLieu" column="tentailieu"/>
+        <result property="tyLe" column="tyle"/>
+        <result property="ten" column="ten"/>
+        <result property="doDai" column="dodai"/>
+        <result property="noiDung" column="noidung"/>
+        <result property="id" column="id"/>
+    </resultMap>
+    <resultMap id="HoSoQuyHoachVO" type="HoSoQuyHoachVO">
+        <result property="idHoSo_QH" column="idhoso_qh"/>
+        <result property="idHuyen" column="idhuyen"/>
+        <result property="maHuyen" column="mahuyen"/>
+        <result property="tenQuyHoach" column="tenquyhoach"/>
+        <result property="phamViQuyHoach" column="phamviquyhoach"/>
+        <result property="quyMoQuyHoach" column="quymoquyhoach"/>
+        <result property="donViTuVan" column="donvituvan"/>
+        <result property="donViThamDinh" column="donvithamdinh"/>
+        <result property="soQuyetDinh" column="soquyetdinh"/>
+        <result property="ngayQD" column="ngayqd"/>
+        <result property="coQuanDuyet" column="coquanduyet"/>
+        <result property="dieuChinh" column="dieuchinh"/>
+        <result property="idParent" column="idparent"/>
+        <result property="idGroup" column="idgroup"/>
+        <result property="cap" column="cap"/>
+    </resultMap>
+    <select id="selectListDmDonViQH" resultMap="DmDonViTuVanQHVO">
+        select * from dmtuvan_qh WHERE cap = #{cap}
+    </select>
+    <select id="selectListDmThamDinh" resultMap="DmThamDinhVO">
+        select * from dmthamdinh
+    </select>
+    <select id="selectListCQDuyet" resultMap="DmCQDuyetVO">
+        select * from dmcqduyet WHERE cap = #{cap}
+    </select>
+    <update id="updateFileUploadVO">
+        update banve_quyhoach
+            set ten = '',
+                dodai = 0,
+                noidung = 0
+            WHERE idbanve_qh = #{idBanVe_QH}
+    </update>
+    <update id="updateFileTaiLieu">
+        update tailieu_quyhoach
+            set ten = '',
+                dodai = 0,
+                noidung = 0
+            WHERE idtailieu_qh = #{idTaiLieu_QH}
+    </update>
+    <select id="selectListHSQH" resultMap="HoSoQuyHoachVO">
+        WITH TempResult AS (
+            select
+                idhoso_qh,
+                isnull(tenquyhoach,'') as tenquyhoach,
+                isnull(soquyetdinh,'') as soquyetdinh,
+                isnull(convert(nvarchar,ngayqd,103),'') as ngayqd,
+                isnull(coquanduyet,'') as coquanduyet,
+                dieuchinh
+            from
+            hoso_quyhoach
+            where
+                idhoso_qh IN (select max(idhoso_qh) from hoso_quyhoach GROUP BY idparent)
+                <if test="optional.tenQuyHoach != null and optional.tenQuyHoach != ''">
+                    and dbo.removecharvn(lower(tenquyhoach)) LIKE dbo.removecharvn(lower(N'%${optional.tenQuyHoach}%'))
+                </if>
+                <if test="optional.maHuyen == ''">
+                    and (mahuyen is null or mahuyen = '')
+                </if>
+                <if test="optional.maHuyen != ''">
+                    and mahuyen = #{optional.maHuyen}
+                </if>
+        ),
+        TempCount AS (
+        SELECT COUNT (*) AS totalrecords
+        FROM TempResult
+        ) SELECT *
+        FROM
+        TempResult, TempCount
+        ORDER BY idhoso_qh DESC
+        OFFSET ${start} ROWS
+        FETCH NEXT
+        ${length} ROWS ONLY;
+    </select>
+    <insert id="insertHSQH" useGeneratedKeys="true" keyProperty="idHoSo_QH" keyColumn="idhoso_qh">
+        insert into hoso_quyhoach
+            (
+             tenquyhoach,
+             phamviquyhoach,
+             quymoquyhoach,
+             donvituvan,
+             donvithamdinh,
+             soquyetdinh,
+             ngayqd,
+             coquanduyet,
+             dieuchinh,
+             idparent,
+             idgroup,
+             cap,
+             mahuyen
+             )
+             VALUES
+                 (
+                  nullif(#{tenQuyHoach},''),
+                  nullif(#{phamViQuyHoach},''),
+                  nullif(#{quyMoQuyHoach},''),
+                  nullif(#{donViTuVan},''),
+                  nullif(#{donViThamDinh},''),
+                  nullif(#{soQuyetDinh},''),
+                  nullif(convert(date,#{ngayQD},103),''),
+                  nullif(#{coQuanDuyet},''),
+                  #{dieuChinh},
+                  #{idParent},
+                  #{idGroup},
+                  #{cap},
+                  #{maHuyen}
+                 )
+    </insert>
+    <update id="updateIdParent">
+        update hoso_quyhoach set idparent = #{idHoSo_QH} WHERE idhoso_qh = #{idHoSo_QH}
+    </update>
+    <update id="updateHSQH">
+        update hoso_quyhoach
+            set
+            tenquyhoach = nullif(#{tenQuyHoach},''),
+            phamviquyhoach = nullif(#{phamViQuyHoach},''),
+            quymoquyhoach = nullif(#{quyMoQuyHoach},''),
+            donvituvan = nullif(#{donViTuVan},''),
+            donvithamdinh = nullif(#{donViThamDinh},''),
+            soquyetdinh = nullif(#{soQuyetDinh},''),
+            ngayqd = nullif(convert(date,#{ngayQD},103),''),
+            coquanduyet = nullif(#{coQuanDuyet},'')
+        WHERE idhoso_qh = #{idHoSo_QH}
+    </update>
+    <select id="getPosition" resultType="java.lang.Integer">
+        WITH TempResult AS
+            (
+            select idhoso_qh
+            from hoso_quyhoach
+            WHERE idhoso_qh IN (select max(idhoso_qh) from hoso_quyhoach GROUP BY idparent)
+            ),
+            MyCte AS (
+                SELECT *, RowNum = row_number() OVER ( order by idhoso_qh DESC)
+                from TempResult
+            )
+        SELECT RowNum
+        FROM MyCte
+        WHERE idhoso_qh = #{idHoSo_QH}
+    </select>
+    <select id="selectDataHSQHByIdHoSoQH" resultMap="HoSoQuyHoachVO">
+        select
+            idhoso_qh,
+            isnull(mahuyen,'') as mahuyen,
+            isnull(tenquyhoach,'') as tenquyhoach,
+            isnull(phamviquyhoach,'') as phamviquyhoach,
+            isnull(quymoquyhoach,'') as quymoquyhoach,
+            isnull(donvituvan,'') as donvituvan,
+            isnull(donvithamdinh,'') as donvithamdinh,
+            isnull(soquyetdinh,'') as soquyetdinh,
+            isnull(convert(nvarchar,ngayqd,103),'') as ngayqd,
+            isnull(coquanduyet,'') as coquanduyet,
+            dieuchinh,
+            idparent,
+            idgroup,
+            cap,
+            mahuyen
+        from hoso_quyhoach
+        WHERE idhoso_qh = #{idHoSo_QH}
+    </select>
+    <select id="selectListBanVeQuyHoach" resultMap="BanVeQuyHoachVO">
+        select
+               idbanve_qh,
+               idhoso_qh,
+               isnull(tenbanve,'') as tenbanve,
+               isnull(tyle,'') as tyle,
+               ten,
+               dodai,
+               noidung,
+               isnull(mabanve,'') as mabanve,
+               isnull(soto,'') as soto,
+               idbanve_qh as id
+        from banve_quyhoach WHERE idhoso_qh = #{idHoSo_QH}
+    </select>
+    <select id="selectListTaiLieuQuyHoach" resultMap="TaiLieuQuyHoachVO">
+        select
+               idtailieu_qh,
+               idhoso_qh,
+               isnull(tentailieu,'') as tentailieu,
+               ten,
+               dodai,
+               noidung,
+               idtailieu_qh as id
+        from tailieu_quyhoach WHERE idhoso_qh = #{idHoSo_QH}
+    </select>
+    <select id="selectFileBanVe"  resultMap="BanVeQuyHoachVO">
+        select ten, dodai, noidung from banve_quyhoach WHERE idbanve_qh = #{id}
+    </select>
+    <select id="selectFileTaiLieu" resultMap="TaiLieuQuyHoachVO">
+        select ten, dodai, noidung from tailieu_quyhoach WHERE idtailieu_qh = #{id}
+    </select>
+    <insert id="insertBanVeQuyHoach" useGeneratedKeys="true" keyProperty="idBanVe_QH" keyColumn="idbanve_qh">
+        insert into banve_quyhoach (idhoso_qh, tenbanve, tyle, mabanve, soto)
+            VALUES (#{idHoSo_QH}, nullif(#{tenBanVe},''), nullif(#{tyLe},''), nullif(#{maBanVe},''), nullif(#{soTo},''))
+    </insert>
+    <update id="updateBanVeQuyHoach">
+        update banve_quyhoach
+            set
+            tenbanve = nullif(#{tenBanVe},''),
+            tyle = nullif(#{tyLe},''),
+            mabanve = nullif(#{maBanVe},''),
+            soto = nullif(#{soTo},'')
+        WHERE idbanve_qh = #{idBanVe_QH}
+    </update>
+    <insert id="insertTaiLieuQuyHoach" useGeneratedKeys="true" keyProperty="idTaiLieu_QH" keyColumn="idtailieu_qh">
+        insert into tailieu_quyhoach (idhoso_qh, tentailieu)
+            VALUES (#{idHoSo_QH}, nullif(#{tenTaiLieu},''))
+    </insert>
+    <update id="updateTaiLieuQuyHoach">
+        update tailieu_quyhoach set tentailieu = nullif(#{tenTaiLieu},'') where idtailieu_qh = #{idTaiLieu_QH}
+    </update>
+    <delete id="deleteBanVeQH">
+        delete from banve_quyhoach WHERE idbanve_qh = #{idBanVe_QH}
+    </delete>
+    <delete id="deleteTaiLieuQH">
+        delete from tailieu_quyhoach WHERE idtailieu_qh = #{idTaiLieu_QH}
+    </delete>
+</mapper>

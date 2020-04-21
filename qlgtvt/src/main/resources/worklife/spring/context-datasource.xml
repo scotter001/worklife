@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="worklife.properties" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath:/worklife/properties/globals.properties</value>
+            </list>
+        </property>
+    </bean>
+
+    <!-- DataSource -->
+    <alias name="dataSource-${Globals.DbType}" alias="worklifeDatabase"/>
+
+    <!-- Declare a datasource that has pooling capabilities -->
+    <!-- <bean id="dataSource-sql" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close"
+          p:driverClass="${Globals.DriverClassName}"
+          p:jdbcUrl="${Globals.Url}"
+          p:user="${Globals.UserName}"
+          p:password="${Globals.Password}"
+          p:acquireIncrement="10"
+          p:idleConnectionTestPeriod="60"
+          p:maxPoolSize="100"
+          p:maxStatements="50"
+          p:minPoolSize="10"/> -->
+
+    <!-- Declare a datasource that has pooling capabilities -->
+    <!-- <bean id="dataSource-postgres" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close"
+          p:driverClass="${Globals.PostgresDriverClassName}"
+          p:jdbcUrl="${Globals.PostgresUrl}"
+          p:user="${Globals.PostgresUserName}"
+          p:password="${Globals.PostgresPassword}"
+          p:acquireIncrement="10"
+          p:idleConnectionTestPeriod="60"
+          p:maxPoolSize="100"
+          p:maxStatements="50"
+          p:minPoolSize="10"/> -->
+
+   <!-- <bean id="dataSource-mssqlserver" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close"
+          p:driverClass="${Globals.MSSqlDriverClassName}"
+          p:jdbcUrl="${Globals.MSSqlUrl}"
+          p:user="${Globals.MSSqlUserName}"
+          p:password="${Globals.MSSqlPassword}"
+          p:acquireIncrement="10"
+          p:idleConnectionTestPeriod="60"
+          p:maxPoolSize="100"
+          p:maxStatements="50"
+          p:minPoolSize="10"/> -->
+   
+    <bean id="dataSource-mssqlserver" class="com.jolbox.bonecp.BoneCPDataSource" destroy-method="close">
+	   <property name="driverClass" value="${Globals.MSSqlDriverClassName}" />
+	   <property name="jdbcUrl" value="${Globals.MSSqlUrl}" />
+	   <property name="username" value="${Globals.MSSqlUserName}"/>
+	   <property name="password" value="${Globals.MSSqlPassword}"/>
+	   <!-- <property name="idleConnectionTestPeriod" value="60"/> -->
+	   <!-- <property name="idleMaxAge" value="240"/> -->
+	   <property name="maxConnectionsPerPartition" value="30"/>
+	   <property name="minConnectionsPerPartition" value="10"/>
+	   <property name="partitionCount" value="3"/>
+	   <property name="acquireIncrement" value="5"/>
+	   <property name="statementsCacheSize" value="100"/>
+	   <!-- <property name="releaseHelperThreads" value="3"/> -->
+	</bean>
+	<bean id="dataSource-Map" class="com.jolbox.bonecp.BoneCPDataSource" destroy-method="close">
+		<property name="driverClass" value="${Globals.Map.MSSqlDriverClassName}" />
+		<property name="jdbcUrl" value="${Globals.Map.MSSqlUrl}" />
+		<property name="username" value="${Globals.Map.MSSqlUserName}"/>
+		<property name="password" value="${Globals.Map.MSSqlPassword}"/>
+		<property name="maxConnectionsPerPartition" value="30"/>
+		<property name="minConnectionsPerPartition" value="10"/>
+		<property name="partitionCount" value="3"/>
+		<property name="acquireIncrement" value="5"/>
+		<property name="statementsCacheSize" value="100"/>
+	</bean>
+
+</beans> 
+	

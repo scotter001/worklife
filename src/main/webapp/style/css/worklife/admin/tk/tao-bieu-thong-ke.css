@@ -1,0 +1,13 @@
+@CHARSET "UTF-8";
+#tableFireIncident.dataTable tbody tr.selected td{
+	 background-color: #acbad4; !important;
+}
+#tableFormStatistical.dataTable tbody tr.selected td{
+	 background-color: #acbad4; !important;
+}
+#tbFireProtectionFacilities.dataTable tbody tr.selected td{
+	 background-color: #acbad4; !important;
+}
+.top-buffer {
+	margin-top: 15px;
+}

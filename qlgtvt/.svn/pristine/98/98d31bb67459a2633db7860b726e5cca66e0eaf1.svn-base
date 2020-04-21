@@ -1,0 +1,22 @@
+Globals.OsType = WINDOWS
+
+Globals.DbType = mssqlserver
+Globals.MSSqlUrl = jdbc:sqlserver://192.168.1.7:1433;databaseName=sogtvt;encrypt=false;trustServerCertificate=false;
+Globals.MSSqlDriverClassName = com.microsoft.sqlserver.jdbc.SQLServerDriver
+Globals.MSSqlUserName = nydev
+Globals.MSSqlPassword = ny@123
+
+Globals.Map.DbType = mssqlserver
+Globals.Map.MSSqlUrl = jdbc:sqlserver://192.168.1.26:1433;databaseName=khanhhoaSde;encrypt=false;trustServerCertificate=false;
+Globals.Map.MSSqlDriverClassName =com.microsoft.sqlserver.jdbc.SQLServerDriver
+Globals.Map.MSSqlUserName = sdeReader
+Globals.Map.MSSqlPassword = ny@123
+#GlobalsMapEsriApi = http://worklife.vn/jsapi/
+GlobalsMapEsriApi = http://192.168.1.25/jsapi/3.23/
+
+Globals.MainPage = /in/Homepage.do
+Globals.FileRegex = ([^\s]+(\.(?i)(gif|jpeg|pdf|jpg|png|doc|doc?x|xls|xls?x|ppt|ppt?x|xlt|xlt?x|bmp))$)
+Globals.fileStorePath = C:/worklife/upload/
+Globals.idsuadgroup = 1
+Globals.SoKHDTUrl = http://192.168.1.10/khdt-test/worklife/user/tracuu/json/tracuudkkd.do
+Globals.SoKHDTUriNewEnterprise = http://192.168.1.10/khdt-test/worklife/user/quanlyvesinhlaodong/getlistdoanhnghiepmoi.do

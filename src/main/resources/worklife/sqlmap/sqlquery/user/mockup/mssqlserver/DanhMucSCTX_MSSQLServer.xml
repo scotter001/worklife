@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="vn.worklife.user.mockup.service.DanhMucSCTXService">
+    <resultMap type="DanhMucSCTXVO" id="DanhMucSCTXVO">
+        <result property="idDmSctx" column="iddmsctx"/>
+        <result property="idSuCo" column="idsuco"/>
+        <result property="idSctx" column="idsctx"/>
+        <result property="noiDungSuaChua" column="noidungsuachua"/>
+        <result property="khoiLuong" column="khoiluong"/>
+        <result property="iddvt" column="iddvt"/>
+        <result property="tenDVT" column="tendvt"/>
+        <result property="kinhPhiDuToan" column="kinhphi_dutoan"/>
+        <result property="kinhPhiDuyet" column="kinhphi_duyet"/>
+        <result property="thuocQuy" column="thuocquy"/>
+        <result property="nam" column="nam"/>
+        <result property="congThucLap" column="congthuclap"/>
+        <result property="klLap_CT" column="kllap_ct"/>
+        <result property="klLap_Tong" column="kllap_tong"/>
+        <result property="congThucDuyet" column="congthucduyet"/>
+        <result property="kinhPhi" column="kinhphi"/>
+        <result property="klDuyet_CT" column="klduyet_ct"/>
+        <result property="klDuyet_Tong" column="klduyet_tong"/>
+        <result property="huHong" column="huhong"/>
+        <result property="ngay" column="ngay"/>
+        <result property="idTuyenDuong" column="idtuyenduong"/>
+        <result property="tenDuong" column="tenduong"/>
+        <result property="lyTrinh" column="lytrinh"/>
+        <result property="tenHatQL" column="tenhatql"/>
+        <result property="keHoach_TH" column="kehoach_th"/>
+        <result property="ghiChu_KH" column="ghichu_kh"/>
+        <result property="thoiGian_TH" column="thoigian_th"/>
+        <result property="ghiChu_TH" column="ghichu_th"/>
+        <result property="ngayKT" column="ngaykt"/>
+        <result property="thucHien" column="thuchien"/>
+        <result property="danhGia" column="danhgia"/>
+        <result property="nguoiKT" column="nguoikt"/>
+        <result property="recordTotals" column="totalrecords"/>
+        <association property="suCoVo" resultMap="vn.worklife.user.mockup.service.SuCoService.SuCoVO"/>
+        <association property="sctxThucHienVO"
+                     resultMap="vn.worklife.user.mockup.service.SctxThucHienService.SctxThucHienVO"/>
+    </resultMap>
+    <resultMap id="DmDVTVO" type="DmDVTVO">
+        <result property="iddvt" column="iddvt"/>
+        <result property="ten" column="ten"/>
+    </resultMap>
+    <select id="selectAllDmSctxByQY" resultMap="DanhMucSCTXVO">
+        select
+        d.iddmsctx,
+        s.idsuco,
+        s.idtuyenduong,
+        t.tenduong,
+        isnull(d.lytrinh,'') as lytrinh,
+        isnull(d.noidungsuachua,'') as noidungsuachua,
+        d.iddvt,
+        dmdvt.ten as tendvt,
+        isnull(d.congthuclap,'') as congthuclap,
+        isnull(d.kllap_ct,'') as kllap_ct,
+        isnull(d.kllap_tong,'') as kllap_tong,
+        isnull(s.huhong,'') as huhong,
+        isnull(convert(nvarchar,s.ngay,103),'') as ngay
+        FROM suco s
+        LEFT JOIN danhmuc_sctx d on s.idSuCo = d.idSuCo
+        LEFT JOIN tuyenduong t on t.idtuyenduong = s.idtuyenduong
+        LEFT JOIN dmdvt ON dmdvt.iddvt = d.iddvt
+        <where>
+            <if test="idGroup != -1 and idGroup != 1">
+                s.idgroup = #{idGroup}
+            </if>
+            AND ((s.chuyensctx = 1 AND s.idsuco not in (select idsuco from danhmuc_sctx))
+            <if test="quy != -1">
+                AND DATEPART(MONTH, ngay)  >= (#{quy}-1)*3+1 AND DATEPART(MONTH, ngay) &lt; (#{quy}-1)*3 + 4
+            </if>
+            <if test="nam != -1">
+                AND #{nam} = DATEPART(year, ngay)
+            </if>
+            OR
+            <if test="quy != -1">
+                DATEPART(MONTH, ngay)  >= (#{quy}-1)*3+1 AND DATEPART(MONTH, ngay) &lt; (#{quy}-1)*3 + 4 AND
+            </if>
+            <if test="nam != -1">
+                #{nam} = DATEPART(year, ngay) AND
+            </if>
+            (s.idsuco = d.idsuco AND
+            d.duyet is null or d.duyet != 1))
+        </where>
+        ORDER BY s.idsuco DESC
+    </select>
+    <select id="insertDmSCTX">
+        insert into danhmuc_sctx
+        (
+         idsuco,
+         noidungsuachua,
+         iddvt,
+         thuocquy,
+         nam,
+         kllap_ct,
+         kllap_tong,
+         congthuclap,
+         lytrinh
+         )
+         VALUES
+             (
+              #{idSuCo},
+              nullif(#{noiDungSuaChua},''),
+              #{iddvt},
+              #{thuocQuy},
+              #{nam},
+              nullif(convert(float,#{klLap_CT}),''),
+              nullif(convert(float,#{klLap_Tong}),''),
+              nullif(#{congThucLap},''),
+              nullif(#{lyTrinh},'')
+             )
+    </select>
+    <update id="updateDmSCTX">
+        update danhmuc_sctx
+            set
+                idsuco=#{idSuCo},
+                noidungsuachua = nullif(#{noiDungSuaChua},''),
+                iddvt = #{iddvt},
+                thuocquy = #{thuocQuy},
+                nam = #{nam},
+                kllap_ct = nullif(convert(float,#{klLap_CT}),''),
+                kllap_tong = nullif(convert(float,#{klLap_Tong}),''),
+                congthuclap = nullif(#{congThucLap},''),
+                lytrinh = nullif(#{lyTrinh},'')
+            Where iddmsctx = #{idDmSctx}
+    </update>
+    <select id="selectListDVT" resultMap="DmDVTVO">
+        select * from dmdvt
+    </select>
+    <delete id="deleteSCTX">
+        delete danhmuc_sctx where iddmsctx = #{idDmSctx}
+    </delete>
+    <select id="selectAllDmSctxByQYNotPaging" resultMap="DanhMucSCTXVO">
+        select
+            t.tenduong,
+            d.iddmsctx,
+            d.noidungsuachua,
+            d.iddvt,
+            s.*
+        FROM danhmuc_sctx d
+                 JOIN suco s on s.idSuCo = d.idSuCo
+                 JOIN tuyenduong t on t.idtuyenduong = s.idtuyenduong
+        WHERE
+            s.idgroup = #{groupId}
+            AND thuocquy = #{thuocQuy}
+            AND nam = #{nam}
+    </select>
+    <select id="selectAllDmSctxForPlanningNotPaging" resultMap="DanhMucSCTXVO">
+        select t.tenduong
+             , d.iddmsctx
+             , d.noidungsuachua
+             , d.iddvt
+             , s.*
+             , CONVERT(nvarchar(10), th.tungay_kh, 103)  as tungay_kh
+             , CONVERT(nvarchar(10), th.denngay_kh, 103) as denngay_kh
+        FROM danhmuc_sctx d
+                 JOIN suco s on s.idSuCo = d.idSuCo
+                 JOIN tuyenduong t on t.idtuyenduong = s.idtuyenduong
+                 LEFT JOIN sctx_thuchien th on th.iddmsctx = d.iddmsctx
+        WHERE s.idgroup = #{groupId} -- user dn
+          AND d.thuocquy = #{thuocQuy}
+          AND d.nam = #{nam}
+    </select>
+    <select id="selectAllDmSctxTraCuu" resultMap="DanhMucSCTXVO">
+        WITH TempResult AS (
+            SELECT
+                t.tenduong,
+                isnull(d.lytrinh,'') as lytrinh,
+                isnull(d.noidungsuachua,'') as noidungsuachua,
+                isnull(convert(nvarchar,d.klduyet_tong),'') as klduyet_tong,
+                isnull(th.thoigian_th,'') as thoigian_th,
+                isnull(convert(nvarchar,th.ngaykt,103),'') as ngaykt,
+                [group].group_name as tenhatql,
+                dmdvt.ten as tendvt,
+                isnull(convert(nvarchar,d.kinhphi),'') as kinhphi,
+                isnull(th.kehoach_th,'') as kehoach_th,
+                isnull(th.ghichu_th,'') as ghichu_th,
+                isnull(th.nguoikt,'') as nguoikt,
+                isnull(th.danhgia,'') as danhgia,
+                CONVERT(nvarchar(10), th.tungay_kh, 103)   as tungay_kh,
+                CONVERT(nvarchar(10), th.denngay_kh, 103)  as denngay_kh,
+                CONVERT(nvarchar(10), th.tungay_th, 103)   as tungay_th,
+                CONVERT(nvarchar(10), th.denngay_th, 103)  as denngay_th,
+                CONVERT(nvarchar(10), th.ngaykiemtra, 103) as ngaykiemtra,
+                th.thuchien as thucHien,
+                th.idsctx,
+                d.iddmsctx,
+                s.idsuco
+            FROM danhmuc_sctx d
+            LEFT JOIN suco s on s.idSuCo = d.idSuCo
+            LEFT JOIN sctx_thuchien th on th.iddmsctx = d.iddmsctx
+            LEFT JOIN tuyenduong t on t.idtuyenduong = s.idtuyenduong
+            LEFT JOIN [group] ON [group].group_id = s.idgroup
+            LEFT JOIN dmdvt ON dmdvt.iddvt = d.iddvt
+            WHERE s.idgroup = #{optional.groupId}
+            AND (
+                    (#{optional.tieuChi} = 1 AND d.thuocquy = #{optional.thuocQuy} AND d.nam = #{optional.nam})
+                    OR (#{optional.tieuChi} = 2 AND DATEPART(year, th.ngaykt) >= #{optional.tuNam} AND
+                        (t.idtuyenduong = #{optional.idTuyenDuong} OR #{optional.idTuyenDuong} = -1))
+                )
+        ),
+             TempCount AS (
+                 SELECT COUNT(*) AS totalrecords
+                 FROM TempResult
+             )
+        SELECT *
+        FROM TempResult,
+             TempCount
+        ORDER BY idsuco DESC
+            OFFSET ${start} ROWS
+        FETCH NEXT ${length} ROWS ONLY;
+    </select>
+    <select id="selectAllDmSctxTraCuuExport" resultMap="DanhMucSCTXVO">
+        SELECT
+            t.tenduong,
+            isnull(d.lytrinh,'') as lytrinh,
+            isnull(d.noidungsuachua,'') as noidungsuachua,
+            isnull(convert(nvarchar,d.klduyet_tong),'') as klduyet_tong,
+            isnull(th.thoigian_th,'') as thoigian_th,
+            isnull(convert(nvarchar,th.ngaykt,103),'') as ngaykt,
+            isnull(convert(nvarchar,d.kinhphi),'') as kinhphi,
+            isnull(th.kehoach_th,'') as kehoach_th,
+            isnull(th.ghichu_th,'') as ghichu_th,
+            isnull(th.nguoikt,'') as nguoikt,
+            isnull(th.danhgia,'') as danhgia,
+            CONVERT(nvarchar(10), th.tungay_kh, 103)   as tungay_kh,
+            CONVERT(nvarchar(10), th.denngay_kh, 103)  as denngay_kh,
+            CONVERT(nvarchar(10), th.tungay_th, 103)   as tungay_th,
+            CONVERT(nvarchar(10), th.denngay_th, 103)  as denngay_th,
+            CONVERT(nvarchar(10), th.ngaykiemtra, 103) as ngaykiemtra,
+            th.thuchien as thucHien,
+            th.idsctx,
+            d.iddmsctx
+        FROM danhmuc_sctx d
+                 LEFT JOIN suco s on s.idSuCo = d.idSuCo
+                 LEFT JOIN sctx_thuchien th on th.iddmsctx = d.iddmsctx
+                 LEFT JOIN tuyenduong t on t.idtuyenduong = s.idtuyenduong
+                 LEFT JOIN [group] ON [group].group_id = s.idgroup
+                 LEFT JOIN dmdvt ON dmdvt.iddvt = d.iddvt
+        WHERE s.idgroup = #{groupId}
+          AND (
+                (#{tieuChi} = 1 AND d.thuocquy = #{thuocQuy} AND d.nam = #{nam})
+                OR (#{tieuChi} = 2 AND DATEPART(year, th.ngaykt) >= #{tuNam} AND
+                    (t.idtuyenduong = #{idTuyenDuong} OR #{idTuyenDuong} = -1))
+            )
+    </select>
+</mapper>

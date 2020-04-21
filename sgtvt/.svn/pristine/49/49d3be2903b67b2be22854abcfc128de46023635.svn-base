@@ -1,0 +1,29 @@
+@CHARSET "UTF-8";
+
+.top-buffer {
+	margin-top: 15px;
+}
+
+textarea {
+	resize: vertical;
+}
+
+/* .top-navigation .wrapper.wrapper-content {
+	padding: 0 0 40px 0 !important;
+} 
+.top-navigation .wrapper.wrapper-content{
+	padding: 0 !important;
+}
+*/
+
+.heavyBorder {
+	border: 1px solid #cfcfcf !important;
+}
+
+tr:hover {
+	cursor: pointer;
+}
+
+.form-control.error {
+	border: 1px solid #cc5965 !important;
+}

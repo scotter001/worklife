@@ -1,0 +1,99 @@
+@CHARSET "UTF-8";
+
+.panner-qc img {
+	margin-bottom: 3px;
+}
+
+.min-width {
+	min-width: 100%
+}
+
+.table-date {
+	margin-bottom: 0
+}
+
+.table-date tr th {
+	background: #f9f9f9
+}
+
+.table-date tr td,
+.table-date tr th {
+	text-align: center;
+}
+
+.table-date tr td {
+	padding: 0 !important
+}
+
+.table-date tr td p {
+	margin: 0;
+}
+
+.table-date tr td p:hover,
+.table-date tr td p:active,
+.table-date tr td:FIRST-CHILD,
+.table-date tr th:FIRST-CHILD {
+	border-right: 1px solid #ddd
+}
+
+.profile .table-LK td {
+	vertical-align: top;
+}
+
+.profile .table-LK {
+	margin-bottom: -1px
+}
+
+.profile .table-LK tr td a.color-blue {
+	color: #3498db
+}
+
+.profile .table-LK tr td a.color-blue:hover {
+	color: #e67e22
+}
+
+.padding-left-30 {
+	padding-left: 30px
+}
+
+.padding-left-40 {
+	padding-left: 40px
+}
+
+.codekham {
+	color: #f1c40f;
+	text-transform: uppercase;
+	position: absolute;
+	top: -14px;
+	left: 130px
+}
+
+.list-bv {
+	height: 520px
+}
+
+.profile .datkham tr td {
+	border-top: none
+}
+
+.profile .datkham tr th {
+	padding: 0 !important
+}
+
+#bacsi .mCSB_outside + .mCSB_scrollTools,
+#lich .mCSB_outside + .mCSB_scrollTools {
+	right: -26px !important
+}
+
+._star {
+	margin: 8px 0 0 0;
+}
+
+._star li i {
+	font-size: 20px;
+}
+
+ul.fix	li:before {
+	content: "-";
+	padding-right: 7px;
+}

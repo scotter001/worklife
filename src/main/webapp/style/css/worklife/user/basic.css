@@ -1,0 +1,59 @@
+/*
+ * Copyright (c) 2017.
+ * Author : Phat Thinh
+ */
+
+.top-buffer {
+    margin-top: 15px;
+}
+
+textarea {
+    resize: vertical;
+}
+tr:hover {
+    cursor: pointer;
+}
+.verticalcentered {
+    margin: 0 auto;
+    width: 80%;
+}
+.fullWidth {
+ width: 100%;
+}
+.table-sub tr td input,select,textarea {
+    border: none;
+    resize:none;
+}
+.table-sub tr td input.form-control,.table-sub tr td select.form-control,.table-sub tr td textarea.form-control  {
+    width:100% !important;
+    border:none;
+}
+.attachFile {
+    text-decoration: underline;
+    cursor: pointer;
+    color: #337ab7;
+    font-weight: 500
+}
+.deleteFileIcon {
+    margin-left: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    display: none;
+}
+.attackFile:hover .deleteFileIcon {
+    display: inline;
+}
+div.tooltip-inner {
+    word-wrap: break-word;
+}
+.selected {
+    background-color: #acbad4 !important
+}
+div.dt-buttons {
+    float: right;
+}
+.lbhidden {
+    content: ".";
+    display: list-item;
+    visibility: hidden;
+}

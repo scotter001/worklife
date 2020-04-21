@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="vn.worklife.user.mockup.service.TuyenDuongService">
+
+    <resultMap id="TuyenDuongVO" type="TuyenDuongVO">
+        <result property="idTuyenDuong" column="idtuyenduong"/>
+        <result property="idLoaiDuong" column="idloaiduong"/>
+        <result property="tenDuong" column="tenduong"/>
+        <result property="loaiDiaHinh" column="loaidiahinh"/>
+        <result property="capKt" column="capkt"/>
+        <result property="maHuyenDiemDau" column="mahuyen_diemdau"/>
+        <result property="maHuyenDiemCuoi" column="mahuyen_diemcuoi"/>
+        <result property="maXaDiemDau" column="maxa_diemdau"/>
+        <result property="maXaDiemCuoi" column="maxa_diemcuoi"/>
+        <result property="lyTrinhKmDiemDau" column="lytrinhkm_diemdau"/>
+        <result property="lyTrinhKmDiemCuoi" column="lytrinhkm_diemcuoi"/>
+        <result property="lyTrinhMDiemDau" column="lytrinhm_diemdau"/>
+        <result property="lyTrinhMDiemCuoi" column="lytrinhm_diemcuoi"/>
+        <result property="chieuDai" column="chieudai"/>
+        <result property="rongNen" column="rongnen"/>
+        <result property="rongMatDuong" column="rongmatduong"/>
+        <result property="ketCauMatDg" column="ketcaumatdg"/>
+        <result property="donViQl" column="donviql"/>
+        <result property="capQl" column="capql"/>
+        <result property="tinhTrang" column="tinhtrang"/>
+        <result property="ghiChu" column="ghichu"/>
+        <result property="tenHuyen" column="tenhuyen"/>
+        <result property="tenXa" column="tenxa"/>
+        <result property="tenCapKt" column="ten"/>
+        <result property="recordTotals" column="totalrecords"/>
+        <result property="tenHuyenCuoi" column="tenHuyenCuoi"/>
+        <result property="tenXaCuoi" column="tenXaCuoi"/>
+        <collection property="files" select="selectFileAttachOfTuyenDuong" column="{idTuyenDuong=idtuyenduong}"/>
+    </resultMap>
+
+    <resultMap id="TiepDinhKemVO" type="TiepDinhKemVO">
+        <result property="idParent" column="parentid"/>
+    </resultMap>
+
+    <resultMap id="FileAttachVO" type="FileAttachVO">
+        <result property="idTuyenDuongFile" column="idtuyenduong"/>
+        <result property="idTaiLieu" column="idtailieu"/>
+        <result property="tenTaiLieu" column="tentailieu"/>
+        <association property="fileData" column="{parentId=idtailieu,loaiTaiLieu=loaitailieu}" select="vn.worklife.user.util.file.service.FileUploadService.selectDataFileByIdParentAndLoaiTaiLieu"/>
+    </resultMap>
+
+    <delete id="deleteDocumentAttach">
+        DELETE
+        FROM tailieu_duong
+        WHERE idtailieu = #{id};
+    </delete>
+
+    <select id="selectFileAttachOfTuyenDuong" resultMap="FileAttachVO">
+        SELECT idtuyenduong,
+        idtailieu,
+        tentailieu,
+        1 as loaitailieu
+        FROM tailieu_duong
+        WHERE idtuyenduong = #{idTuyenDuong}
+    </select>
+
+    <insert id="insertFile" useGeneratedKeys="true" keyProperty="idTaiLieu">
+        INSERT INTO "tailieu_duong" (
+        idtuyenduong,
+        tentailieu
+        )
+        VALUES (
+        #{idTuyenDuongFile},
+        #{tenTaiLieu}
+        )
+    </insert>
+
+    <update id="updateFile" parameterType="FileAttachVO">
+        UPDATE "tailieu_duong"
+        SET
+        idtuyenduong = #{idTuyenDuongFile},
+        tentailieu = #{tenTaiLieu}
+        WHERE idtailieu = #{idTaiLieu}
+    </update>
+
+    <select id="selectShowTuyenDuong" resultMap="TuyenDuongVO">
+        WITH TempResult AS (
+        SELECT
+        td.idtuyenduong,
+        td.idloaiduong,
+        td.tenduong,
+        td.capkt,
+        td.mahuyen_diemdau,
+        td.mahuyen_diemcuoi,
+        td.maxa_diemdau,
+        td.maxa_diemcuoi,
+        dmh.tenhuyen,
+        dmx.tenxa,
+        dmckt.ten,
+        dmh2.tenhuyen as tenHuyenCuoi,
+        dmx2.tenxa as tenXaCuoi
+        FROM tuyenduong td
+        LEFT JOIN dmhuyen dmh ON dmh.mahuyen = td.mahuyen_diemdau
+        LEFT JOIN dmhuyen dmh2 ON dmh2.mahuyen = td.mahuyen_diemcuoi
+        LEFT JOIN dmxa dmx ON dmx.maxa = td.maxa_diemdau
+        LEFT JOIN dmxa dmx2 ON dmx2.maxa = td.maxa_diemcuoi
+        LEFT JOIN dmcapkythuat dmckt ON dmckt.idcapkt = td.capkt
+        WHERE 1=1
+        <if test="optional.idLoaiDuong!=-1">
+            AND idloaiduong = #{optional.idLoaiDuong}
+        </if>
+        ),
+        TempCount AS (
+        SELECT COUNT (*) AS
+        totalrecords
+        FROM TempResult
+        ) SELECT *
+        FROM
+        TempResult, TempCount
+        ORDER
+        BY
+        ${orders[0].column}
+        ${orders[0].dir}
+        OFFSET ${start} ROWS
+        FETCH NEXT
+        ${length} ROWS ONLY;
+    </select>
+
+    <select id="selectTuyenDuongByTuyenDuongId" resultMap="TuyenDuongVO">
+        SELECT *
+        FROM tuyenduong
+        WHERE idtuyenduong = #{id}
+    </select>
+
+    <insert id="insertTuyenDuong" useGeneratedKeys="true" keyProperty="idTuyenDuong">
+        INSERT INTO "tuyenduong" (
+          idloaiduong,
+          tenduong,
+          loaidiahinh,
+          capkt,
+          mahuyen_diemdau,
+          mahuyen_diemcuoi,
+          maxa_diemdau,
+          maxa_diemcuoi,
+          lytrinhkm_diemdau,
+          lytrinhkm_diemcuoi,
+          lytrinhm_diemdau,
+          lytrinhm_diemcuoi,
+          chieudai,
+          rongnen,
+          rongmatduong,
+          ketcaumatdg,
+          donviql,
+          capql,
+          tinhtrang,
+          ghichu
+        )
+        VALUES (
+          #{idLoaiDuong},
+          #{tenDuong},
+          #{loaiDiaHinh},
+          #{capKt},
+          #{maHuyenDiemDau},
+          #{maHuyenDiemCuoi},
+          #{maXaDiemDau},
+          #{maXaDiemCuoi},
+          #{lyTrinhKmDiemDau},
+          #{lyTrinhKmDiemCuoi},
+          #{lyTrinhMDiemDau},
+          #{lyTrinhMDiemCuoi},
+          #{chieuDai},
+          #{rongNen},
+          #{rongMatDuong},
+          #{ketCauMatDg},
+          #{donViQl},
+          #{capQl},
+          #{tinhTrang},
+          #{ghiChu}
+        )
+    </insert>
+
+    <update id="updateTuyenDuong" parameterType="TuyenDuongVO">
+        UPDATE "tuyenduong"
+        SET idloaiduong = #{idLoaiDuong},
+        tenduong = #{tenDuong},
+        loaidiahinh = #{loaiDiaHinh},
+        capkt = #{capKt},
+        mahuyen_diemdau = #{maHuyenDiemDau},
+        mahuyen_diemcuoi = #{maHuyenDiemCuoi},
+        maxa_diemdau = #{maXaDiemDau},
+        maxa_diemcuoi = #{maXaDiemCuoi},
+        lytrinhkm_diemdau = #{lyTrinhKmDiemDau},
+        lytrinhkm_diemcuoi = #{lyTrinhKmDiemCuoi},
+        lytrinhm_diemdau = #{lyTrinhMDiemDau},
+        lytrinhm_diemcuoi = #{lyTrinhMDiemCuoi},
+        chieudai = #{chieuDai},
+        rongnen = #{rongNen},
+        rongmatduong = #{rongMatDuong},
+        ketcaumatdg = #{ketCauMatDg},
+        donviql = #{donViQl},
+        capql = #{capQl},
+        tinhtrang = #{tinhTrang},
+        ghichu = #{ghiChu}
+        WHERE idtuyenduong = #{idTuyenDuong}
+    </update>
+</mapper>

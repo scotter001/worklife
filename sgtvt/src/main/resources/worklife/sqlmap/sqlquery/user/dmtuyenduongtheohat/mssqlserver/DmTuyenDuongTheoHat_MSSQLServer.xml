@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="vn.worklife.user.quanlytuyenduong.service.DmTuyenDuongTheoHatService">
+    <resultMap id="GroupVO" type="GroupVO">
+        <result property="group_Id" column="group_id"/>
+        <result property="maHuyen" column="mahuyen"/>
+        <result property="group_Name" column="group_name"/>
+        <result property="abbreviation" column="abbreviation"/>
+        <result property="group_Description" column="group_description"/>
+        <result property="parent_Id" column="parent_id"/>
+        <result property="create_at" column="create_at"/>
+        <result property="update_at" column="update_at"/>
+        <result property="is_Department" column="is_department"/>
+        <result property="idPhuong" column="idphuong"/>
+        <result property="maXa" column="maxa"/>
+    </resultMap>
+    <resultMap id="DmLoaiDuongVO" type="DmLoaiDuongVO">
+        <result property="idLoaiDuong" column="idloaiduong"/>
+        <result property="ten" column="ten"/>
+    </resultMap>
+    <resultMap id="TuyenDuongHatVO" type="TuyenDuongHatVO">
+        <result property="idTuyenDuong" column="idtuyenduong"/>
+        <result property="idLoaiDuong" column="idloaiduong"/>
+        <result property="tenDuong" column="tenduong"/>
+        <result property="chieuDai"
+		column="chieudai"/>
+		chỗ này khai báo y trong database
+		bên này là giao tiếp vs VO
+		
+    </resultMap>
+    <resultMap id="DmHuyenVO" type="DmHuyenVO">
+        <result property="idHuyen" column="idhuyen"/>
+        <result property="maHuyen" column="mahuyen"/>
+        <result property="tenHuyen" column="tenhuyen"/>
+        <result property="loai" column="loai"/>
+        <result property="idTinh" column="idtinh"/>
+    </resultMap>
+    <resultMap id="UsersVO" type="UsersVO">
+        <result property="id_User" column="id_user"/>
+        <result property="password" column="password"/>
+        <result property="group_Id" column="group_id"/>
+        <result property="fullName" column="fullname"/>
+        <result property="address" column="address"/>
+        <result property="birthday" column="birthday"/>
+        <result property="cellphone" column="cellphone"/>
+        <result property="landline" column="landline"/>
+        <result property="idnum_date" column="idnum_date"/>
+        <result property="idnum_agency" column="idnum_agency"/>
+        <result property="avatar" column="avatar"/>
+        <result property="username" column="username"/>
+        <result property="email" column="email"/>
+        <result property="active_flag" column="active_flag"/>
+        <result property="update_at" column="update_at"/>
+        <result property="create_at" column="create_at"/>
+        <result property="chucvu" column="chucvu"/>
+        <result property="gender" column="gender"/>
+        <result property="mahuyen" column="mahuyen"/>
+        <result property="ky_giayto" column="ky_giayto"/>
+        <result property="is_admin" column="is_admin"/>
+    </resultMap>
+    <resultMap id="DoanDuongVO" type="DoanDuongVO">
+        <result property="idDoan" column="iddoan"/>
+        <result property="iddh" column="iddh"/>
+        <result property="lyTrinh_Tu" column="lytrinh_tu"/>
+        <result property="lyTrinh_Den" column="lytrinh_den"/>
+        <result property="chieuDai" column="chieudai"/>
+        <result property="idUser" column="iduser"/>
+        <result property="idHuyen" column="idhuyen"/>
+        <result property="telephone" column="telephone"/>
+    </resultMap>
+    <resultMap id="DuongHatVO" type="DuongHatVO">
+        <result property="iddh" column="iddh"/>
+        <result property="idTuyenDuong" column="idtuyenduong"/>
+        <result property="idGroup" column="idgroup"/>
+        <result property="diaDanh_DiemDau" column="diadanh_diemdau"/>
+        <result property="diaDanh_DiemCuoi" column="diadanh_diemcuoi"/>
+        <result property="chieuDai" column="chieudai"/>
+        <result property="idLoaiDuong" column="idloaiduong"/>
+    </resultMap>
+    <resultMap id="DuongTheoHatVO" type="DuongTheoHatVO">
+        <result property="iddh" column="iddh"/>
+        <result property="group_Name" column="group_name"/>
+        <result property="ten" column="ten"/>
+        <result property="tenDuong" column="tenduong"/>
+        <result property="chieuDai" column="chieudai"/>
+        <result property="tenHuyen" column="tenhuyen"/>
+        <result property="recordTotals" column="totalrecords"/>
+    </resultMap>
+    <select id="selectListHatQL" resultMap="GroupVO">
+        select * from [group] WHERE is_department = 3
+    </select>
+    <select id="selectListLoaiDuong" resultMap="DmLoaiDuongVO">
+        select * from dmloaiduong
+    </select>
+    <select id="selectListTuyenDuong" resultMap="TuyenDuongHatVO">
+        select * from tuyenduong
+    </select>
+    <select id="selectHuyen" resultMap="DmHuyenVO">
+        select * from dmhuyen
+    </select>
+    <select id="selectListUsers" resultMap="UsersVO">
+        select * from users WHERE group_id = #{idGroup}
+    </select>
+    <select id="selectTelePhoneByIdUser" resultMap="UsersVO">
+        select cellphone from users WHERE id_user = #{idUser}
+    </select>
+    <select id="selectListDuongHat" resultMap="DuongTheoHatVO">
+        WITH TempResult AS (
+        select dh1.iddh, [group].group_name, dmld.ten,td.tenduong, isnull(convert(nvarchar,dh1.chieudai),'') as chieudai,
+        (SELECT
+        STUFF(
+        (SELECT distinct ', ' + dmhuyen.tenhuyen
+        FROM
+        duong_hat dh2
+        LEFT JOIN doanduong ON doanduong.iddh = dh2.iddh
+        LEFT JOIN dmhuyen ON dmhuyen.idhuyen = doanduong.idhuyen
+        WHERE dh2.iddh = dh1.iddh AND doanduong.idhuyen IN (select idhuyen from doanduong GROUP BY idhuyen)
+        FOR XML PATH(''),TYPE).value('/','NVARCHAR(MAX)'), 1, 1, ''))
+        AS tenhuyen
+        from duong_hat dh1
+        LEFT JOIN [group] ON [group].group_id = dh1.idgroup
+        LEFT JOIN tuyenduong td ON td.idtuyenduong = dh1.idtuyenduong
+        LEFT JOIN dmloaiduong dmld ON dmld.idloaiduong = td.idloaiduong
+            <where>
+                <if test="optional.idGroup != -1 and optional.idGroup != 1">
+                    dh1.idgroup = #{optional.idGroup}
+                </if>
+                <if test="optional.idLoaiDuong != -1">
+                    AND td.idloaiduong = #{optional.idLoaiDuong}
+                </if>
+                <if test="optional.tenDuong != null and optional.tenDuong != ''">
+                    AND dbo.removecharvn(lower(td.tenduong)) LIKE dbo.removecharvn(lower(N'%${optional.tenDuong}%'))
+                </if>
+            </where>
+        ),
+        TempCount AS (
+        SELECT COUNT(*) AS
+        totalrecords
+        FROM TempResult
+        ) SELECT *
+        FROM
+        TempResult, TempCount
+        ORDER BY iddh DESC
+        OFFSET ${start} ROWS
+        FETCH NEXT
+        ${length} ROWS ONLY;
+    </select>
+    <select id="selectDataByIddh" resultMap="DuongHatVO">
+        select *,
+               isnull(convert(nvarchar,duong_hat.chieudai),'') as chieudai,
+               dmloaiduong.idloaiduong
+        from duong_hat
+        LEFT JOIN tuyenduong ON tuyenduong.idtuyenduong = duong_hat.idtuyenduong
+        LEFT JOIN dmloaiduong ON dmloaiduong.idloaiduong = tuyenduong.idloaiduong
+        where iddh = #{iddh}
+    </select>
+    <select id="selectListDoanDuong" resultMap="DoanDuongVO">
+        select *, users.cellphone as telephone
+        from
+             doanduong
+            LEFT JOIN users ON users.id_user = doanduong.iduser
+        where iddh = #{iddh}
+    </select>
+    <insert id="insertDuongHat" useGeneratedKeys="true" keyProperty="iddh" keyColumn="iddh">
+        insert into duong_hat
+            (idtuyenduong, idgroup, diadanh_diemdau, diadanh_diemcuoi, chieudai)
+            VALUES
+                (#{idTuyenDuong}, #{idGroup}, #{diaDanh_DiemDau}, #{diaDanh_DiemCuoi}, CONVERT(float,NULLIF(#{chieuDai},'')))
+    </insert>
+    <update id="updateDuongHat" parameterType="DuongHatVO">
+        update duong_hat
+            SET
+            idtuyenduong = #{idTuyenDuong},
+            idgroup = #{idGroup},
+            diadanh_diemdau = #{diaDanh_DiemDau},
+            diadanh_diemcuoi = #{diaDanh_DiemCuoi},
+            chieudai = CONVERT(float,NULLIF(#{chieuDai},''))
+            WHERE iddh = #{iddh}
+    </update>
+    <insert id="insertDoanDuong" parameterType="DoanDuongVO">
+        insert into doanduong
+            (iddh, lytrinh_tu, lytrinh_den, chieudai, iduser, idhuyen)
+            VALUES
+                (#{iddh}, #{lyTrinh_Tu}, #{lyTrinh_Den}, #{chieuDai}, #{idUser}, #{idHuyen})
+    </insert>
+    <update id="updateDoanDuong" parameterType="DoanDuongVO">
+        update doanduong
+            SET
+            iddh = #{iddh},
+            lytrinh_tu = #{lyTrinh_Tu},
+            lytrinh_den = #{lyTrinh_Den},
+            chieudai = #{chieuDai},
+            iduser = #{idUser},
+            idhuyen = #{idHuyen}
+        WHERE iddoan = #{idDoan}
+    </update>
+    <select id="getPositionSeaShoe" resultType="java.lang.Integer">
+        WITH TempResult AS
+            (
+                select dh1.iddh, [group].group_name, dmld.ten,td.tenduong, isnull(convert(nvarchar,dh1.chieudai),'') as chieudai,
+                       (SELECT
+                            STUFF(
+                                    (SELECT distinct ', ' + dmhuyen.tenhuyen
+                                     FROM
+                                         duong_hat dh2
+                                             LEFT JOIN doanduong ON doanduong.iddh = dh2.iddh
+                                             LEFT JOIN dmhuyen ON dmhuyen.idhuyen = doanduong.idhuyen
+                                     WHERE dh2.iddh = dh1.iddh AND doanduong.idhuyen IN (select idhuyen from doanduong GROUP BY idhuyen)
+                                         FOR XML PATH(''),TYPE).value('/','NVARCHAR(MAX)'), 1, 1, ''))
+                                                                                                                     AS tenhuyen
+                from duong_hat dh1
+                         LEFT JOIN [group] ON [group].group_id = dh1.idgroup
+                         LEFT JOIN tuyenduong td ON td.idtuyenduong = dh1.idtuyenduong
+                         LEFT JOIN dmloaiduong dmld ON dmld.idloaiduong = td.idloaiduong
+            ),
+                MyCte AS (
+                    SELECT *, RowNum = row_number() OVER ( order by iddh DESC)
+                    from TempResult
+                )
+        SELECT RowNum
+        FROM MyCte
+        WHERE iddh = #{id}
+    </select>
+    <delete id="deleteDoanDuong">
+        delete from doanduong WHERE iddoan = #{idDoan}
+    </delete>
+</mapper>

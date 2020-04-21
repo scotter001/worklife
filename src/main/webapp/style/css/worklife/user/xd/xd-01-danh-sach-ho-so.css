@@ -1,0 +1,21 @@
+@import url("https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&lang=en");
+@import url("https://fonts.googleapis.com/css?family=Roboto:400,300,500,700");
+.fix_sorting_disabled{text-align: center!important; width: 30px!important; padding-right:8px!important}
+.fix-wrap-model{width: 98%!important}
+@media (min-width: 1024px) {
+  .fix-wrap-model {
+    /*  margin:20px!important */
+  }
+}
+@media (max-width: 350px) {
+  .fix-wrap-model {
+     margin:2px!important
+  }
+}
+.fix-wrap-model-send{}
+@media (min-width: 1024px) {
+  .fix-wrap-model-send {
+     width: 70%!important
+  }
+}
+.p-b-xd01{padding-bottom:35px}

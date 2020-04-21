@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.worklife.manager.security.service.WorklifePermissionGroupService">
+    <resultMap id="WorklifePermissionGroup" type="WorklifePermissionGroupVO">
+        <result property="groupId" column="group_id"/>
+        <result property="permissionId" column="permission_id"/>
+    </resultMap>
+    
+    <resultMap id="WorklifePermissionForSecurity" type="WorklifePermissionVO">
+        <result property="permissionName" column="permission_name"/>
+        <result property="permissionPattern" column="permission_pattern"/>
+    </resultMap>
+
+    <resultMap id="WorklifePermissionGroupForList" type="WorklifePermissionGroupVO">
+        <result property="groupId" column="group_id"/>
+        <result property="worklifeGroup.groupName" column="group_name"/>
+        <result property="worklifeGroup.listNameOfParent" column="list_name_of_parent"/>
+        <result property="listPermissionOfGroup" column="list_permission_of_group"/>
+        <result property="permissionStatus" column="permission_status"/>
+    </resultMap>
+
+    <insert id="insertPermissionGroup">
+        INSERT INTO permission_group( 	group_id,
+							        	permission_id
+        						)
+        VALUES( 						#{groupId},
+							        	#{permissionId}
+							    )
+    </insert>
+
+    <delete id="deleteSinglePermissionGroup" parameterType="WorklifePermissionGroupVO">
+        DELETE
+        FROM 	permission_group
+        WHERE 	group_id 		= #{groupId}
+        AND 	permission_id 	= #{permissionId}
+    </delete>
+
+    <delete id="deleteSinglePermissionGroupByGroupId" parameterType="int">
+        DELETE
+        FROM 	permission_group
+        WHERE 	group_id = #{groupId}
+    </delete>
+
+    <delete id="deleteSinglePermissionGroupByPermissionId" parameterType="int">
+        DELETE
+        FROM 	permission_group
+        WHERE 	permission_id = #{permissionId}
+    </delete>
+    
+    <select id="selectListPermissionIdByGroupId" resultType="int">
+    	SELECT	permission_id
+    	FROM	permission_group
+    	WHERE	group_id = #{groupId}
+    </select>
+    
+    <select id="selectSinglePermissionGroup" parameterType="WorklifePermissionGroupVO" resultMap="WorklifePermissionGroup">
+        SELECT 	group_id,
+		        permission_id,
+        FROM 	permission_group
+        WHERE 	group_id 		= #{groupId}
+        AND 	permission_id 	= #{permissionId}
+    </select>
+    
+    <select id="selectPermissionForSecurity" resultMap="WorklifePermissionForSecurity">
+    	SELECT 	role_code AS permission_name,
+    			permission_pattern
+    	FROM	permissions
+    	INNER JOIN role_group ON role_group.permission_id = permissions.permission_id
+    	INNER JOIN role ON role.role_id = role_group.role_id
+    </select>
+    
+    <select id="selectPermissionForFilter" resultMap="WorklifePermissionForSecurity">
+    	SELECT 	DISTINCT	permissions.permission_pattern
+		FROM 				users 
+		INNER JOIN 			role_user 	ON role_user.id_user 			= users.id_user 
+		INNER JOIN 			role 		ON role.role_id 				= role_user.role_id 
+		INNER JOIN 			role_group 	ON role_group.role_id 			= role.role_id
+		INNER JOIN 			permissions ON permissions.permission_id 	= role_group.permission_id
+    	WHERE 				#{pattern}  								~ permission_pattern
+    	AND 				users.username 							= #{userName}
+    </select>
+    
+    <select id="selectPermissionForFilterByUrl" resultMap="WorklifePermissionForSecurity">
+    	SELECT 	DISTINCT	permissions.permission_pattern
+		FROM 				role_group 
+		INNER JOIN 			permissions ON permissions.permission_id 	= role_group.permission_id
+    	WHERE 				#{pattern}  								~ permission_pattern
+    </select>
+
+    <select id="selectListPermissionGroup" parameterType="WorklifePermissionGroupVO" resultMap="WorklifePermissionGroupForList">
+        SELECT 	DISTINCT "group".group_id,
+		        "group".group_name,
+		        getFullPathOfGroup("group".parent_id) AS list_name_of_parent,
+		        ( SELECT string_agg(permission_name, ', ')
+		        FROM permissions
+		        INNER JOIN permission_group ON permissions.permission_id = permission_group.permission_id
+		        WHERE permission_group.group_id = "group".group_id
+		        ) AS list_permission_of_group,
+		        (CASE WHEN ( SELECT string_agg(permission_name, ', ')
+		        FROM permissions
+		        INNER JOIN permission_group ON permissions.permission_id = permission_group.permission_id
+		        WHERE permission_group.group_id = "group".group_id
+		        ) != '' THEN 'Y' ELSE 'N' END) AS permission_status
+        FROM 	"group"
+        LEFT JOIN permission_group ON "group".group_id = permission_group.group_id
+        WHERE 	1 = 1
+        <if test="idGroupUserLogin != idGroupSuperAdmin" >
+        	AND "group".group_id IN
+        	
+        	(WITH RECURSIVE t(group_id)
+				AS (
+					SELECT 
+						group_id
+					FROM "group"
+					WHERE group_id = #{idGroupUserLogin}
+			
+					UNION All
+					SELECT b.group_id
+					FROM t as a, "group" as b
+					WHERE a.group_id = b.parent_id
+				)
+				
+				SELECT 
+				DISTINCT
+					a.group_id
+				FROM t a
+        	)
+        </if>
+        <if test="search != '' and search != null">
+            AND (lower("group".group_name) LIKE lower(CONCAT('%', #{search}, '%')) 
+            OR lower(getFullPathOfGroup("group".parent_id)) LIKE lower(CONCAT('%', #{search}, '%'))
+            OR lower(( SELECT string_agg(permission_name, ', ')
+		        FROM permissions
+		        INNER JOIN permission_group ON permissions.permission_id = permission_group.permission_id
+		        WHERE permission_group.group_id = "group".group_id
+		        )) LIKE lower(CONCAT('%', #{search}, '%'))) 
+        </if>
+        GROUP BY "group".group_id
+        <if test="columnName != '' and columnName != null">
+            <if test="typeOrder != '' and typeOrder != null">
+                ORDER BY
+                <if test="columnName == 'group_name'">
+                    "group".group_name
+                </if>
+                <if test="columnName == 'list_name_of_parent'">
+                    list_name_of_parent
+                </if>
+                <if test="columnName == 'list_permission_of_group'">
+                    list_permission_of_group
+                </if>
+                <if test="typeOrder == 'desc'">
+                    DESC
+                </if>
+                <if test="typeOrder == 'asc'">
+                    ASC
+                </if>
+            </if>
+        </if>
+        LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+    </select>
+    <select id="countListPermissionGroup" parameterType="WorklifePermissionGroupVO" resultType="int">
+        <!-- SELECT 	COUNT(*)
+        FROM 	"group"
+        WHERE 	1 = 1
+        <if test="idGroupUserLogin != idGroupSuperAdmin" >
+        	AND "group".group_id IN
+        	
+        	(WITH RECURSIVE t(group_id)
+				AS (
+					SELECT 
+						group_id
+					FROM "group"
+					WHERE group_id = #{idGroupUserLogin}
+			
+					UNION All
+					SELECT b.group_id
+					FROM t as a, "group" as b
+					WHERE a.group_id = b.parent_id
+				)
+				
+				SELECT 
+				DISTINCT
+					a.group_id
+				FROM t a
+        	)
+        </if>
+        <if test="search != '' and search != null">
+            AND (lower("group".group_name) LIKE lower(CONCAT('%', #{search}, '%')) 
+            OR lower(getFullPathOfGroup("group".parent_id)) LIKE lower(CONCAT('%', #{search}, '%'))
+            OR lower(( SELECT string_agg(permission_name, ', ')
+		        FROM permissions
+		        INNER JOIN permission_group ON permissions.permission_id = permission_group.permission_id
+		        WHERE permission_group.group_id = "group".group_id
+		        )) LIKE lower(CONCAT('%', #{search}, '%'))) 
+        </if> -->
+        
+        <!-- Edit by ThuongPham -->
+        SELECT COUNT(*)
+        FROM
+        (
+        	SELECT 	DISTINCT "group".group_id,
+		        "group".group_name,
+		        getFullPathOfGroup("group".parent_id) AS list_name_of_parent,
+		        ( SELECT string_agg(permission_name, ', ')
+		        FROM permissions
+		        INNER JOIN permission_group ON permissions.permission_id = permission_group.permission_id
+		        WHERE permission_group.group_id = "group".group_id
+		        ) AS list_permission_of_group,
+		        (CASE WHEN ( SELECT string_agg(permission_name, ', ')
+		        FROM permissions
+		        INNER JOIN permission_group ON permissions.permission_id = permission_group.permission_id
+		        WHERE permission_group.group_id = "group".group_id
+		        ) != '' THEN 'Y' ELSE 'N' END) AS permission_status
+	        FROM 	"group"
+	        LEFT JOIN permission_group ON "group".group_id = permission_group.group_id
+	        WHERE 	1 = 1
+	        <if test="idGroupUserLogin != idGroupSuperAdmin" >
+	        	AND "group".group_id IN
+	        	
+	        	(WITH RECURSIVE t(group_id)
+					AS (
+						SELECT 
+							group_id
+						FROM "group"
+						WHERE group_id = #{idGroupUserLogin}
+				
+						UNION All
+						SELECT b.group_id
+						FROM t as a, "group" as b
+						WHERE a.group_id = b.parent_id
+					)
+					
+					SELECT 
+					DISTINCT
+						a.group_id
+					FROM t a
+	        	)
+	        </if>
+	        <if test="search != '' and search != null">
+	            AND (lower("group".group_name) LIKE lower(CONCAT('%', #{search}, '%')) 
+	            OR lower(getFullPathOfGroup("group".parent_id)) LIKE lower(CONCAT('%', #{search}, '%'))
+	            OR lower(( SELECT string_agg(permission_name, ', ')
+			        FROM permissions
+			        INNER JOIN permission_group ON permissions.permission_id = permission_group.permission_id
+			        WHERE permission_group.group_id = "group".group_id
+			        )) LIKE lower(CONCAT('%', #{search}, '%'))) 
+	        </if>
+	        GROUP BY "group".group_id
+	        <if test="columnName != '' and columnName != null">
+	            <if test="typeOrder != '' and typeOrder != null">
+	                ORDER BY
+	                <if test="columnName == 'group_name'">
+	                    "group".group_name
+	                </if>
+	                <if test="columnName == 'list_name_of_parent'">
+	                    list_name_of_parent
+	                </if>
+	                <if test="columnName == 'list_permission_of_group'">
+	                    list_permission_of_group
+	                </if>
+	                <if test="typeOrder == 'desc'">
+	                    DESC
+	                </if>
+	                <if test="typeOrder == 'asc'">
+	                    ASC
+	                </if>
+	            </if>
+	        </if>
+        ) AS t
+    </select>
+</mapper>

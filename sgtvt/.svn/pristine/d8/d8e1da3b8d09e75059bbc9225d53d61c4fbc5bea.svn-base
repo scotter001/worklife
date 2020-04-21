@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="vn.worklife.user.quanlytuyenduong.service.DmTuyenDuongThuocTinhService">
+    <resultMap id="DmLoaiDuongVO" type="DmLoaiDuongVO">
+        <result property="idLoaiDuong" column="idloaiduong"/>
+        <result property="ten" column="ten"/>
+    </resultMap>
+    <resultMap id="TuyenDuongVO" type="TuyenDuongVO">
+        <result property="idTuyenDuong" column="idtuyenduong"/>
+        <result property="idLoaiDuong" column="idloaiduong"/>
+        <result property="tenDuong" column="tenduong"/>
+        <result property="chieuDai" column="chieudai"/>
+    </resultMap>
+    <resultMap id="TuyenThuocTinhVO" type="TuyenThuocTinhVO">
+        <result property="idTuyenDuong" column="idtuyenduong"/>
+        <result property="idLoaiDuong" column="idloaiduong"/>
+        <result property="ten" column="ten"/>
+        <result property="tenDuong" column="tenduong"/>
+        <result property="chieuDai" column="chieudai"/>
+    </resultMap>
+    <!--<select id="selectListTuyenDuongThuocTinh" resultMap="TuyenThuocTinhVO">-->
+        <!--select * from tuyenduong-->
+        <!--Left JOIN dmloaiduong ON dmloaiduong.idloaiduong = tuyenduong.idloaiduong-->
+        <!--<where>-->
+            <!--<if test="optional.idLoaiDuong != -1">-->
+                <!--tuyenduong.idloaiduong = #{optional.idLoaiDuong}-->
+            <!--</if>-->
+            <!--<if test="optional.tenDuong != null and optional.tenDuong != ''">-->
+                <!--AND dbo.removecharvn(lower(tuyenduong.tenduong)) LIKE dbo.removecharvn(lower(N'%${optional.tenDuong}%'))-->
+            <!--</if>-->
+        <!--</where>-->
+    <!--</select>-->
+    <select id="selectListTuyenDuongThuocTinh" resultMap="TuyenThuocTinhVO">
+        select * from tuyenduong
+        Left JOIN dmloaiduong ON dmloaiduong.idloaiduong = tuyenduong.idloaiduong
+        <where>
+            <if test="idLoaiDuong != -1">
+                tuyenduong.idloaiduong = #{idLoaiDuong}
+            </if>
+            <if test="tenDuong != null and tenDuong != ''">
+                AND dbo.removecharvn(lower(tuyenduong.tenduong)) LIKE dbo.removecharvn(lower(N'%${tenDuong}%'))
+            </if>
+        </where>
+      order by idtuyenduong DESC
+    </select>
+
+    <insert id="insertTuyenDuong" useGeneratedKeys="true" keyProperty="idTuyenDuong" keyColumn="idTuyenDuong">
+        INSERT into tuyenduong ( idloaiduong, tenduong, chieudai)  VALUES ( #{idLoaiDuong}, #{tenDuong}, CONVERT(float,NULLIF(#{chieuDai},'')))
+    </insert>
+    <update id="updateTuyenDuong">
+        DECLARE @chieudai FLOAT
+        SET @chieudai  = CONVERT(FLOAT,NULLIF(#{chieuDai},''))
+        UPDATE tuyenduong set
+    [idloaiduong] = #{idLoaiDuong},
+     [tenduong] = #{tenDuong},
+      [chieudai] = @chieudai where  idtuyenduong = #{idTuyenDuong}
+    </update>
+    <select id="selectTuyenDuongById" resultMap="TuyenThuocTinhVO">
+        select * from tuyenduong
+        Left JOIN dmloaiduong ON dmloaiduong.idloaiduong = tuyenduong.idloaiduong
+        where   idtuyenduong = #{idTuyenDuong}
+    </select>
+
+    <delete id="deleteTuyenDuong">
+        delete from tuyenduong WHERE idtuyenduong = #{idTuyenDuong}
+    </delete>
+
+</mapper>
+

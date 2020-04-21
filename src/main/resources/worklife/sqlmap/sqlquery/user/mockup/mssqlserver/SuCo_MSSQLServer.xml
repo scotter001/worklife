@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2018.
+  ~ Author : Phat Thinh
+  -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="vn.worklife.user.mockup.service.SuCoService">
+    <resultMap id="SuCoVO" type="SuCoVO">
+        <result property="idSuCo" column="idsuco"/>
+        <result property="ngay" column="ngay"/>
+        <result property="idGroup" column="idgroup"/>
+        <result property="idTuyenDuong" column="idtuyenduong"/>
+        <result property="taiNan" column="tainan"/>
+        <result property="huHong" column="huhong"/>
+        <result property="xuLy" column="xuly"/>
+        <result property="khacPhuc" column="khacphuc"/>
+        <result property="chuyenSCTX" column="chuyensctx"/>
+        <result property="tenDuong" column="tenduong"/>
+        <result property="recordTotals" column="totalrecords"/>
+    </resultMap>
+
+    <select id="selectSuCoById" resultMap="SuCoVO">
+        SELECT
+            idsuco,
+            idtuyenduong,
+            idgroup,
+            ISNULL(CONVERT (nvarchar,ngay,103),'') as ngay,
+            ISNULL(tainan, '') as tainan,
+            isnull(huhong, '') as huhong,
+            isnull(xuly, '') as xuly,
+            isnull(khacphuc, '') as khacphuc,
+            isnull(chuyensctx, '') as chuyensctx
+        FROM suco
+        WHERE idsuco = #{id}
+    </select>
+    <select id="selectAllSuCoByWY" resultMap="SuCoVO">
+        SET DATEFIRST 1;
+        WITH TempResult AS (
+                SELECT  sc.idsuco,
+                    CONVERT (varchar(10),sc.ngay,103)  as ngay,
+                    sc.idtuyenduong,
+                    sc.idgroup,
+                    isnull(sc.tainan,'') as tainan,
+                    isnull(sc.huhong,'') as huhong,
+                    isnull(sc.xuly,'') as xuly,
+                    isnull(sc.khacphuc,'') as khacphuc,
+                    sc.chuyensctx,
+                    td.tenduong
+                FROM suco sc
+                    join tuyenduong td on td.idtuyenduong=sc.idtuyenduong
+            WHERE DATEPART( WEEK, sc.ngay) = #{optional.tuanthu}
+                AND DATEPART( YEAR, sc.ngay) = #{optional.nam}
+                <if test="optional.idGroup != 1">
+                    AND idGroup = #{optional.idGroup}
+                </if>
+        ),
+        TempCount AS (
+        SELECT COUNT (*) AS totalrecords
+        FROM TempResult
+        ) SELECT *
+          FROM
+              TempResult, TempCount
+          ORDER BY convert(date, ngay, 103) DESC<!--${orders[0].column} ${orders[0].dir}-->
+        OFFSET ${start} ROWS
+        FETCH NEXT
+        ${length} ROWS ONLY;
+    </select>
+    <select id="selectAllSuCoByWYReport" resultMap="SuCoVO">
+        SET DATEFIRST 1;
+        WITH TempResult AS (
+                SELECT
+                    sc.idsuco,
+                    sc.idtuyenduong,
+                    td.tenduong,
+                    CONVERT (varchar(10),sc.ngay,103)  as ngay,
+                    sc.idgroup,
+                    sc.tainan,
+                    sc.huhong,
+                    sc.xuly,
+                    sc.khacphuc,
+                    sc.chuyensctx
+                FROM suco sc
+                    join tuyenduong td on td.idtuyenduong=sc.idtuyenduong
+                WHERE DATEPART( WEEK, sc.ngay) = #{optional.tuanthu}
+        AND DATEPART( YEAR, sc.ngay) = #{optional.nam}
+                      AND sc.idgroup =#{optional.idgroup}
+        ),
+        TempCount AS (
+        SELECT COUNT (*) AS totalrecords
+        FROM TempResult
+        ) SELECT *
+        FROM
+        TempResult, TempCount
+        ORDER BY ngay DESC <!--${orders[0].column} ${orders[0].dir}-->
+        OFFSET ${start} ROWS
+        FETCH NEXT
+        ${length} ROWS ONLY;
+    </select>
+    <select id="selectAllSuCoByWYHQL" resultMap="SuCoVO">
+        WITH TempResult AS (
+                SELECT
+                    sc.idsuco,
+                    sc.idtuyenduong,
+                    td.tenduong,
+                    CONVERT (varchar(10),sc.ngay,103)  as ngay,
+                    sc.idgroup,
+                    sc.tainan,
+                    sc.huhong,
+                    sc.xuly,
+                    sc.khacphuc,
+                    sc.chuyensctx
+                FROM suco sc
+                    join tuyenduong td on td.idtuyenduong=sc.idtuyenduong
+                WHERE DATEPART( WEEK, sc.ngay) = #{optional.tuanthu}
+                    AND DATEPART( YEAR, sc.ngay) = #{optional.nam}
+                    AND sc.idgroup =#{optional.idgroup}
+                    <if test="optional.chuyensctx == 1">
+                        AND sc.chuyensctx = 1
+                    </if>
+        ),
+                TempCount AS (
+                    SELECT COUNT (*) AS totalrecords
+                    FROM TempResult
+            ) SELECT *
+              FROM
+                  TempResult, TempCount
+              ORDER
+              BY ngay DESC
+                  <!--${orders[0].column}
+                  ${orders[0].dir}-->
+        OFFSET ${start} ROWS
+        FETCH NEXT
+        ${length} ROWS ONLY;
+    </select>
+    <select id="selectAllSuCoNotPaging" resultMap="SuCoVO">
+        SET DATEFIRST 1;
+        SELECT
+        sc.*,
+        td.tenduong,
+        CONVERT (varchar(10),sc.ngay,103)  as ngay
+        FROM suco sc
+        join tuyenduong td on td.idtuyenduong=sc.idtuyenduong
+        WHERE DATEPART( WEEK, sc.ngay) = #{tuan}
+        AND DATEPART( YEAR, sc.ngay) = #{nam}
+        AND sc.idgroup =#{idGroup}
+    </select>
+    <insert id="insertSuCo" useGeneratedKeys="true" keyProperty="idSuCo" keyColumn="idsuco">
+        INSERT INTO suco (
+                          idtuyenduong,
+                          idgroup,
+                          ngay,
+                          tainan,
+                          huhong,
+                          xuly,
+                          khacphuc,
+                          chuyensctx
+                          )
+        VALUES (
+                #{idTuyenDuong},
+                #{idGroup},
+                NULLIF(convert(datetime, #{ngay}, 103),'') ,
+                NULLIF(#{taiNan},''),
+                NULLIF(#{huHong},''),
+                NULLIF(#{xuLy},''),
+                NULLIF(#{khacPhuc},''),
+                NULLIF(#{chuyenSCTX},'')
+                )
+    </insert>
+    <update id="updateSuCo">
+        UPDATE suco
+        SET
+            idtuyenduong        = #{idTuyenDuong},
+            ngay                = NULLIF(convert(datetime, #{ngay}, 103),''),
+            tainan              = NULLIF(#{taiNan},''),
+            huhong              = NULLIF(#{huHong},''),
+            xuly                = NULLIF(#{xuLy},''),
+            khacphuc            = NULLIF(#{khacPhuc},''),
+            chuyensctx          = NULLIF(#{chuyenSCTX},'')
+        WHERE idsuco = #{idSuCo}
+    </update>
+    <select id="getPosition" resultType="java.lang.Integer">
+        WITH TempResult AS
+                 (
+                     select idsuco, ngay
+                     from suco
+                              LEFT JOIN tuyenduong td ON td.idtuyenduong = suco.idtuyenduong
+                 ),
+             MyCte AS (
+                 SELECT *, RowNum = row_number() OVER ( order by ngay DESC)
+                 from TempResult
+             )
+        SELECT RowNum
+        FROM MyCte
+        WHERE idsuco = #{idSuCo}
+    </select>
+    <update id="updateChuyenSCTX">
+        update suco set chuyensctx = #{chuyenSCTX} WHERE idsuco = #{idSuCo}
+    </update>
+</mapper>

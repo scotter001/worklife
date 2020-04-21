@@ -1,0 +1,25 @@
+<%--
+  ~ Copyright (c) 2017.
+  ~ Author : Phat Thinh
+  --%>
+
+<script type="text/javascript">
+    let fileMultiLanguage = {
+        attack_file: '<spring:message code="label.attach.file"/>',
+        out_of_memory: '<spring:message code="label.attach.file.outofmemory"/>',
+        required_name: '<spring:message code="label.attach.file.name.required"/>',
+        notify: '<spring:message code="label.notify"/>',
+        accept: '<spring:message code="label.accept"/>',
+        cancel: '<spring:message code="label.cancel"/>',
+        delete_successful: '<spring:message code="label.attach.file.remove.successful"/>',
+        delete_failed: '<spring:message code="label.attach.file.remove.failed"/>',
+        required_select : '<spring:message code="label.require.selectrow"/>',
+        confirm_delete : '<spring:message code="label.remove.confirmation"/>',
+        remove_successful : '<spring:message code="label.remove.successful"/>',
+        remove_failed : '<spring:message code="label.remove.failed"/> ',
+        downloadfile : '<spring:message code="label.attach.file.downloadfile.title"/>'
+    };
+</script>
+
+
+	

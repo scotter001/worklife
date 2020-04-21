@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="vn.worklife.manager.user.service.WorklifeUserService">
+	<resultMap id="WorklifeUser" type="WorklifeUserVO">
+		<result property="userId" column="id_user" />
+		<result property="username" column="username" />
+		<result property="email" column="email" />
+		<result property="password" column="password" />
+		<result property="realName" column="fullname" />
+		<result property="groupId" column="group_id" />
+		<result property="activeFlag" column="active_flag" />
+		<result property="createAt" column="create_at" />
+		<result property="updateAt" column="update_at" />
+		<result property="realName" column="fullname" />		
+		<result property="gender" column="gender" />
+		<result property="address" column="address" />
+		<result property="birthday" column="birthday" />
+		<result property="cellphone" column="cellphone" />
+		<result property="landline" column="landline" />
+		<result property="identityCard" column="identity_card" />
+		<result property="IDDate" column="idnum_date" />
+		<result property="IDAgency" column="idnum_agency" />
+		<result property="avatar" column="avatar" />
+		<result property="chucvu" column="chucvu" />
+		<result property="isAdmin" column="is_admin" />
+		<association property="group" javaType="WorklifeGroupVO" select="vn.worklife.manager.group.service.WorklifeGroupService.selectGroupByGroupId" column="{groupId=group_id}"></association>
+	</resultMap>
+	
+	<resultMap id="WorklifeListRolelUser" type="WorklifeUserVO">
+		<result property="userId" column="id_user" />
+		<result property="username" column="username" />
+		<result property="email" column="email" />
+		<result property="password" column="password" />
+		<result property="realName" column="fullname" />
+		<result property="groupId" column="group_id" />
+		<result property="activeFlag" column="active_flag" />
+		<result property="createAt" column="create_at" />
+		<result property="updateAt" column="update_at" />
+		<result property="realName" column="fullname" />		
+		<result property="gender" column="gender" />
+		<result property="address" column="address" />
+		<result property="birthday" column="birthday" />
+		<result property="cellphone" column="cellphone" />
+		<result property="landline" column="landline" />
+		<result property="identityCard" column="identity_card" />
+		<result property="IDDate" column="idnum_date" />
+		<result property="IDAgency" column="idnum_agency" />
+		<result property="avatar" column="avatar" />
+		<result property="chucvu" column="chucvu" />
+		<result property="isAdmin" column="is_admin" />
+		<association property="group" javaType="WorklifeGroupVO" select="vn.worklife.manager.group.service.WorklifeGroupService.selectGroupByGroupId" column="{groupId=group_id}"></association>
+		<association property="listRoleName" javaType="String" select="vn.worklife.manager.security.service.WorklifeRoleService.selectListRoleNameByUserId" column="{userId=id_user}"></association>
+		<collection property="listRole" javaType="ArrayList" select="vn.worklife.manager.security.service.WorklifeRoleService.selectRoleByUserId" column="{userId=id_user}"></collection>
+	</resultMap>
+	
+	<insert id="insertUser">
+		<!-- <selectKey keyProperty="userId" resultType="int" order="AFTER">
+			 SELECT currval('users_id_user_seq');
+		</selectKey> -->
+		<selectKey keyProperty="userId" resultType="int" order="AFTER">
+			SELECT MAX(id_user) FROM users
+		</selectKey>
+		INSERT INTO "users"(username, 
+							email,
+							password, 
+							group_id, 
+							active_flag, 
+							create_at, 
+							update_at,
+							fullname, 
+							gender,
+							address,
+							birthday,
+							cellphone,
+							landline,
+							identity_card,
+							idnum_date,
+							idnum_agency,
+							avatar,
+							chucvu,
+							mahuyen,
+							is_admin
+						)
+					VALUES(	#{username}, 
+							#{email},
+							#{password}, 
+							#{groupId}, 
+							1, 
+							GETDATE(), 
+							GETDATE(),
+							#{realName}, 
+							#{gender},
+							#{address},
+							#{birthday},
+							#{cellphone},
+							#{landline},
+							#{identityCard},
+							#{IDDate},
+							#{IDAgency},
+							#{avatar},
+							#{chucvu},
+							#{mahuyen},
+							#{isAdmin}
+						)
+	</insert>
+	
+	<update id="updateUserAvatar" parameterType="WorklifeUserVO">
+		UPDATE 	"users"
+		SET		avatar 		= #{avatar}
+		WHERE	id_user 	= #{userId}
+	</update>
+	<update id="updateUserPasswordd" parameterType="WorklifeUserVO">
+		  UPDATE  "users"
+		  SET  password  = #{password}
+		  WHERE id_user  = #{userId}
+ 	</update>
+	<update id="updateUser" parameterType="WorklifeUserVO">
+		UPDATE 	"users"
+		SET		fullname 		= #{realName},
+				group_id 		= #{groupId},
+				gender 			= #{gender},
+				address		 	= #{address},
+				birthday 		= #{birthday},
+				cellphone 		= #{cellphone},
+				landline 		= #{landline},
+				identity_card 	= #{identityCard},
+				idnum_date 		= #{IDDate},
+				idnum_agency 	= #{IDAgency},
+				chucvu			= #{chucvu},
+				update_at		= #{updateAt}
+		WHERE	id_user 		= #{userId}
+	</update>
+	
+	<delete id="deleteSingleUserByUserId" parameterType="WorklifeUserVO">
+		DELETE 
+		FROM 	"users" 
+		WHERE 	id_user 	= #{userId}
+	</delete>
+	
+	<delete id="deleteMultiUserSameGroupId" parameterType="WorklifeUserVO">
+		DELETE 
+		FROM 	"users" 
+		WHERE 	group_id 	= #{groupId}
+	</delete>
+	
+	<delete id="deleteMultiUserSameActiveFlag" parameterType="WorklifeUserVO">
+		DELETE 
+		FROM 	"users" 
+		WHERE 	active_flag = #{activeFlag}
+	</delete>
+	
+	<delete id="deleteMultiUserSameGroupIdActiveFlag" parameterType="WorklifeUserVO">
+		DELETE 
+		FROM 	"users" 
+		WHERE 	active_flag = 1
+		AND		group_id 	= #{groupId}
+	</delete>
+	
+	<select id="loginSingleActiveUser" parameterType="WorklifeUserVO" resultMap="WorklifeUser">
+		SELECT	"users".*
+		FROM	"users"
+		WHERE 	username 	= #{username}
+		AND		password	= #{password}
+		AND		active_flag = 1
+	</select>
+	
+	<select id="loginSingleActiveUserByUserName" parameterType="WorklifeUserVO" resultMap="WorklifeUser">
+		SELECT	"users".*
+		FROM	"users"
+		WHERE 	username 	= #{username}
+		AND		active_flag = 1
+	</select>
+    
+    <select id="selectUserPermissionForSecurity" resultType="String">
+    	SELECT 	role.role_code AS role
+		FROM 	users 
+		INNER JOIN role_user ON role_user.id_user = users.id_user 
+		INNER JOIN role ON role.role_id = role_user.role_id 
+		WHERE username = #{username}
+    </select>
+	
+	<select id="selectSingleActiveUser" parameterType="WorklifeUserVO" resultMap="WorklifeUser">
+		SELECT	"users".*
+		FROM	"users"
+		WHERE 	id_user 	= #{userId}
+		AND		active_flag = 1
+	</select>
+	
+	<select id="selectMultiUser" parameterType="WorklifeUserVO" resultMap="WorklifeUser">
+		<if test="idGroupUserLogin != idGroupSuperAdmin">
+			WITH t_cte
+			AS (
+				SELECT 
+					group_id
+				FROM "group"
+				WHERE group_id = #{idGroupUserLogin}
+		
+				UNION All
+				SELECT b.group_id
+				FROM t_cte as a, "group" as b
+				WHERE a.group_id = b.parent_id
+			)
+		</if>
+		SELECT	"users".*
+		FROM	"users"
+		INNER JOIN "group" AS g ON "users".group_id = g.group_id
+		WHERE 	1 			= 1
+		
+		<!-- User of SuperAdminGroup: Get All
+			 User of others Group: Get follow this Tree Group
+		  -->
+		<if test="idGroupUserLogin != idGroupSuperAdmin">
+			AND "users".group_id IN (
+				SELECT 
+				DISTINCT
+					a.group_id
+				FROM t_cte a
+			)
+		</if>
+		
+		<if test="activeFlag != null and activeFlag >= 0">
+			AND active_flag	= #{activeFlag}
+		</if>
+		<if test="groupId != null and groupId >= 0">
+			AND users.group_id	= #{groupId}
+		</if>
+		<if test="search != '' and search != null">
+            AND (lower(username) LIKE lower(CONCAT('%', #{search}, '%'))
+            OR lower(email) LIKE lower(CONCAT('%', #{search}, '%'))
+            OR lower(g.group_name) LIKE lower(CONCAT('%', #{search}, '%')))
+        </if>
+        <if test="columnName != '' and columnName != null">
+            <if test="typeOrder != '' and typeOrder != null">
+                ORDER BY
+                <if test="columnName == 'username'">
+                    username
+                </if>
+                <if test="columnName == 'email'">
+                    email
+                </if>
+                <if test="typeOrder == 'desc'">
+                    DESC
+                </if>
+                <if test="typeOrder == 'asc'">
+                    ASC
+                </if>
+            </if>
+        </if>
+       	OFFSET #{firstIndex} ROWS FETCH NEXT #{recordCountPerPage} ROWS ONLY 
+	</select>
+	
+	<select id="selectMultiRoleUser" parameterType="WorklifeUserVO" resultMap="WorklifeListRolelUser">
+		<if test="groupId != null and groupId >= 0">
+			WITH t_cte
+			AS (
+				SELECT 
+					group_id
+				FROM "group"
+				WHERE group_id = #{groupId}
+		
+				UNION All
+				SELECT b.group_id
+				FROM t_cte as a, "group" as b
+				WHERE a.group_id = b.parent_id
+				
+			)
+		</if>
+		SELECT DISTINCT	"users".*
+		FROM	"users"
+		LEFT JOIN	"group" AS g ON g.group_id = "users".group_id
+		LEFT JOIN role_user AS ru ON ru.id_user = "users".id_user
+		LEFT JOIN role AS r ON r.role_id = ru.role_id
+		WHERE 	1 			= 1
+		<if test="groupId != null and groupId >= 0">
+			AND g.group_id IN
+			(
+				SELECT 
+				DISTINCT
+					a.group_id
+				FROM t_cte a
+			)
+		</if>
+		<if test="activeFlag != null and activeFlag >= 0">
+			AND active_flag	= #{activeFlag}
+		</if>
+		<!-- <if test="groupId != null and groupId >= 0">
+			AND g.group_id	= #{groupId}
+		</if> -->
+		<if test="search != '' and search != null">
+            AND (lower(username) LIKE lower(CONCAT('%', #{search}, '%'))
+            OR lower(email) LIKE lower(CONCAT('%', #{search}, '%'))
+            OR lower(g.group_name) LIKE lower(CONCAT('%', #{search}, '%'))
+            OR lower(r.role_name) LIKE lower(CONCAT('%', #{search}, '%')))
+        </if>
+        <if test="columnName != '' and columnName != null">
+            <if test="typeOrder != '' and typeOrder != null">
+                ORDER BY
+                <if test="columnName == 'username'">
+                    username
+                </if>
+                <if test="columnName == 'email'">
+                    email
+                </if>
+                <if test="typeOrder == 'desc'">
+                    DESC
+                </if>
+                <if test="typeOrder == 'asc'">
+                    ASC
+                </if>
+            </if>
+        </if>
+        OFFSET #{firstIndex} ROWS FETCH NEXT #{recordCountPerPage} ROWS ONLY 
+	</select>
+	
+	<select id="checkExistsEmail" resultType="int">
+		SELECT	COUNT(*)
+		FROM	"users"
+		WHERE 	email 			= #{email}
+	</select>
+	
+	<select id="checkExistsUserName" resultType="int">
+		SELECT	COUNT(*)
+		FROM	"users"
+		WHERE 	username 		= #{username}
+	</select>
+	
+	
+	<select id="countListUser" parameterType="WorklifeUserVO" resultType="Integer">
+		<if test="groupId != null and groupId >= 0">
+			WITH t_cte
+			AS (
+				SELECT 
+					group_id
+				FROM "group"
+				WHERE group_id = #{groupId}
+		
+				UNION All
+				SELECT b.group_id
+				FROM t_cte as a, "group" as b
+				WHERE a.group_id = b.parent_id
+				
+			)
+		</if>
+		SELECT COUNT (*)
+		FROM 
+		(
+			SELECT DISTINCT	"users".*
+			FROM	"users"
+			LEFT JOIN 
+				"group" AS g ON g.group_id = "users".group_id
+			LEFT JOIN 
+				role_user AS ru ON ru.id_user = "users".id_user
+			LEFT JOIN 
+				role AS r ON r.role_id = ru.role_id
+			WHERE 	1 			= 1
+			<if test="groupId != null and groupId >= 0">
+				AND g.group_id IN
+				(
+					SELECT 
+					DISTINCT
+						a.group_id
+					FROM t_cte a
+				)
+			</if>
+			<if test="activeFlag != null and activeFlag >= 0">
+				AND active_flag	= #{activeFlag}
+			</if>
+			<!-- <if test="groupId != null and groupId >= 0">
+				AND g.group_id	= #{groupId}
+			</if> -->
+			<if test="search != '' and search != null">
+	            AND (lower(username) LIKE lower(CONCAT('%', #{search}, '%'))
+	            OR lower(email) LIKE lower(CONCAT('%', #{search}, '%'))
+	            OR lower(g.group_name) LIKE lower(CONCAT('%', #{search}, '%'))
+	            OR lower(r.role_name) LIKE lower(CONCAT('%', #{search}, '%')))
+	        </if>
+		) AS t
+	</select>
+	
+	<select id="checkRoleUser" parameterType="WorklifeUserVO" resultType="Integer">
+		SELECT COUNT(*)
+		FROM role_user
+		WHERE id_user = #{userId}
+	</select>
+	
+	<select id="countMultiUser" parameterType="WorklifeUserVO" resultType="Integer">
+		<if test="idGroupUserLogin != idGroupSuperAdmin">
+			WITH t_cte
+			AS (
+				SELECT 
+					group_id
+				FROM "group"
+				WHERE group_id = #{idGroupUserLogin}
+		
+				UNION All
+				SELECT b.group_id
+				FROM t_cte as a, "group" as b
+				WHERE a.group_id = b.parent_id
+				
+			)
+		</if>
+		SELECT COUNT(*)
+        FROM 
+        (
+        	SELECT	"users".*
+			FROM	"users"
+			INNER JOIN "group" AS g ON "users".group_id = g.group_id
+			WHERE 	1 			= 1
+			
+			<!-- User of SuperAdminGroup: Get All
+				 User of others Group: Get follow this Tree Group
+			  -->
+			<if test="idGroupUserLogin != idGroupSuperAdmin">
+				AND "users".group_id IN
+				(
+					SELECT 
+					DISTINCT
+						a.group_id
+					FROM t_cte a
+				)
+			</if>
+			
+			<if test="activeFlag != null and activeFlag >= 0">
+				AND active_flag	= #{activeFlag}
+			</if>
+			<if test="groupId != null and groupId >= 0">
+				AND users.group_id	= #{groupId}
+			</if>
+			<if test="search != '' and search != null">
+				AND (lower(username) LIKE lower(CONCAT('%', #{search}, '%'))
+	            OR lower(email) LIKE lower(CONCAT('%', #{search}, '%'))
+	            OR lower(g.group_name) LIKE lower(CONCAT('%', #{search}, '%')))
+	        </if>
+        ) AS t
+	</select>
+	<select id="selectUsersByGroupId" resultMap="WorklifeUser">
+		SELECT "users".*
+		FROM "users"
+		WHERE "users".group_id = #{idGroup}
+		 AND "users".id_user != #{idUser}
+	</select>
+</mapper>

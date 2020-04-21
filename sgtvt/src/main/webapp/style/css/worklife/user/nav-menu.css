@@ -1,0 +1,69 @@
+.top-navigation .nav > li > a {
+    padding: 20px 10px;
+}
+
+#worklifeTopMenu > ul > li > a > span {
+    margin-bottom: 3px;
+    margin-left: 3px;
+}
+
+.dropdown-submenu.pull-left > .dropdown-menu {
+    left: -100%;
+    margin-left: 10px;
+    -webkit-border-radius: 6px 0 6px 6px;
+    -moz-border-radius: 6px 0 6px 6px;
+    border-radius: 6px 0 6px 6px;
+}
+
+.navbar ul a {
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+#worklifeTopMenu > ul > li > a {
+    color: white;
+    font-size: 13px;
+}
+
+#worklifeTopMenu > ul > li > ul > li > a {
+    color: white;
+    font-size: 12px;
+    font-style: normal;
+}
+
+#worklifeTopMenu,
+.navbar ul a:hover,
+.navbar ul a:focus,
+.navbar ul a:active,
+.navbar ul,
+.nav .open > a,
+.nav .open > a:hover,
+.nav .open > a:focus {
+    text-transform: uppercase;
+    background: #214e85;
+    color: white;
+}
+
+#selStreetType form .form-control:focus{
+    border-color: transparent;
+    box-shadow: none;
+}
+
+[class*='col-md'] {
+    padding-right: 9px !important;
+    padding-left: 9px !important;
+}
+
+.div-center {
+    margin: 0 auto;
+}
+
+#tblThongTinCau > tbody > tr > td > input {
+    width: 100%;
+    text-align: center;
+}
+
+#tblThongTinCau > tbody > tr > td > select {
+    width: 100%;
+}

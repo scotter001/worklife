@@ -1,0 +1,88 @@
+.form-control, .single-line{
+    background-color: #FFFFFF;
+    background-image: none;
+    border: 2px solid black !important;
+    border-radius: 1px;
+    color: inherit;
+    display: block;
+    padding: 6px 12px;
+    transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+    width: 100%;
+    font-size: 14px;
+}
+span[class="input-group-addon"], a[class="chosen-single"]{
+	border: 2px solid black !important;
+}
+label{
+    max-width: 100%;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: black;
+}
+label[class="attachFile"]{
+	font-weight: bold !important;
+}
+
+input, select, textarea, th, td, h2, h3, h4, h5, h6, a[data-toggle="tab"], a[aria-controls], span, div[class="div-bordered"], label, select[class="form-control"]{
+    font-weight: bold !important;
+    color: black !important;
+}
+.navbar-nav>li>a, .top-navigation .navbar-nav .open .dropdown-menu > li > a, .top-navigation .navbar-nav .open .dropdown-menu .dropdown-header{
+	font-weight: 600;
+    color: black !important;
+}
+input[type=checkbox], input[type=radio] {
+	border: 2px solid;
+}
+
+.btn{
+	font-size:medium !important;
+	font-weight: bolder !important;
+}
+
+.pagination > li > a, .pagination > li > span {
+    background-color: #FFFFFF;
+    border: 1px solid #DDDDDD;
+    color: inherit;
+    float: left;
+    line-height: 1.42857;
+    margin-left: -1px;
+    padding: 4px 10px;
+    position: relative;
+    text-decoration: none;
+}
+div.dataTables_wrapper div.dataTables_paginate {
+    padding-right: 0% !important;
+}
+#btnTraCuu{
+	font-size:small !important;
+}
+.table[class="table dataTables-example"] > thead > tr > th, .table[class="table dataTables-example"] > tbody > tr > th, .table[class="table dataTables-example"] > tfoot > tr > th, .table[class="table dataTables-example"] > thead > tr > td, .table[class="table dataTables-example"] > tbody > tr > td, .table[class="table dataTables-example"] > tfoot > tr > td, .table[class="table dataTables-example"] {
+    border-top: 1px solid #e7eaec !important;
+    line-height: 1.42857 !important;
+    padding: 8px !important;
+    vertical-align: top !important;
+    border-bottom: none !important;
+    border-left: none !important;
+    border-right: none !important;
+}
+.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td, .table {
+    border: 1px solid black !important;
+}
+.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+    font-weight: 900;
+    color: black;
+    border: 2px;
+}
+
+/*.table {
+	width: 100% !important;
+}*/
+.table>tbody>tr>td textarea, .table>tbody>tr>td input {
+  width: 100% !important;
+  border: none !important;
+}
+#detailParent {
+    margin-left: -30px;
+    margin-top: 9px;
+}

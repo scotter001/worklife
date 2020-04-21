@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2017.
+  ~ Author : Phat Thinh
+  -->
+<category>
+    <table>
+        <name>dmhuyen</name>
+        <url>district</url>
+        <title>Huyện</title>
+        <fields>
+            <field column="idhuyen" type="int" property="id"/>
+            <field column="tenhuyen" type="String" property="name" title="Tên huyện" size="12"/>
+            <field column="loai" type="int" property="extendCol1" title="Loại huyện" size="6" ddefault="option">
+                <option value="1">Thành phố</option>
+                <option value="2">Huyện</option>
+                <option value="3">Thị xã</option>
+            </field>
+            <field column="mahuyen" type="String" property="code" title="Mã huyện" size="6"/>
+        </fields>
+    </table>
+
+    <table>
+        <name>dmxa</name>
+        <url>ward</url>
+        <title>Xã</title>
+        <fields>
+            <field column="iddmxa" type="int" property="id"/>
+            <field column="tenxa" type="String" property="name" title="Tên Xã" size="6"/>
+            <field column="maxa" type="String" property="code" title="Mã xã" size="6"/>
+            <field column="loai" type="int" property="extendCol1" title="Loại xã" size="6" ddefault="option">
+                <option value="1">Xã</option>
+                <option value="2">Phường</option>
+                <option value="3">Thị trấn</option>
+            </field>
+            <field column="mahuyen" type="int" property="extendCol2" title="Thuộc huyện" size="6"
+                   ddefault="association">
+                <condition type="table" name="dmhuyen" column="mahuyen" result="tenhuyen" value="mahuyen" text="tenhuyen"/>
+            </field>
+        </fields>
+    </table>
+
+    <table>
+        <name>dmcapkythuat</name>
+        <url>capkythuat</url>
+        <title>cap ky thuat</title>
+        <fields>
+            <field column="idcapkt" type="int" property="id"/>
+            <field column="ten" type="String" property="name" title="Tên" size="6"/>
+        </fields>
+    </table>
+
+    <table>
+        <name>dmloaiduong</name>
+        <url>loaiduong</url>
+        <title>loai duong</title>
+        <fields>
+            <field column="idloaiduong" type="int" property="id"/>
+            <field column="ten" type="String" property="name" title="Tên Loại Đường" size="6"/>
+        </fields>
+    </table>
+
+    <table>
+        <name>dmloaidiahinh</name>
+        <url>loaidiahinh</url>
+        <title>loai dia hinh</title>
+        <fields>
+            <field column="idtinhtrang" type="int" property="id"/>
+            <field column="ten" type="String" property="name" title="Tên Loại Địa Hình" size="6"/>
+        </fields>
+    </table>
+
+    <table>
+        <name>dmketcaumatdg</name>
+        <url>ketcaumg</url>
+        <title>ket cau md</title>
+        <fields>
+            <field column="idketcaumat" type="int" property="id"/>
+            <field column="ten" type="String" property="name" title="Tên Loại Địa Hình" size="6"/>
+        </fields>
+    </table>
+
+    <table>
+        <name>dmdonviql</name>
+        <url>donviql</url>
+        <title>don vi quan ly</title>
+        <fields>
+            <field column="iddonviql" type="int" property="id"/>
+            <field column="ten" type="String" property="name" title="Tên Đơn vị quản lý" size="6"/>
+        </fields>
+    </table>
+
+    <table>
+        <name>dmcapql</name>
+        <url>dmcapql</url>
+        <title>danh muc cap ql</title>
+        <fields>
+            <field column="idcapql" type="int" property="id"/>
+            <field column="ten" type="String" property="name" title="Danh mục cấp quản lý" size="6"/>
+        </fields>
+    </table>
+
+    <table>
+        <name>dmnguonvon</name>
+        <url>dmnguonvon</url>
+        <title>danh muc nguồn vốn</title>
+        <fields>
+            <field column="idnguonvon" type="int" property="id"/>
+            <field column="ten_nguonvon" type="String" property="name" title="Danh mục nguồn vốn" size="6"/>
+        </fields>
+    </table>
+
+    <table>
+        <name>dmtuvanksldt</name>
+        <url>dmtuvanksldt</url>
+        <title>danh mục tư vấn ksldt</title>
+        <fields>
+            <field column="idtuvanksldt" type="int" property="id"/>
+            <field column="ten_tuvanksldt" type="String" property="name" title="Danh mục tư vấn ksldt" size="6"/>
+        </fields>
+    </table>
+
+    <table>
+        <name>cau</name>
+        <url>dmcau</url>
+        <title>danh muc cau</title>
+        <fields>
+            <field column="idcau" type="int" property="id"/>
+            <field column="tencau" type="String" property="name" title="Danh mục cầu" size="6"/>
+            <field column="idtuyenduong" type="int" property="extendCol2" title="Thuộc tuyenes duong" size="6" ddefault="association">
+                <condition type="table" name="tuyenduong" column="idtuyenduong" result="tenduong" value="idtuyenduong" text="tenduong"/>
+            </field>
+        </fields>
+    </table>
+
+    <table>
+        <name>dmloaicau</name>
+        <url>dmloaicau</url>
+        <title>danh muc loai cau</title>
+        <fields>
+            <field column="idloaicau" type="int" property="id"/>
+            <field column="ten" type="String" property="name" title="Danh mục loại cầu" size="6"/>
+        </fields>
+    </table>
+
+    <table>
+        <name>tuyenduong</name>
+        <url>tuyenduong</url>
+        <title>tuyen duong</title>
+        <fields>
+            <field column="idtuyenduong" type="int" property="id"/>
+            <field column="tenduong" type="String" property="name" title="Tên đường" size="6"/>
+            <field column="lytrinhkm_diemdau" type="String" property="extendCol1" title="Lý trình km điểm đầu" size="6"/>
+            <field column="lytrinhkm_diemcuoi" type="String" property="extendCol2" title="Lý trình km điểm cuối" size="6"/>
+        </fields>
+    </table>
+
+    <table>
+        <name>dmdoituongvuot</name>
+        <url>dmdoituongvuot</url>
+        <title>danh muc doi tuong</title>
+        <fields>
+            <field column="iddtvuot" type="int" property="id"/>
+            <field column="ten" type="String" property="name" title="Danh mục đối tượng vượt" size="6"/>
+        </fields>
+    </table>
+
+    <table>
+        <name>dmchaychung</name>
+        <url>dmchaychung</url>
+        <title>danh muc chay chung</title>
+        <fields>
+            <field column="idchaychung" type="int" property="id"/>
+            <field column="ten" type="String" property="name" title="Danh mục đối tượng chạy chung" size="6"/>
+        </fields>
+    </table>
+
+    <table>
+        <name>dmketcaunhip</name>
+        <url>dmketcaunhip</url>
+        <title>danh muc ket cau nhip</title>
+        <fields>
+            <field column="idketcaunhip" type="int" property="id"/>
+            <field column="ten" type="String" property="name" title="Dạng kết cấu nhịp" size="6"/>
+        </fields>
+    </table>
+
+    <table>
+        <name>dmtinhtrang</name>
+        <url>dmtinhtrang</url>
+        <title>danh muc tinh trang</title>
+        <fields>
+            <field column="idtinhtrang" type="int" property="id"/>
+            <field column="ten" type="String" property="name" title="DM tình tr" size="6"/>
+        </fields>
+    </table>
+
+    <table>
+        <name>dmvatlieu_nhipchinh</name>
+        <url>dmvatlieu_nhipchinh</url>
+        <title>danh muc vat lieu nhip chinh</title>
+        <fields>
+            <field column="idvatlieu" type="int" property="id"/>
+            <field column="ten" type="String" property="name" title="Danh mục vật liệu" size="6"/>
+        </fields>
+    </table>
+
+    <table>
+        <name>bienbao_dentinhieu</name>
+        <url>bienbao_dentinhieu</url>
+        <title>bien bao den tin hieu</title>
+        <fields>
+            <field column="idbbdth" type="int" property="id"/>
+            <field column="ten" type="String" property="name" title="Danh mục vật liệu" size="6"/>
+        </fields>
+    </table>
+
+    <table>
+        <name>dmloaibientaitrong</name>
+        <url>dmloaibientaitrong</url>
+        <title>dm loai bien tai trong</title>
+        <fields>
+            <field column="idloaibien" type="int" property="id"/>
+            <field column="ten" type="String" property="name" title="Danh mục loại biển tải trọng" size="6"/>
+        </fields>
+    </table>
+
+    <table>
+        <name>dmchongvaxo</name>
+        <url>dmchongvaxo</url>
+        <title>dm chong va xo</title>
+        <fields>
+            <field column="idchongvaxo" type="int" property="id"/>
+            <field column="ten" type="String" property="name" title="Danh mục chống va xô" size="6"/>
+        </fields>
+    </table>
+
+    <table>
+        <name>dmdonvibaotri</name>
+        <url>dmdonvibaotri</url>
+        <title>dm don vi bao tri</title>
+        <fields>
+            <field column="iddonvibt" type="int" property="id"/>
+            <field column="ten" type="String" property="name" title="Danh mục đơn vị bảo trì" size="6"/>
+        </fields>
+    </table>
+
+    <table>
+        <name>dmbciav</name>
+        <url>dmbciav</url>
+        <title>dm bciav</title>
+        <fields>
+            <field column="idbciav" type="int" property="id"/>
+            <field column="ten" type="String" property="name" title="Danh mục BCiav" size="12"/>
+            <field column="tinhtrang" type="String" property="extendCol1" title="Tình trạng BCiav" size="6"/>
+            <field column="mota" type="String" property="extendCol2" title="Mô tả BCiav" size="6"/>
+        </fields>
+    </table>
+
+    <table>
+        <name>dmbcicrit</name>
+        <url>dmbcicrit</url>
+        <title>dm bcicrit</title>
+        <fields>
+            <field column="idbcicrit" type="int" property="id"/>
+            <field column="ten" type="String" property="name" title="Danh mục BCicrit" size="12"/>
+            <field column="tinhtrang" type="String" property="extendCol1" title="Tình trạng BCicrit" size="6"/>
+            <field column="mota" type="String" property="extendCol2" title="Mô tả BCicrit" size="6"/>
+        </fields>
+    </table>
+
+    <table>
+        <name>dmthongsokt</name>
+        <url>dmthongsokt</url>
+        <title>dm thong so kiem tra</title>
+        <fields>
+            <field column="idthongsokt" type="int" property="id"/>
+            <field column="noidung" type="String" property="name" title="Nội dung" size="12"/>
+            <field column="donvitinh" type="String" property="extendCol1" title="ĐVT" size="6"/>
+            <field column="tendm" type="String" property="extendCol2" title="Danh mục só liệu" size="6"/>
+        </fields>
+    </table>
+
+    <table>
+        <name>dmtaitrongtk</name>
+        <url>dmtaitrongtk</url>
+        <title>dmtaitrongtk</title>
+        <fields>
+            <field column="idtaitrong" type="int" property="id"/>
+            <field column="ten" type="String" property="name" title="Tên" size="12"/>
+        </fields>
+    </table>
+
+    <table>
+        <name>dmgiaiphancach</name>
+        <url>dmgiaiphancach</url>
+        <title>dmgiaiphancach</title>
+        <fields>
+            <field column="idgiaiphancach" type="int" property="id"/>
+            <field column="ten" type="String" property="name" title="Tên" size="12"/>
+        </fields>
+    </table>
+
+    <table>
+        <name>dmthongthuyen</name>
+        <url>dmthongthuyen</url>
+        <title>dmthongthuyen</title>
+        <fields>
+            <field column="idgiaiphancach" type="int" property="id"/>
+            <field column="ten" type="String" property="name" title="Tên" size="12"/>
+        </fields>
+    </table>
+
+    <table>
+        <name>dmphumatcau</name>
+        <url>dmphumatcau</url>
+        <title>dmphumatcau</title>
+        <fields>
+            <field column="idphumatcau" type="int" property="id"/>
+            <field column="ten" type="String" property="name" title="Tên" size="12"/>
+        </fields>
+    </table>
+
+    <table>
+        <name>dmbammatcau</name>
+        <url>dmbanmatcau</url>
+        <title>dmbanmatcau</title>
+        <fields>
+            <field column="idbanmatcau" type="int" property="id"/>
+            <field column="ten" type="String" property="name" title="Tên" size="12"/>
+        </fields>
+    </table>
+
+    <table>
+        <name>dmvatlieuketcau</name>
+        <url>dmbanmatcau</url>
+        <title>dmbanmatcau</title>
+        <fields>
+            <field column="idvatlieuketcau" type="int" property="id"/>
+            <field column="ten" type="String" property="name" title="Tên" size="12"/>
+        </fields>
+    </table>
+
+    <table>
+        <name>dmsodonhip</name>
+        <url>dmsodonhip</url>
+        <title>dmsodonhip</title>
+        <fields>
+            <field column="idsodonhip" type="int" property="id"/>
+            <field column="ten" type="String" property="name" title="Tên" size="12"/>
+        </fields>
+    </table>
+
+    <table>
+        <name>dmmatcatdam</name>
+        <url>dmmatcatdam</url>
+        <title>dmmatcatdam</title>
+        <fields>
+            <field column="idmatcatdam" type="int" property="id"/>
+            <field column="ten" type="String" property="name" title="Tên" size="12"/>
+        </fields>
+    </table>
+
+    <table>
+        <name>dmnhathau</name>
+        <url>dmnhathau</url>
+        <title>dmnhathau</title>
+        <fields>
+            <field column="idnhathau" type="int" property="id"/>
+            <field column="tennhathau" type="String" property="name" title="Tên" size="12"/>
+        </fields>
+    </table>
+</category>

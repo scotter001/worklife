@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2018.
+  ~ Author : Phat Thinh
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="vn.worklife.user.util.file.service.FileUploadService">
+	<resultMap type="FileUploadVO" id="FileUploadVO">
+		<result property="id" column="id"/>
+		<result property="parentId" column="parentid"/>
+		<result property="loaiTaiLieu" column="loaitailieu"/>
+		<result property="moTa" column="mota"/>
+		<result property="tenDayDu" column="tendaydu"/>
+		<result property="ten" column="ten"/>
+		<result property="tenFile" column="tenfile"/>
+		<result property="doDai" column="dodai"/>
+		<result property="noiDung" column="noidung"/>
+	</resultMap>
+	<resultMap id="FileUploadBCSuCoVO" type="FileUploadBCSuCoVO">
+		<result property="idbcht" column="idbcht"/>
+		<result property="idGroup" column="idgroup"/>
+		<result property="tuan" column="tuan"/>
+		<result property="nam" column="nam"/>
+		<result property="ten" column="ten"/>
+		<result property="doDai" column="dodai"/>
+		<result property="noiDung" column="noidung"/>
+		<result property="ngayBC" column="ngaybc"/>
+	</resultMap>
+	<select id="selectDataFileByTuanAndNam" resultMap="FileUploadBCSuCoVO">
+		select * from file_bchientrang WHERE tuan = #{tuan} AND nam = #{nam} AND idgroup = #{idGroup}
+	</select>
+	<select id="selectDataFileByIdParentAndLoaiTaiLieu" resultMap="FileUploadVO">
+		SELECT id,parentid,loaitailieu,mota,tendaydu,LTRIM(RTRIM(ten)) as ten
+		FROM tepdinhkem
+		WHERE parentid = #{parentId}
+		AND loaitailieu = #{loaiTaiLieu}
+	</select>
+	
+	<select id="selectDataDownloadFileByIdParentAndLoaiTaiLieu" resultMap="FileUploadVO">
+		SELECT ten,noidung,dodai
+		FROM tepdinhkem
+		WHERE parentid = #{parentId}
+		AND loaitailieu = #{loaiTaiLieu}
+	</select>
+	<select id="selectFileAttachByID" resultMap="FileUploadVO" parameterType="int">
+		SELECT ten,noidung,dodai,id
+		FROM tepdinhkem
+		WHERE id = #{id}
+	</select>
+	<insert id="insertFileUploadVO" parameterType="FileUploadVO">
+		INSERT INTO tepdinhkem
+		([parentid], [loaitailieu], [mota], [tendaydu], [ten], [dodai], [noidung]) 
+		VALUES (#{parentId}, #{loaiTaiLieu}, #{moTa}, #{tenDayDu}, #{ten}, #{doDai}, #{noiDung});
+	</insert>
+		
+	<update id="updateFileUploadVO" parameterType="FileUploadVO">
+		UPDATE tepdinhkem
+		SET  
+			[mota]= #{moTa}, 
+			[tendaydu]=#{tenDayDu}, 
+			[ten]=#{ten}, 
+			[dodai]=#{doDai}, 
+			[noidung]=#{noiDung} 
+		WHERE ([id] = #{id});
+	</update>
+
+	<insert id="insertFileUploadBaoCaoVO">
+		insert into file_bchientrang (idgroup, tuan, nam, dodai, noidung, ten, ngaybc)
+		VALUES (#{idGroup}, #{tuan}, #{nam}, #{doDai}, #{noiDung}, #{ten}, nullif(convert(date,#{ngayBC},103),''))
+	</insert>
+
+	<update id="updateFileUploadBaoCaoVO">
+		update file_bchientrang
+		set
+			dodai = #{doDai},
+			noidung = #{noiDung},
+		    ten = #{ten},
+		    ngaybc = nullif(convert(date,#{ngayBC},103),'')
+		WHERE idbcht = #{idbcht}
+	</update>
+
+	<delete id="deleteFileUploadVO" parameterType="FileUploadVO">
+		DELETE FROM [dbo].[tepdinhkem]
+		WHERE [id] = #{id}
+	</delete>
+	<delete id="deleteFileUploadByList">
+		DELETE FROM [dbo].[tepdinhkem]
+		WHERE parentid IN  <foreach item="item" index="index" collection="list"
+							      open="(" separator="," close=")">
+							        #{item.idHoSoGiayTo}
+ 							</foreach>
+	</delete>
+	<update id="updateFileBanVeQuyHoach">
+		update banve_quyhoach
+			set
+			ten = #{ten},
+			doDai = #{doDai},
+			noidung = #{noiDung}
+		WHERE idbanve_qh = #{idBanVe_QH}
+	</update>
+	<update id="updateFilePhapLy">
+		update scdk_phaply
+		set
+		tenfile = #{tenFile},
+		doDai = #{doDai},
+		noidung = #{noiDung}
+		WHERE idpl = #{idPL}
+	</update>
+	<update id="updateFileTaiLieuQuyHoach">
+		update tailieu_quyhoach
+			set
+			ten = #{ten},
+			dodai = #{doDai},
+			noidung = #{noiDung}
+		WHERE idtailieu_qh = #{idTaiLieu_QH}
+	</update>
+	<update id="updateFileTaiLieuCongTrinh">
+		update tailieu_congtrinh
+			set
+			tenfile = #{tenFile},
+			dodai = #{doDai},
+			noidung = #{noiDung}
+		where idtl = #{idTL}
+	</update>
+</mapper>

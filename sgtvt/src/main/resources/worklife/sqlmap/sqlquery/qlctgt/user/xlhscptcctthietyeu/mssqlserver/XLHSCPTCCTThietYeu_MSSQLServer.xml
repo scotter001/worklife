@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="vn.worklife.qlctgt.user.xulycpctthietyeu.service.XLCPCTThietYeuService">
+    <resultMap id="DmLoaiCongTrinhVO" type="DmLoaiCongTrinhVO">
+        <result property="id" column="id"/>
+        <result property="ten" column="ten"/>
+        <result property="idLoaiHS" column="idloaihs"/>
+        <result property="thoiHan" column="thoihan"/>
+        <result property="loai" column="loai"/>
+    </resultMap>
+    <resultMap id="CongTrinhChiTietVO" type="CongTrinhChiTietVO">
+        <result property="idctct" column="idctct"/>
+        <result property="idCongTrinh" column="idcongtrinh"/>
+        <result property="idHuyen" column="idhuyen"/>
+        <result property="idXa" column="idxa"/>
+        <result property="tenDuong" column="tenduong"/>
+        <result property="lyTrinh" column="lytrinh"/>
+        <result property="ranhDao_Dai" column="ranhdao_dai"/>
+        <result property="ranhDao_Rong" column="ranhdao_rong"/>
+        <result property="ranhDao_Sau" column="ranhdao_sau"/>
+        <result property="dienTich" column="dientich"/>
+        <result property="dienGiai" column="diengiai"/>
+        <result property="ghiChu" column="ghichu"/>
+        <result property="nhieuDuong" column="nhieuduong"/>
+    </resultMap>
+    <resultMap id="DmDonGiaCPVO" type="DmDonGiaCPVO">
+        <result property="id" column="id"/>
+        <result property="idDMLoaiHS" column="iddmloaihs"/>
+        <result property="donGia_Thang" column="dongia_thang"/>
+        <result property="donGia_Ngay" column="dongia_ngay"/>
+        <result property="suDung" column="sudung"/>
+    </resultMap>
+    <resultMap id="ThuPhiCongThucVO" type="ThuPhiCongThucVO">
+        <result property="id" column="id"/>
+        <result property="idPhi" column="idphi"/>
+        <result property="congThuc" column="congthuc"/>
+        <result property="dienTich" column="dientich"/>
+    </resultMap>
+    <resultMap id="ThuPhiCongTrinhVO" type="ThuPhiCongTrinhVO">
+        <result property="idPhi" column="idphi"/>
+        <result property="idHoSo" column="idhoso"/>
+        <result property="donGia_Thang" column="dongia_thang"/>
+        <result property="donGia_Ngay" column="dongia_ngay"/>
+        <result property="tongDT" column="tongdt"/>
+        <result property="congThuc" column="congthuc"/>
+        <result property="tienNop" column="tiennop"/>
+        <result property="tienNop_LamTron" column="tiennop_lamtron"/>
+        <result property="canCuTB" column="cancutb"/>
+        <result property="noiDungTB" column="noidungtb"/>
+        <result property="noiNhanTB" column="noinhantb"/>
+        <result property="nguoiKyTB" column="nguoikytb"/>
+        <result property="chucVuTB" column="chucvutb"/>
+        <result property="uyQuyenTB" column="uyquyentb"/>
+        <result property="tb_So" column="tb_so"/>
+        <result property="tb_Ngay" column="tb_ngay"/>
+        <result property="tieuDeTB" column="tieudetb"/>
+        <result property="kinhGui" column="kinhgui"/>
+    </resultMap>
+    <select id="selectLoaiHinh" resultMap="DmLoaiCongTrinhVO">
+        select * from dmloaict where loai is not null
+    </select>
+    <delete id="deleteCongTrinhChiTiet">
+        delete congtrinh_chitiet where idcongtrinh = #{idCongTrinh}
+    </delete>
+    <insert id="insertCongTrinhChiTiet" useGeneratedKeys="true" keyProperty="idctct" keyColumn="idctct">
+        insert into congtrinh_chitiet
+            (idcongtrinh, idhuyen, idxa, tenduong, lytrinh, diengiai, nhieuduong)
+            VALUES
+                (
+                 #{idCongTrinh},
+                 #{idHuyen},
+                 #{idXa},
+                 nullif(#{tenDuong},''),
+                 nullif(#{lyTrinh},''),
+                 nullif(#{dienGiai},''),
+                 #{nhieuDuong}
+                )
+    </insert>
+    <select id="selectListChiTietCT" resultMap="CongTrinhChiTietVO">
+        select
+        idctct,
+        idcongtrinh,
+        idhuyen,
+        idxa,
+        isnull(tenduong,'') as tenduong,
+        isnull(lytrinh, '') as lytrinh,
+        isnull(diengiai,'') as diengiai,
+        nhieuduong
+        from congtrinh_chitiet where idcongtrinh = #{idCongTrinh}
+    </select>
+    <delete id="deleteChiTietTD">
+        delete from congtrinh_chitiet where idctct = #{idctct}
+    </delete>
+    <delete id="deleteCongThuc">
+        delete from thuphi_congthuc where id = #{id}
+    </delete>
+    <select id="selectDonGia" resultMap="DmDonGiaCPVO">
+        select * from dmdongia_cp where iddmloaihs = #{idLoaiHoSo} and sudung = #{suDung}
+    </select>
+    <select id="selectThuPhiCongTrinh" resultMap="ThuPhiCongTrinhVO">
+        select
+               idphi,
+               idhoso,
+               isnull(dongia_thang,'') as dongia_thang,
+               isnull(convert(nvarchar, dongia_ngay),'') as dongia_ngay,
+               isnull(convert(nvarchar,tongdt),'') as tongdt,
+               isnull(congthuc,'') as congthuc,
+               isnull(convert(nvarchar,tiennop),'') as tiennop,
+               isnull(convert(nvarchar,tiennop_lamtron),'') as tiennop_lamtron,
+               isnull(cancu,'') as cancutb,
+               isnull(noidung,'') as noidungtb,
+               isnull(noinhan,'') as noinhantb,
+               isnull(nguoiky,'') as nguoikytb,
+               isnull(chucvu,'') as chucvutb,
+               isnull(uyquyen,'') as uyquyentb,
+               isnull(tb_so,'') as tb_so,
+               isnull(convert(nvarchar, tb_ngay,103),'') as tb_ngay
+        from thuphi_congtrinh where idhoso = #{idHoSo}
+    </select>
+</mapper>

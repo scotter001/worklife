@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2018.
+  ~ Author : Phat Thinh
+  -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="vn.worklife.user.mockup.service.DanhSachDmScdkService">
+
+    <resultMap type="DanhSachDmScdkVO" id="DanhSachDmScdkVO">
+        <result property="idDsDmScdk" column="idds_dmscdk"/>
+        <result property="idDmScdk" column="iddmscdk"/>
+        <result property="idSuCo" column="idsuco"/>
+        <result property="traiPhai" column="traiphai"/>
+        <result property="recordTotals" column="totalrecords"/>
+        <association property="suCoVo" javaType="SuCoVO">
+            <result property="loaiSuCo" column="loaisuco"/>
+            <result property="lyTrinhKmDiemDau" column="lytrinhkm_diemdau"/>
+            <result property="lyTrinhMDiemDau" column="lytrinhm_diemdau"/>
+            <result property="lyTrinhKmDiemCuoi" column="lytrinhkm_diemcuoi"/>
+            <result property="lyTrinhMDiemCuoi" column="lytrinhm_diemcuoi"/>
+            <result property="tenHuyen" column="tenhuyen"/>
+            <result property="tenXa" column="tenxa"/>
+        </association>
+    </resultMap>
+
+    <select id="selectDsDmScdkTheoDmScdk" resultMap="DanhSachDmScdkVO">
+        SELECT
+            dsscdk.idds_dmscdk
+            ,dsscdk.traiphai
+            ,s.loaisuco
+            ,s.lytrinhkm_diemdau
+            ,s.lytrinhm_diemdau
+            ,s.lytrinhkm_diemcuoi
+            ,s.lytrinhm_diemcuoi
+            ,s.idsuco
+            ,dmh.tenhuyen
+            ,dmx.tenxa
+        FROM ds_dmscdk dsscdk
+            JOIN suco s on dsscdk.idsuco = s.idsuco
+            JOIN dmhuyen dmh on s.mahuyen = dmh.mahuyen
+            JOIN dmxa dmx on s.maxa = dmx.maxa
+        WHERE  dsscdk.iddmscdk = #{idDmScdk}
+    </select>
+    <insert id="insertDsDmScdk">
+        INSERT INTO ds_dmscdk (iddmscdk,idsuco,traiphai)
+        VALUES (#{idDmScdk},#{idSuCo},#{traiPhai});
+    </insert>
+    <delete id="deleteDsDmScdkByDmScdkId">
+        DELETE FROM ds_dmscdk WHERE iddmscdk = #{idDmScdk}
+    </delete>
+    <delete id="deleteDsDmScdkByDmScdkIdList">
+        DELETE FROM ds_dmscdk
+        WHERE iddmscdk IN
+        <foreach item="item" collection="idDmScdk" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="vn.worklife.qlctgt.user.xulycpctdaunoihttnuocthai.service.XLCPCTDauNoiDuongHTTNuocThaiService">
+    <resultMap id="DmLoaiCongTrinhVO" type="DmLoaiCongTrinhVO">
+        <result property="id" column="id"/>
+        <result property="ten" column="ten"/>
+        <result property="idLoaiHS" column="idloaihs"/>
+        <result property="thoiHan" column="thoihan"/>
+        <result property="loai" column="loai"/>
+    </resultMap>
+    <resultMap id="CongTrinhChiTietVO" type="CongTrinhChiTietVO">
+        <result property="idctct" column="idctct"/>
+        <result property="idCongTrinh" column="idcongtrinh"/>
+        <result property="idHuyen" column="idhuyen"/>
+        <result property="tenHuyen" column="tenhuyen"/>
+        <result property="tenXa" column="tenxa"/>
+        <result property="idXa" column="idxa"/>
+        <result property="tenDuong" column="tenduong"/>
+        <result property="lyTrinh" column="lytrinh"/>
+        <result property="ranhDao_Dai" column="ranhdao_dai"/>
+        <result property="ranhDao_Rong" column="ranhdao_rong"/>
+        <result property="ranhDao_Sau" column="ranhdao_sau"/>
+        <result property="dienTich" column="dientich"/>
+        <result property="dienGiai" column="diengiai"/>
+        <result property="ghiChu" column="ghichu"/>
+        <result property="nhieuDuong" column="nhieuduong"/>
+    </resultMap>
+    <select id="selectListChiTietCTNT" resultMap="CongTrinhChiTietVO">
+        select
+            idctct,
+            idcongtrinh,
+            ct.idhuyen,
+            ct.idxa,
+            isnull(tenduong,'') as tenduong,
+            isnull(lytrinh, '') as lytrinh,
+            isnull(h.tenhuyen,'') as tenhuyen,
+            isnull(x.tenxa,'') as tenxa
+        from congtrinh_chitiet ct
+            LEFT JOIN dmhuyen h ON h.idhuyen = ct.idhuyen
+            LEFT JOIN dmxa x ON x.iddmxa = ct.idxa
+        where idcongtrinh = #{idCongTrinh}
+    </select>
+    <insert id="insertCongTrinhChiTietNT" useGeneratedKeys="true" keyProperty="idctct" keyColumn="idctct">
+        insert into congtrinh_chitiet
+        (idcongtrinh, idhuyen, idxa, tenduong, lytrinh)
+        VALUES
+        (
+        #{idCongTrinh},
+        #{idHuyen},
+        #{idXa},
+        nullif(#{tenDuong},''),
+        nullif(#{lyTrinh},'')
+
+        )
+    </insert>
+
+</mapper>
